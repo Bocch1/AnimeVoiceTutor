@@ -6,7 +6,7 @@ $repo=if ($Model -eq '0.6B') { 'Qwen/Qwen3-ASR-0.6B' } else { 'Qwen/Qwen3-ASR-1.
 $destination=Join-Path $root "models\$folder"
 $python=(& (Join-Path $PSScriptRoot 'resolve_runtime_python.ps1') -Role asr | Select-Object -Last 1)
 if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
-    throw 'Install the ASR runtime first: Setup AnimeVoiceTutor.cmd all'
+    throw 'Install the ASR runtime first: advanced\Setup AnimeVoiceTutor.cmd all'
 }
 $checker=Join-Path $root 'tools\check_local_asr_model.py'
 if (Test-Path -LiteralPath (Join-Path $destination 'config.json') -PathType Leaf) {

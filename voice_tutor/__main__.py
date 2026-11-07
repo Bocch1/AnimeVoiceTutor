@@ -10,7 +10,7 @@ from .ports import web_port
 
 def doctor():
     s=Settings.from_env()
-    print("AnimeVoiceTutor v0.12.0 environment check")
+    print("AnimeVoiceTutor v0.13.1 environment check")
     print("DeepSeek configured:", bool(s.api_key))
     print("FFmpeg found:", bool(shutil.which("ffmpeg")))
     print("ASR URL:", s.asr_url)

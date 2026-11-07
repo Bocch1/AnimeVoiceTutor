@@ -13,7 +13,7 @@ if (-not $python) {
     $found = Get-Command python.exe -ErrorAction SilentlyContinue
     if ($found) { $python = $found.Source }
 }
-if (-not $python) { throw 'Python not found. Run Setup AnimeVoiceTutor.cmd or install Python 3.11+.' }
+if (-not $python) { throw 'Python not found. Run advanced\Setup AnimeVoiceTutor.cmd or install Python 3.11+.' }
 $argsList = @(Join-Path $root 'tools\build_public_source.py')
 if ($OutputPath) { $argsList += @('--output', $OutputPath) }
 if ($SkipTests) { $argsList += '--skip-tests' }

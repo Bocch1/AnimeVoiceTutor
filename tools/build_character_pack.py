@@ -55,6 +55,7 @@ def build(args):
             dest = stage / rel
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(src, dest)
+        manifest['pack_version'] = getattr(args, 'pack_version', '1')
         manifest['voice'] = {
             'id': args.voice_id,
             'label': manifest['display_name'],
@@ -67,6 +68,16 @@ def build(args):
             'sovits_weights': 'models/sovits.pth',
             'preset': 'configs/tts_preset.json',
         }
+        color_avatar = getattr(args, 'avatar_color', None)
+        if color_avatar is not None:
+            avatar_source = Path(color_avatar).resolve()
+            if not avatar_source.is_file() or avatar_source.suffix.lower() not in {'.png', '.jpg', '.jpeg', '.webp'}:
+                raise ValueError('Color avatar must be a readable image')
+            avatar_rel = 'assets/avatar_color' + avatar_source.suffix.lower()
+            avatar_dest = stage / avatar_rel
+            avatar_dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(avatar_source, avatar_dest)
+            manifest['avatar_color'] = avatar_rel
         manifest_file.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
         validate_manifest(stage)
         output = Path(args.output).expanduser().resolve()
@@ -86,8 +97,10 @@ def main():
     parser.add_argument('--gpt-weights', required=True, type=Path)
     parser.add_argument('--sovits-weights', required=True, type=Path)
     parser.add_argument('--reference-audio', required=True, type=Path)
+    parser.add_argument('--avatar-color', type=Path, help='Optional original-color avatar image, separate from monochrome portrait')
     parser.add_argument('--preset', required=True, type=Path)
     parser.add_argument('--prompt-text', required=True)
+    parser.add_argument('--pack-version', default='1', help='Character archive version, e.g. 1 or 1.1.0')
     parser.add_argument('--voice-id', default='azusa_e36')
     parser.add_argument('--output', required=True, type=Path)
     build(parser.parse_args())

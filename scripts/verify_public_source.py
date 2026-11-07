@@ -17,7 +17,7 @@ PRIVATE_ROOT_NAMES = {
     'external', 'datasets', 'backups', '.venv', 'runtime', '.installer',
     '.git', '.pytest_cache', '.mypy_cache', '.ruff_cache', '__pycache__',
     'local', 'private', 'weights', 'checkpoints', 'outputs', 'reports',
-    'logs', 'build', 'dist', '.venv_old_backup',
+    'logs', 'build', 'dist', '.venv_old_backup', 'packages',
 }
 PRIVATE_SUFFIXES = {
     '.wav', '.mp3', '.flac', '.ogg', '.mkv', '.mp4', '.pth', '.pt',
@@ -27,7 +27,7 @@ PRIVATE_SUFFIXES = {
 }
 REQUIRED = {
     'README.md', 'README.zh-CN.md', 'README.ja.md', 'LICENSE',
-    'SECURITY.md', 'Setup AnimeVoiceTutor.cmd', 'Start AnimeVoiceTutor.cmd',
+    'SECURITY.md', 'First Run Setup.cmd', 'Start AnimeVoiceTutor.cmd',
     'Stop AnimeVoiceTutor.cmd', 'web/index.html', 'voice_tutor/app.py',
 }
 

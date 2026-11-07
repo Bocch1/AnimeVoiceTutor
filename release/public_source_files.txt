@@ -1,26 +1,27 @@
-# Allowed files in GitHub source ZIP. Use relative forward-slash paths.
-# Existing listed source edits are exported automatically; add new public files here.
-# Never list local private configuration, user audio, model weights, runtime or backups.
+# Private character media, model weights, local configs, logs and runtimes are never included.
+# Public distribution allowlist. Paths are relative to this project.
 .env.example
 .gitattributes
 .github/workflows/source-tests.yml
 .gitignore
-Build Public Source.cmd
-Doctor AnimeVoiceTutor.cmd
-Download ASR Model.cmd
+First Run Setup.cmd
 LICENSE
-Quick Setup.cmd
 README.ja.md
 README.md
 README.zh-CN.md
 SECURITY.md
-Setup AnimeVoiceTutor.cmd
 Start AnimeVoiceTutor.cmd
 Stop AnimeVoiceTutor.cmd
 THIRD_PARTY_NOTICES.md
-Test AnimeVoiceTutor.cmd
-Use Existing Models.cmd
-Verify Source.cmd
+advanced/Build Public Source.cmd
+advanced/Doctor AnimeVoiceTutor.cmd
+advanced/Download ASR Model.cmd
+advanced/Quick Setup.cmd
+advanced/README.md
+advanced/Setup AnimeVoiceTutor.cmd
+advanced/Test AnimeVoiceTutor.cmd
+advanced/Use Existing Models.cmd
+advanced/Verify Source.cmd
 configs/README.md
 configs/frozen_tts_preset.example.json
 configs/private_greetings.example.json
@@ -28,6 +29,7 @@ configs/voice_profiles_v08.example.json
 configs/voice_profiles_v08.sample.json
 docs/CHARACTER_PACKS.md
 docs/INSTALLATION.md
+docs/LOCAL_PACKAGES.md
 docs/PUBLISHING.md
 docs/TESTING.md
 pyproject.toml
@@ -35,20 +37,31 @@ release/install_specs/asr_requirements.in
 release/install_specs/asr_requirements.lock
 release/install_specs/tts_requirements.in
 release/install_specs/tts_requirements.lock
+release/install_specs/voice_baseline.json
 release/install_specs/web_requirements.in
 release/install_specs/web_requirements.lock
+release/project_links.json
 release/public_source_files.txt
 scripts/asr_env_probe.py
 scripts/bootstrap_uv.ps1
 scripts/build_public_source.ps1
+scripts/capture_voice_baseline.ps1
+scripts/desktop_start.ps1
+scripts/desktop_start.vbs
+scripts/diagnose_voice_base.ps1
 scripts/doctor_asr.ps1
 scripts/doctor_source.ps1
 scripts/download_asr_model.ps1
+scripts/first_run_gui.ps1
+scripts/first_run_preflight.ps1
+scripts/first_run_tasks.ps1
 scripts/launch_app.ps1
 scripts/load_local_runtime.ps1
 scripts/monitor_browser.ps1
 scripts/open_app_window.ps1
 scripts/quick_setup.ps1
+scripts/refresh_after_character_install.ps1
+scripts/refresh_character_tts.ps1
 scripts/resolve_runtime_python.ps1
 scripts/reuse_existing_installation.ps1
 scripts/runtime_import_probe.py
@@ -61,6 +74,7 @@ scripts/start_web.ps1
 scripts/stop_app.ps1
 scripts/test_source.ps1
 scripts/verify_install.ps1
+scripts/verify_local_tts_provenance.ps1
 scripts/verify_public_source.py
 scripts/verify_source_tests.ps1
 scripts/web_port.ps1
@@ -68,11 +82,21 @@ services/__init__.py
 services/asr_service.py
 tests/test_browser_lifecycle_v086.py
 tests/test_character_packs_v012.py
+tests/test_character_tts_refresh_v013.py
 tests/test_current_application_contract.py
 tests/test_current_secret_greeting_cache.py
 tests/test_deepseek_fallback_v085.py
+tests/test_desktop_click_launch_v013.py
 tests/test_existing_asr_runtime_compat.py
+tests/test_first_run_pretrained_v013.py
+tests/test_first_run_refinement_v013.py
+tests/test_first_run_setup_v013.py
+tests/test_first_run_windows_entrypoints_v013.py
 tests/test_local_asr_model_checker.py
+tests/test_local_package_layout_v0131.py
+tests/test_local_tts_recovery_v013.py
+tests/test_managed_identity_tts_exit_v013.py
+tests/test_port_recovery_cleanup_v013.py
 tests/test_product_v083.py
 tests/test_product_v084.py
 tests/test_public_distribution.py
@@ -84,12 +108,19 @@ tests/test_source_distribution_smoke.py
 tests/test_v094.py
 tests/test_v095.py
 tests/test_v096.py
+tests/test_voice_release_install_v013.py
 tests/test_web_port_isolation_v0115.py
+tools/apply_engine_overlay.py
 tools/build_character_pack.py
 tools/build_public_source.py
 tools/check_local_asr_model.py
 tools/download_hf_model.py
+tools/fetch_pinned_engine.py
+tools/github_character_release.py
+tools/install_and_select_character.py
 tools/install_character_pack.py
+tools/install_tts_pretrained.py
+tools/local_package_store.py
 tools/migrate_local_character.py
 tools/smoke_voice_services.py
 tools/verify_runtime_locks.py

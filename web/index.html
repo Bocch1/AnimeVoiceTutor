@@ -824,6 +824,10 @@ body.corrections-off .correction{display:none!important}
   display:grid;place-items:center;background:#293c3b;color:#c4ede7;font-weight:650}
 .role-portrait-thumb img,#roleAvatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 13%}
 #roleAvatar{overflow:hidden}
+/* Keep the source portrait colors in the small top-left avatar. */
+#sidebar #roleAvatar img,.role-portrait-thumb img{
+  filter:none!important;mix-blend-mode:normal!important;opacity:1!important;
+}
 .role-menu-item{justify-content:flex-start!important;text-align:left}
 .role-menu-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
 .role-menu-copy>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -899,6 +903,8 @@ body.corrections-off .correction{display:none!important}
         <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="llmDot"></i>AI 对话</span><small id="llmModel">DeepSeek API</small></span><b id="llmStatus">检查中</b></div>
         <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="asrDot"></i>语音识别</span><small>Qwen3-ASR · 1.7B</small></span><b id="asrStatus">检查中</b></div>
         <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="ttsDot"></i>语音合成</span><small>可选角色 TTS</small></span><b id="ttsStatus">检查中</b></div>
+        <p id="ttsStatusDetail" style="font-size:12px;line-height:1.55;opacity:.87;margin:8px 3px;overflow-wrap:anywhere" role="status" hidden></p>
+        <button class="status-recheck" id="retryTtsBtn" type="button" hidden>重试加载角色语音</button>
         <button class="status-recheck" id="refreshStatus">重新检查</button>
       </div>
     </header>
@@ -910,7 +916,7 @@ body.corrections-off .correction{display:none!important}
         <div class="revision-banner" id="revisionBanner" hidden><span>正在更正此前发送的发言</span><button type="button" id="cancelRevision">取消更正</button></div>
         <div class="audio-floating"><button class="tool-btn hidden" id="stopAudio" title="停止播放" aria-label="停止播放"></button></div>
         <div class="composer" id="composer">
-          <textarea id="text" rows="1" maxlength="2000" placeholder="用日语开始对话" aria-label="输入消息"></textarea>
+          <textarea id="text" rows="1" maxlength="2000" placeholder="开始对话" aria-label="输入消息"></textarea>
           <div class="composer-tools">
             <div class="composer-primary">
               <div class="meter hidden" id="meter" aria-label="麦克风音量"><div id="meterFill"></div></div>
@@ -2224,14 +2230,31 @@ function showStatus(data) {
   $('llmModel').textContent = (data.llm_provider === 'openai' ? 'OpenAI' : 'DeepSeek') + ' · ' + (typeof data.model === 'string' && data.model.trim() ? data.model.trim() : 'API');
   $('llmStatus').textContent = (data.llm_configured ?? data.deepseek_configured) ? '已配置' : '未配置';
   $('asrStatus').textContent = data.asr_ready ? '已就绪' : (data.asr_detail || '未就绪');
-  $('ttsStatus').textContent = data.tts_ready ? '已就绪' : (ttsOptional ? '未配置（可选）' : '尚未启动');
+  $('ttsStatus').textContent = data.tts_ready ? '已就绪' : (ttsOptional ? '未配置（可选）' : (data.tts_initializing ? '启动中' : '尚未就绪'));
   $('ttsStatus').title = data.tts_detail || '';
+  $('ttsStatusDetail').textContent = data.tts_detail || '';
+  $('ttsStatusDetail').hidden = Boolean(data.tts_ready || !data.tts_detail);
+  $('retryTtsBtn').hidden = Boolean(data.tts_ready || data.tts_initializing || !data.tts_pack_installed || data.character_id === 'default');
   if(availableCharacters.length)refreshCharacterControls();
   for (const [id, active] of [['llmDot',data.llm_configured ?? data.deepseek_configured],['asrDot',data.asr_ready],['ttsDot',data.tts_ready]]) $(id).classList.toggle('ready', Boolean(active));
 }
 async function refreshStatus() {
   try { showStatus(await (await api('/api/status')).json()); }
   catch (_) { $('statusDot').className = 'dot warn'; }
+}
+async function retryCharacterTts(){
+  const button=$('retryTtsBtn');button.disabled=true;
+  try{
+    const response=await api('/api/characters/refresh-tts',jsonPost({}));
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.detail||'无法启动角色语音');
+    note('正在加载当前角色语音…');
+    const status=await waitForManagedCharacterVoice(Boolean(result.tts_refresh_scheduled),await (await api('/api/status')).json());
+    await syncVoicesForCharacter();
+    if(status.tts_ready)note('当前角色语音已就绪');
+    else note(status.tts_detail||'角色语音仍未就绪，请检查服务状态',true);
+  }catch(err){note('角色语音加载失败：'+err.message,true);await refreshStatus();}
+  finally{button.disabled=false;}
 }
 async function setup() {
   const status = await (await api('/api/status')).json();
@@ -2264,9 +2287,9 @@ function closeRoleMenu() {
 }
 function characterPortraitThumb(item){
   const thumb=document.createElement('span');thumb.className='role-portrait-thumb';
-  if(item?.has_portrait&&item.id!=='default'){
+  if((item?.has_portrait||item?.has_color_avatar)&&item.id!=='default'){
     const img=document.createElement('img');img.alt='';img.loading='lazy';
-    img.src='/api/characters/'+encodeURIComponent(item.id)+'/portrait';thumb.appendChild(img);
+    img.src='/api/characters/'+encodeURIComponent(item.id)+'/avatar';thumb.appendChild(img);
   }else thumb.textContent=item?.avatar||'日';
   return thumb;
 }
@@ -2281,6 +2304,19 @@ function renderRoleMenu(){
     b.onclick=()=>{closeRoleMenu();selectCharacter(item.id);};menu.appendChild(b);
   }
 }
+// Composer placeholder follows the UI language and selected character.
+// Use the character's visible label, not its internal asset ID.
+function updateComposerPlaceholder(){
+  const input=document.getElementById('text');if(!input)return;
+  const locale=document.documentElement.dataset.uiLanguage||'zh-CN';
+  const item=availableCharacters.find(x=>x.id===activeCharacter);
+  const named=activeCharacter!=='default'&&Boolean(item);
+  const label=named?String(item.label||activeCharacter):'';
+  const value=named
+    ?(locale==='en'?`Message ${label}`:locale==='ja'?`${label}にメッセージを送る`:`发消息给${label}`)
+    :(locale==='en'?'Start chatting':locale==='ja'?'会話を始める':'开始对话');
+  input.setAttribute('placeholder',value);
+}
 function syncRolePicker(){
   const item=availableCharacters.find(x=>x.id===activeCharacter);
   $('rolePickerName').textContent=item?.label||'AnimeVoiceTutor';
@@ -2289,6 +2325,7 @@ function syncRolePicker(){
   if(image.querySelector('img'))emblem.append(image.firstChild);
   else emblem.textContent=item?.avatar||'日';
   renderRoleMenu();
+  updateComposerPlaceholder();
 }
 function refreshCharacterControls(){
   const choice=$('characterSelect');if(choice){choice.replaceChildren();
@@ -2348,12 +2385,28 @@ function uploadCharacterPack(file,progress){
     const form=new FormData();form.append('archive',file,file.name);xhr.send(form);
   });
 }
+async function waitForManagedCharacterVoice(scheduled, initialStatus){
+  if(!scheduled || initialStatus?.tts_ready)return initialStatus;
+  let status=initialStatus;
+  // A managed TTS process must load model weights before generation is enabled.
+  for(let attempt=0;attempt<55;attempt++){
+    await new Promise(resolve=>setTimeout(resolve,1800));
+    try{
+      status=await (await api('/api/status')).json();
+      showStatus(status);
+      if(status.tts_ready || status.tts_refresh?.status==='failed')return status;
+    }catch(_){/* server is still running or the voice service is loading */}
+  }
+  return status;
+}
 async function selectCharacter(id){
   if(id===activeCharacter)return;
   try{
-    await api('/api/characters/active',jsonPost({id}));
+    const activation=await (await api('/api/characters/active',jsonPost({id}))).json();
     await loadCharacterContent();
-    const status=await syncVoicesForCharacter();
+    let status=await syncVoicesForCharacter();
+    status=await waitForManagedCharacterVoice(Boolean(activation.tts_refresh_scheduled),status);
+    await syncVoicesForCharacter();
     closeSettings();await newChat();
     const item=availableCharacters.find(x=>x.id===id);
     showCharacterActivation(item,id==='default'?'已切换到标准日语':status.tts_ready?'当前角色语音已就绪':'已切换人物；实时语音需要启动模型');
@@ -2373,12 +2426,17 @@ async function installCharacterFromSettings(){
     // Compatible with an older server process that only performs installation.
     if(result.active!==installed.id)await api('/api/characters/active',jsonPost({id:installed.id}));
     await loadCharacterContent();
-    const status=await syncVoicesForCharacter();
-    setCharacterInstallFeedback('success','安装成功',100,'已自动启用 '+installed.label);
+    let status=await syncVoicesForCharacter();
+    if(result.tts_refresh_scheduled && !status.tts_ready){
+      setCharacterInstallFeedback('installing','正在加载角色语音',100,'角色包已安装，正在启动 GPT-SoVITS 模型');
+      status=await waitForManagedCharacterVoice(true,status);
+      await syncVoicesForCharacter();
+    }
+    setCharacterInstallFeedback('success','安装成功',100,status.tts_ready?'已启用 '+installed.label+'，语音可用':'已启用 '+installed.label+'；实时语音尚未就绪');
     $('characterZip').value='';
     closeSettings();await newChat();
     showCharacterActivation(availableCharacters.find(x=>x.id===installed.id),
-      status.tts_ready?'安装成功，角色语音已就绪':'安装成功；已启用人物，语音模型需单独启动');
+      status.tts_ready?'安装成功，角色语音已就绪':(status.tts_refresh?.status==='failed'?'角色已安装，但语音加载失败：'+status.tts_detail:'安装成功；已启用人物，语音模型尚未就绪'));
   }catch(e){
     setCharacterInstallFeedback('error','安装失败',0,String(e.message||e));
     note('角色包安装失败：'+e.message,true);
@@ -2513,7 +2571,7 @@ async function exitAnimeVoiceTutor(){
   button.disabled=true;
   try{
     const info=await (await api('/api/system/exit-token')).json();
-    if(!info.available||!info.token)throw new Error('当前不是受管的一键启动会话，请使用 Stop AnimeVoiceTutor.cmd');
+    if(!info.available||!info.token)throw new Error('当前网页未登记为受管实例。请关闭旧窗口并重新双击 Start AnimeVoiceTutor.cmd；新窗口可以直接使用退出按钮。');
     const response=await fetch('/api/system/exit',{
       method:'POST',cache:'no-store',credentials:'same-origin',
       headers:{'Content-Type':'application/json','X-AVT-Exit-Token':info.token},
@@ -2539,6 +2597,7 @@ $('settingsBtn').onclick = openSettings;
 $('statusBtn').onclick = toggleStatusPopover;
 $('closeStatus').onclick = closeStatusPopover;
 $('refreshStatus').onclick = refreshStatus;
+$('retryTtsBtn').onclick = retryCharacterTts;
 document.querySelectorAll('.settings-tab').forEach(el => el.onclick = () => {selectSettingsTab(el.dataset.tab);if(el.dataset.tab==='model')loadLLMSettings()});
 $('llmProvider').onchange=fillProviderForm;
 $('llmSave').onclick=saveLLMSettings;
@@ -2655,6 +2714,7 @@ if(initialGreetingButton){
     ['语音识别','Speech recognition','音声認識'],
     ['语音合成','Speech synthesis','音声合成'],
     ['重新检查','Check again','再確認'],
+    ['重试加载角色语音','Retry character voice','キャラクター音声を再読み込み'],
     ['检查中','Checking','確認中'],
     ['已配置','Configured','設定済み'],
     ['未配置','Not configured','未設定'],
@@ -2673,7 +2733,7 @@ if(initialGreetingButton){
     ['播放问候语','Play greeting','挨拶を再生'],
     ['停止播放','Stop playback','再生を停止'],
     ['输入消息','Message input','メッセージ入力'],
-    ['用日语开始对话','Start a Japanese conversation','日本語で会話を始める'],
+    ['开始对话','Start chatting','会話を始める'],
     ['麦克风音量','Microphone level','マイク音量'],
     ['角色动态肖像','Animated character portrait','キャラクターのパーティクル肖像'],
     ['点击角色，外侧会出现波纹和小音符','Tap the character to create ripples and music notes','キャラクターを押すと波紋と音符が現れます'],
@@ -2897,6 +2957,7 @@ if(initialGreetingButton){
     if (select && select.value !== next) select.value=next;
     try { localStorage.setItem(STORAGE_KEY, next); } catch (_) { /* private browsing */ }
     translateSubtree(document.body);
+    if(typeof updateComposerPlaceholder==='function')updateComposerPlaceholder();
   }
   const select=document.getElementById('uiLocale');
   if (!select) return;

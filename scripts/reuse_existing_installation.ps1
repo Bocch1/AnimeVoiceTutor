@@ -98,4 +98,4 @@ $temp = $target + '.tmp'
 Move-Item -LiteralPath $temp -Destination $target -Force
 Write-Host 'Local model/runtime references configured. No model download, weight copy or dependency installation occurred.'
 Write-Host 'Read-only preflight: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\doctor_source.ps1'
-Write-Host 'Voice smoke test (after starting): Test AnimeVoiceTutor.cmd -Voice'
+Write-Host 'Voice smoke test (after starting): advanced\Test AnimeVoiceTutor.cmd -Voice'

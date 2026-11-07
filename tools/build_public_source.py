@@ -89,8 +89,9 @@ def build(output: Path, *, root: Path = PROJECT_ROOT, skip_tests: bool = False) 
                 raise RuntimeError('Clean source regression tests failed')
         output = output.expanduser().resolve()
         output.parent.mkdir(parents=True, exist_ok=True)
-        if output == root.resolve() or output.is_relative_to(root.resolve()):
-            raise RuntimeError('Output ZIP must be outside the developer project')
+        private_updates = (root / 'packages' / 'updates').resolve()
+        if (output == root.resolve() or output.is_relative_to(root.resolve())) and not output.is_relative_to(private_updates):
+            raise RuntimeError('Output ZIP inside project is permitted only under packages/updates')
         tmp = output.with_name(output.name + '.incomplete')
         try:
             with zipfile.ZipFile(tmp, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
@@ -117,12 +118,12 @@ def build(output: Path, *, root: Path = PROJECT_ROOT, skip_tests: bool = False) 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, help='Destination ZIP path (default: Downloads)')
+    parser.add_argument('--output', type=Path, help='Destination ZIP path (default: packages/updates)')
     parser.add_argument('--skip-tests', action='store_true', help='For development only; public releases must run tests')
     args = parser.parse_args()
     import tomllib
     release_version = tomllib.loads((PROJECT_ROOT/'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
-    output = args.output or (Path.home()/'Downloads'/f'AnimeVoiceTutor_Source_v{release_version}_from_project.zip')
+    output = args.output or (PROJECT_ROOT/'packages'/'updates'/f'AnimeVoiceTutor_Core_v{release_version}.zip')
     try:
         build(output, skip_tests=args.skip_tests)
     except Exception as exc:

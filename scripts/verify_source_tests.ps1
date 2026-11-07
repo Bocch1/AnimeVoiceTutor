@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $python = (& (Join-Path $PSScriptRoot 'resolve_runtime_python.ps1') -Role web | Select-Object -Last 1)
 if (-not $python -or -not (Test-Path -LiteralPath $python -PathType Leaf)) {
-    throw 'Web Python runtime missing. Run Setup AnimeVoiceTutor.cmd first.'
+    throw 'Web Python runtime missing. Run advanced\Setup AnimeVoiceTutor.cmd first.'
 }
 
 # Scope public-source regression checks to reviewed distribution tests only.
@@ -15,6 +15,10 @@ $releaseTests = @(
     'tests/test_current_secret_greeting_cache.py',
     'tests/test_deepseek_fallback_v085.py',
     'tests/test_existing_asr_runtime_compat.py',
+    'tests/test_first_run_setup_v013.py',
+    'tests/test_first_run_windows_entrypoints_v013.py',
+    'tests/test_voice_release_install_v013.py',
+    'tests/test_first_run_pretrained_v013.py',
     'tests/test_local_asr_model_checker.py',
     'tests/test_product_v083.py',
     'tests/test_product_v084.py',

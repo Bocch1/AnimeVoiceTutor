@@ -1,63 +1,36 @@
-# Publishing AnimeVoiceTutor
+# Publishing Core and update ZIPs
 
-This project separates the **source repository**, the **Core source ZIP**, and optional **character packs**. GitHub's repository files and its Release attachments serve different purposes. The repository should expose readable, auditable source; the Release attachment provides a ready-to-extract source ZIP.
+AnimeVoiceTutor uses **one Core source ZIP** and optional separate **character ZIPs**. A small incremental **Update ZIP** applies only to the source version named in its patch manifest; it is not a complete install.
 
-## Before publication
+## Before publishing
 
-1. Review changes in the maintained Git repository. Do not commit `.env`, `.avt-local.ps1`, local models, recordings, `runtime/`, `data/`, third-party engine directories, or private configuration.
-2. Run `Verify Source.cmd` and `Build Public Source.cmd` in the maintained source tree. The builder exports exactly the allowlisted files from `release/public_source_files.txt` and tests the clean stage.
-3. Test that exact Core ZIP in a new directory using [TESTING.md](TESTING.md). An automated test pass does not prove GPU, speech or external LLM operation on every computer.
-4. Verify that the GitHub commit/tag represents the same public source files as the ZIP. Do **not** tag an older GitHub commit while attaching a newer Core ZIP.
-5. Check the [license](../LICENSE), [third-party notices](../THIRD_PARTY_NOTICES.md), and each optional character asset's distribution rights before making any Release public.
+1. Update the project version consistently in `pyproject.toml`, Web status and launch checks. Review `release/install_specs/voice_baseline.json` and `release/project_links.json`; the latter must contain the **actual** public GitHub Releases URL before enabling automatic character downloads. Do not guess the repository owner.
+2. In the maintained project, run `advanced/Verify Source.cmd`. Fix all failures.
+3. Double-click `advanced/Build Public Source.cmd`. Its default result is `packages/updates/AnimeVoiceTutor_Core_vX.Y.Z.zip`. The builder exports only `release/public_source_files.txt` and performs tests in a fresh isolated staging directory. The private `packages/` folder is **not** bundled.
+4. Test this **exact ZIP** in a new folder on Windows: install or diagnose the voice base, import an authorized test character ZIP, run ASR and generate real TTS, exit and restart using only the GUI. See [Testing](TESTING.md).
+5. Commit/push the verified public source files to the intended GitHub repository. Create a release/tag on that **same commit**, and upload the matching Core ZIP. GitHub's automatic “Source code (zip)” is separate from the tested Core ZIP.
+6. Publish `AnimeVoiceTutor_Update_vX.Y.Z.zip` only if you have tested it against the stated predecessor version. Include the expected previous-file hashes, backups and rollback in the patch. Keep update archives in `packages/updates/` locally.
 
-`Build Public Source.cmd` does not create a Windows `.exe` or a self-contained offline voice installation. It exports source, dependencies, launchers, docs, and tests.
+## Simple filenames
 
-## Which local files should match the release ZIP?
+- `AnimeVoiceTutor_Core_v0.13.1.zip`: complete public Core.
+- `AnimeVoiceTutor_Update_v0.13.1.zip`: incremental change from a documented compatible predecessor.
+- `AnimeVoiceTutor_Character_azusa_v1.zip`: character ZIP (if redistribution is permitted).
 
-The maintained checkout can contain many **additional** local and ignored files: Python virtual environments, model weights, reference recordings, logs, cached conversations, `.avt-local.ps1`, and secrets. These are not part of the distribution.
+Keep each new release under its own version; do not repeatedly publish different contents under the same filename. For changes after publishing a version, bump the version rather than silently replacing ZIP contents.
 
-For every relative path listed in `release/public_source_files.txt`, the bytes in the Core ZIP should match the corresponding file in the maintained project **at the moment the archive is built**. The rest of the checkout is intentionally not included. Editing a README after the build makes the previous ZIP stale; rebuild it before uploading.
+## Keep private content private
 
-A successful `Verify Source.cmd` checks the code, but does not compare two different folders' entire contents or prove the remote GitHub commit is synchronized. Perform a public-file hash comparison when you need exact archive equivalence.
+Do **not** commit or attach entire `packages/`, `data/`, `runtime/`, `external/`, `models/`, `.venv/`, `.env`, local logs, trained weights or personal media. The local `packages/characters` folder can contain protected media and is never a public Release by default. MIT covers the app code, not third-party character assets or GPT-SoVITS upstream models; a takedown notice does not grant redistribution rights.
 
-## Recommended GUI workflow: GitHub Desktop + GitHub website
+## Reproducibility limitations
 
-### A. Update repository source with GitHub Desktop
+`release/install_specs/voice_baseline.json` pins a GPT-SoVITS upstream commit, but the developer's working inference engine has separate uncommitted modifications. Until those differences are reviewed and offered as an authorized, SHA-256-pinned overlay, a clean install cannot be advertised as fully identical to the developer's voice environment. The Python lock files and upstream asset receipts are not a guarantee of identical hardware inference on every PC.
 
-1. Install [GitHub Desktop](https://desktop.github.com/) and sign in.
-2. Select **File → Add local repository**, choosing the maintained project folder (not an extracted release ZIP).
-3. Review the **Changes** tab. Include only intended public source changes; uncheck private, unrelated, or generated files. Check `.gitignore` and sensitive paths carefully.
-4. Enter a commit summary such as `Prepare Core v0.12.0 release`, click **Commit to main** (or the current branch), then **Push origin**.
-5. Open **Repository → View on GitHub** to confirm the new README and source files are visible at the intended commit.
+For a final check from the project root:
 
-If the folder is not a Git repository or GitHub Desktop reports an unconfigured remote, resolve repository setup first. Do not initialize or publish a duplicate repository just to create a Release.
+```powershell
+python scripts\verify_public_source.py --archive ".\packages\updates\AnimeVoiceTutor_Core_v0.13.1.zip"
+```
 
-### B. Attach the Core ZIP using the GitHub website
-
-1. Open the repository on GitHub and select **Releases → Draft a new release**.
-2. Choose an existing `v0.12.0` tag, or create it **on the commit that contains the tested source**. Set a release title and description.
-3. Drag `AnimeVoiceTutor_Source_v0.12.0.zip` into the **Attach binaries** area. Optionally attach `SHA256SUMS.txt`.
-4. Choose **Save draft** to review the files and download links. Publish only after verifying the tag, description and uploaded asset.
-
-**Important:** GitHub automatically displays its own “Source code (zip)” for the tagged commit. That autogenerated ZIP is distinct from the project's manually built **Core source ZIP**. Keep the commit and release attachment synchronized so users do not receive different source versions.
-
-### Can the entire project be uploaded through a browser?
-
-The repository's **Add file → Upload files** feature can upload source files, but it is not a substitute for synchronizing an existing Git repository. It is limited to 25 MiB per file and 100 files per batch. Uploading a source ZIP there stores it as one ZIP file—it does **not** create a normal browseable project tree. For routine development and existing repositories, GitHub Desktop is the simpler graphical way to commit and push changes.
-
-The **Releases** page is the correct place for the distributable Core ZIP; it accepts binary attachments independently of those repository file-upload limits.
-
-## Optional character packs
-
-Character ZIPs are separate assets, not code automatically covered by the Core's MIT license. Do not publish artwork, copyrighted recordings, fine-tuned voice models, references, or derived animations without appropriate redistribution authorization. Keep such packs private when rights are uncertain. Do not include them in the Core source repository or public commit history.
-
-## Release description checklist
-
-A source-only Release should state:
-
-- What Core includes and excludes (no pretrained ASR/TTS models, voice engine, bundled API key, or character voices).
-- Tested Windows installation route and how to configure online chat.
-- Optional ASR/character-pack installation steps and licensing caveats.
-- Known limitations and a link to [Testing](TESTING.md).
-
-To inspect the archive directly, run `python scripts/verify_public_source.py --archive <path-to-zip>` from a compatible Python environment. Do not upload a test extraction folder after installing models or linking local resources.
+Expected: `PUBLIC_ARCHIVE_PASS`. Successful code tests are necessary but not a substitute for real Windows installation tests.

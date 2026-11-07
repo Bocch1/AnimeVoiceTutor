@@ -1,9 +1,13 @@
-param([Parameter(Mandatory=$true)][string]$RunId)
+param([Parameter(Mandatory=$true)][string]$RunId, [int]$WebPort = 0)
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $statePath = Join-Path $root 'data\app\local_services.json'
 $stopScript = Join-Path $PSScriptRoot 'stop_app.ps1'
-$webPort = [int](& (Join-Path $PSScriptRoot 'web_port.ps1'))
+if ($WebPort -ge 1024 -and $WebPort -le 65535 -and $WebPort -notin @(8766,9880)) {
+    $webPort = $WebPort
+} else {
+    $webPort = [int](& (Join-Path $PSScriptRoot 'web_port.ps1'))
+}
 $webBase = "http://127.0.0.1:$webPort"
 $env:NO_PROXY = 'localhost,127.0.0.1,::1'
 $startedAt = Get-Date

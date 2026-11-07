@@ -4,7 +4,6 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $statePath = Join-Path $root 'data\app\local_services.json'
 . (Join-Path $PSScriptRoot 'load_local_runtime.ps1')
 $webPort = [int](& (Join-Path $PSScriptRoot 'web_port.ps1'))
-$allowedPorts = @($webPort, 8766, 9880)
 if (-not (Test-Path -LiteralPath $statePath -PathType Leaf)) {
     Write-Host 'No managed AnimeVoiceTutor services are recorded.'
     exit 0
@@ -14,6 +13,14 @@ try {
 } catch {
     throw "Cannot parse service state: $statePath"
 }
+# A foreign listener can cause Web to use an alternate port. Read it from the
+# managed state, not from this separately launched Stop process's environment.
+[int]$recordedPort = 0
+if ($null -ne $state.web_port -and
+    [int]::TryParse([string]$state.web_port, [ref]$recordedPort) -and
+    $recordedPort -ge 1024 -and $recordedPort -le 65535 -and
+    $recordedPort -notin @(8766,9880)) { $webPort = $recordedPort }
+$allowedPorts = @($webPort, 8766, 9880)
 # Browser monitors and older exit requests must not stop a newer launch.
 if ($RunId -and [string]$state.run_id -ne $RunId) {
     Write-Host 'A newer AnimeVoiceTutor session is active; shutdown skipped.'

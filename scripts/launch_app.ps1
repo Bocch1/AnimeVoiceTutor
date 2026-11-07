@@ -8,10 +8,24 @@ $stateDir = Join-Path $root 'data\app'
 New-Item -ItemType Directory -Force -Path $logDir, $stateDir | Out-Null
 $statePath = Join-Path $stateDir 'local_services.json'
 $webPort = [int](& (Join-Path $PSScriptRoot 'web_port.ps1'))
+# A previous launch may have chosen an alternate port. Prefer its recorded
+# port when present; verify process identity before ever reusing it.
+if (Test-Path -LiteralPath $statePath -PathType Leaf) {
+    try {
+        $savedState = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
+        [int]$savedPort = 0
+        if ($null -ne $savedState.web_port -and
+            [int]::TryParse([string]$savedState.web_port, [ref]$savedPort) -and
+            $savedPort -ge 1024 -and $savedPort -le 65535 -and
+            $savedPort -notin @(8766,9880)) { $webPort = $savedPort }
+    } catch { Write-Host 'Previous Web port state is unreadable; using the configured port.' }
+}
 $webBase = "http://127.0.0.1:$webPort"
 $script:startedServices = @()
 $script:owned = @()
 $script:runId = [guid]::NewGuid().ToString("N")
+. (Join-Path $PSScriptRoot 'verify_local_tts_provenance.ps1')
+$script:recoveredTts = $false
 
 function Has-Listener([int]$port) {
     try {
@@ -28,6 +42,25 @@ function Get-Json([string]$url) {
     try { return Invoke-RestMethod -Uri $url -TimeoutSec 2 -ErrorAction Stop }
     catch { return $null }
 }
+# The launched Web process inherits this random run ID. A foreign listener
+# cannot produce the matching signed-by-launch response, even if its Python
+# executable path happens to look the same as our virtual environment.
+function Get-ManagedWebListener([int]$port, [string]$runId) {
+    if ($runId -notmatch '^[0-9a-fA-F]{32}$') { return $null }
+    $uri = "http://127.0.0.1:$port/api/system/managed-identity"
+    try {
+        $claim = Invoke-RestMethod -Uri $uri -Headers @{'X-AVT-Run-Id'=$runId} -TimeoutSec 2 -ErrorAction Stop
+        if (-not $claim.managed -or [int]$claim.web_port -ne $port) { return $null }
+        ${avtProcessId} = [int]$claim.pid
+        if (${avtProcessId} -lt 4) { return $null }
+        $socket = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+            Where-Object { [int]$_.OwningProcess -eq ${avtProcessId} })
+        if ($socket.Count -lt 1) { return $null }
+        $process = Get-Process -Id ${avtProcessId} -ErrorAction SilentlyContinue
+        if (-not $process -or $process.ProcessName -notmatch '^python(w)?$') { return $null }
+        return [pscustomobject]@{name='web';pid=${avtProcessId};kind='listener';port=$port;script=''}
+    } catch { return $null }
+}
 function Get-Service-Listener([string]$name, [int]$port) {
     $sockets = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
     foreach ($socket in $sockets) {
@@ -40,6 +73,16 @@ function Get-Service-Listener([string]$name, [int]$port) {
             'asr' { $line -match '(services\.asr_service:app)' }
             'tts' { $line -match '(^|[\\/])api_v2\.py(\s|$)' }
             default { $false }
+        }
+        # A generic command line is not enough to adopt a Web process from
+        # another checkout. Require the exact configured Web Python executable.
+        if ($trusted -and $name -eq 'web') {
+            $expectedWebPython = (& (Join-Path $PSScriptRoot 'resolve_runtime_python.ps1') -Role web)
+            if (-not $expectedWebPython -or -not $procInfo.ExecutablePath -or
+                -not [string]::Equals(
+                    [IO.Path]::GetFullPath([string]$procInfo.ExecutablePath),
+                    [IO.Path]::GetFullPath([string]$expectedWebPython),
+                    [StringComparison]::OrdinalIgnoreCase)) { $trusted = $false }
         }
         if ($trusted) { return [pscustomobject]@{ name=$name; pid=${avtProcessId}; kind='listener'; port=$port; script='' } }
     }
@@ -58,8 +101,75 @@ function Is-Previous-ManagedListener([string]$name, [int]$port, [int]$listenerPi
     } catch { return $false }
     return $false
 }
+# Save only processes we have positively identified. The Web port must be
+# recorded because a foreign listener may force an alternate port.
+function Save-Processes {
+    [pscustomobject]@{ run_id=$script:runId; web_port=$webPort; created_at=(Get-Date).ToString('o'); processes=$script:owned } |
+        ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $statePath -Encoding UTF8
+}
+function Start-BrowserMonitor {
+    if ($NoBrowser) { return }
+    $monitor = Join-Path $root 'scripts\monitor_browser.ps1'
+    if (-not (Test-Path -LiteralPath $monitor)) { throw 'Browser monitor script is missing.' }
+    $monArgs = "-NoProfile -ExecutionPolicy Bypass -File `"$monitor`" -RunId $script:runId -WebPort $webPort"
+    Start-Process -FilePath 'powershell.exe' -ArgumentList $monArgs -WorkingDirectory $root -WindowStyle Hidden `
+        -RedirectStandardOutput (Join-Path $logDir ("browser_monitor_$($script:runId)_stdout.log")) `
+        -RedirectStandardError (Join-Path $logDir ("browser_monitor_$($script:runId)_stderr.log")) | Out-Null
+    Write-Host 'Browser lifecycle monitor started for this app instance.'
+}
+# A second click opens only a listener that proves the same managed run ID.
+# A legacy or foreign Web listener is not adopted or killed; choose another port.
+function Try-Open-ExistingInstance {
+    if (-not (Has-Listener $webPort)) { return $false }
+    if (-not (Test-Path -LiteralPath $statePath -PathType Leaf)) { return $false }
+    try {
+        $state = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $previousRun = [string]$state.run_id
+        if ($previousRun -notmatch '^[0-9a-fA-F]{32}$') { return $false }
+        $web = Get-ManagedWebListener $webPort $previousRun
+        if ($null -eq $web) { return $false }
+        $script:runId = $previousRun
+        $script:owned = @($state.processes)
+        if (@($script:owned | Where-Object {
+            $_.name -eq 'web' -and $_.kind -eq 'listener' -and [int]$_.pid -eq [int]$web.pid
+        }).Count -eq 0) {
+            $script:owned += $web
+            Save-Processes
+        }
+        Write-Host "Reusing verified managed AnimeVoiceTutor Web PID $($web.pid) on $webPort."
+        if (-not $NoBrowser) { & (Join-Path $PSScriptRoot 'open_app_window.ps1') -Url $webBase }
+        return $true
+    } catch { return $false }
+}
+if (Try-Open-ExistingInstance) { return }
+
+# A port owned by another application must never be killed or adopted. Choose
+# a free project-local Web port and keep its value in the managed state.
+if (Has-Listener $webPort) {
+    $occupiedPort = $webPort
+    $alternatePorts = @(8777,8778,8779,8780,8781,8782,8783,8784,8785)
+    $alternative = $null
+    foreach ($candidate in $alternatePorts) {
+        if ($candidate -eq $occupiedPort -or $candidate -in @(8766,9880)) { continue }
+        if (-not (Has-Listener $candidate)) { $alternative = $candidate; break }
+    }
+    if ($null -eq $alternative) {
+        throw "Web port $occupiedPort is occupied and no safe alternate Web port was found. Nothing was stopped."
+    }
+    $webPort = [int]$alternative
+    $webBase = "http://127.0.0.1:$webPort"
+    Write-Host "Web port $occupiedPort belongs to an unverified listener; using alternate Web port $webPort instead."
+}
+# The Web subprocess, API and browser-side exit helper must all agree on the
+# effective port and the random managed run ID. They are inherited only by
+# children of this launcher, not by a manually launched Web server.
+$env:AVT_WEB_PORT = [string]$webPort
+$env:AVT_MANAGED_RUN_ID = $script:runId
+
 function Record-Listener([string]$name, [int]$port) {
-    $listener = Get-Service-Listener $name $port
+    $listener = if ($name -eq 'web') {
+        Get-ManagedWebListener $port $script:runId
+    } else { Get-Service-Listener $name $port }
     if ($null -eq $listener) { return }
     if ($name -notin $script:startedServices -and
         -not (Is-Previous-ManagedListener $name $port ([int]$listener.pid))) { return }
@@ -74,7 +184,7 @@ function Launch-Service([string]$name, [int]$port, [string]$scriptFile) {
         if ($name -eq 'web') {
             if ($listener -and (Is-Previous-ManagedListener 'web' $port ([int]$listener.pid))) {
                 $status = Get-Json "$webBase/api/status"
-                if ($status -and $status.version -eq '0.12.0') {
+                if ($status -and $status.version -eq '0.13.1') {
                     Write-Host "[web] Reusing a recorded Tutor listener on $port (PID $($listener.pid))."
                     Record-Listener 'web' $port
                     return
@@ -83,6 +193,17 @@ function Launch-Service([string]$name, [int]$port, [string]$scriptFile) {
             throw "Web port $port is occupied by another service. It will not be stopped or adopted."
         }
         if ($null -ne $listener) {
+            if ($name -eq 'tts') {
+                $expectedTtsPython = (& (Join-Path $PSScriptRoot 'resolve_runtime_python.ps1') -Role tts | Select-Object -Last 1)
+                if ($expectedTtsPython -and (Test-LocalFrozenTtsProvenance -ListenerPid ([int]$listener.pid) -ExpectedPython $expectedTtsPython -ProjectRoot $root)) {
+                    # A genuine stale local TTS may have lost its state file.
+                    # Recover only the verified Python listener, not an untrusted wrapper.
+                    $script:owned += [pscustomobject]@{ name='tts'; pid=[int]$listener.pid; kind='listener'; port=9880; script='' }
+                    $script:recoveredTts = $true
+                    Write-Host "[tts] Recovered this checkout's frozen TTS listener PID $($listener.pid)."
+                    return
+                }
+            }
             Write-Host "[$name] Reusing an existing compatible service on port $port (not owned; will not be stopped)."
             return
         }
@@ -98,17 +219,13 @@ function Launch-Service([string]$name, [int]$port, [string]$scriptFile) {
     $script:startedServices += $name
     Write-Host "[$name] Started process $($proc.Id). Logs: data\logs\${name}_*.log"
 }
-function Save-Processes {
-    [pscustomobject]@{ run_id=$script:runId; created_at=(Get-Date).ToString('o'); processes=$script:owned } |
-        ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $statePath -Encoding UTF8
-}
 
 Write-Host 'AnimeVoiceTutor | One-click local launcher'
 Write-Host "Project: $root"
 $webPython = (& (Join-Path $PSScriptRoot 'resolve_runtime_python.ps1') -Role web)
 if (-not (Test-Path -LiteralPath $webPython)) {
     Write-Host 'ERROR: The web app Python environment is not installed.'
-    Write-Host 'Run Setup AnimeVoiceTutor.cmd once during installation.'
+    Write-Host 'Run advanced\Setup AnimeVoiceTutor.cmd once during installation.'
     exit 1
 }
 if (-not (Test-Path -LiteralPath (Join-Path $root '.env'))) {
@@ -153,6 +270,20 @@ if (-not $webOk) {
     Write-Host "Check $logDir\web_stderr.log"
     exit 1
 }
+# Register the exact Web listener before showing the window. This is essential
+# for browser Exit and post-import character TTS activation. Never mistake an
+# unverified running Web server for a managed desktop instance.
+Record-Listener 'web' $webPort
+$registeredWeb=@($script:owned | Where-Object {
+    $_.name -eq 'web' -and $_.kind -eq 'listener' -and [int]$_.port -eq $webPort
+})
+if ($registeredWeb.Count -ne 1) {
+    Write-Host 'ERROR: Web launched but managed ownership handshake failed.'
+    Write-Host "Web log: $logDir\web_stderr.log"
+    Save-Processes
+    throw 'WEB_MANAGED_IDENTITY_MISSING'
+}
+Save-Processes
 
 if (-not $NoBrowser) { & (Join-Path $PSScriptRoot 'open_app_window.ps1') -Url $webBase }
 Write-Host "Web app ready: $webBase"
@@ -211,14 +342,30 @@ if (-not $SkipTTS -and $ttsReady -and $script:startedServices -contains 'tts') {
 }
 
 Save-Processes
+# Do not advertise stale voice weights as ready just because a local frozen
+# listener was recovered. If the selected character does not match the
+# recorded binding, refresh it using the same verified managed run.
+if ($script:recoveredTts -and -not $SkipTTS -and $ttsCharacterAtStart -ne 'default') {
+    $recordedTts = @($script:owned | Where-Object { $_.name -eq 'tts' -and $_.kind -eq 'listener' -and [int]$_.port -eq 9880 } | Select-Object -Last 1)
+    $bindingPath = Join-Path $stateDir 'tts_model_binding.json'
+    $bound = $false
+    if ($recordedTts.Count -gt 0 -and (Test-Path -LiteralPath $bindingPath -PathType Leaf)) {
+        try {
+            $binding = Get-Content -LiteralPath $bindingPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            $bound = ([string]$binding.character_id -eq [string]$ttsCharacterAtStart -and [int]$binding.listener_pid -eq [int]$recordedTts[0].pid)
+        } catch { $bound = $false }
+    }
+    if (-not $bound) {
+        $refreshScript = Join-Path $root 'scripts\refresh_character_tts.ps1'
+        $refreshArgs = "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$refreshScript`" -RunId $script:runId -CharacterId $ttsCharacterAtStart"
+        Start-Process -FilePath 'powershell.exe' -ArgumentList $refreshArgs -WorkingDirectory $root -WindowStyle Hidden `
+            -RedirectStandardOutput (Join-Path $logDir 'tts_start_recovery_stdout.log') `
+            -RedirectStandardError (Join-Path $logDir 'tts_start_recovery_stderr.log') | Out-Null
+        Write-Host '[tts] Scheduled voice reload for recovered local frozen API.'
+    }
+}
 if (-not $NoBrowser) {
-    $monitor = Join-Path $root 'scripts\monitor_browser.ps1'
-    if (-not (Test-Path -LiteralPath $monitor)) { throw 'Browser monitor script is missing.' }
-    $monArgs = "-NoProfile -ExecutionPolicy Bypass -File `"$monitor`" -RunId $script:runId"
-    Start-Process -FilePath 'powershell.exe' -ArgumentList $monArgs -WorkingDirectory $root -WindowStyle Hidden `
-        -RedirectStandardOutput (Join-Path $logDir ("browser_monitor_$($script:runId)_stdout.log")) `
-        -RedirectStandardError (Join-Path $logDir ("browser_monitor_$($script:runId)_stderr.log")) | Out-Null
-    Write-Host 'The last browser tab closing will automatically stop the managed services.'
+    Start-BrowserMonitor
 } else {
     Write-Host 'NoBrowser mode: services stay active until Stop AnimeVoiceTutor.cmd is run.'
 }

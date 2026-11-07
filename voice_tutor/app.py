@@ -7,6 +7,7 @@ import ipaddress
 import json
 import os
 import secrets
+import time
 import subprocess
 from urllib.parse import urlparse
 import httpx
@@ -27,8 +28,52 @@ from . import characters
 app = FastAPI(title="AnimeVoiceTutor", docs_url="/docs")
 settings = Settings.from_env()
 _exit_token = secrets.token_urlsafe(32)
+_started_monotonic = time.monotonic()
 llm_config = LLMConfigStore(defaults=settings)
 voices = characters.current_voice_profiles()
+
+
+def _sync_voice_profiles() -> None:
+    """See character selections made outside the running Web Python process."""
+    latest = characters.current_voice_profiles()
+    if latest != voices:
+        voices.clear()
+        voices.update(latest)
+
+
+def _schedule_managed_character_refresh() -> bool:
+    """Reload only a managed TTS listener; foreign 9880 listeners remain untouched."""
+    if os.name != 'nt' or not settings.tts_enabled or not characters.current_voice_profiles():
+        return False
+    run_id = _managed_run_id()
+    script = ROOT / 'scripts' / 'refresh_character_tts.ps1'
+    if not run_id or not script.is_file():
+        return False
+    asyncio.create_task(_launch_character_refresh(run_id, characters.active_id()))
+    return True
+
+
+async def _launch_character_refresh(run_id: str, identity: str) -> None:
+    # Give the browser time to receive the successful import/selection response.
+    await asyncio.sleep(0.7)
+    log_dir = ROOT / 'data' / 'logs'
+    try:
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with (log_dir / 'tts_refresh.log').open('ab') as log:
+            subprocess.Popen(
+                ['powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
+                 '-File', str(ROOT / 'scripts' / 'refresh_character_tts.ps1'),
+                 '-RunId', run_id, '-CharacterId', identity],
+                cwd=str(ROOT), stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
+                creationflags=(getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+                               | getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0)),
+            )
+    except OSError as exc:
+        try:
+            (log_dir / 'tts_refresh.log').open('ab').write(
+                ('TTS_RELOAD_LAUNCH_FAILED: ' + str(exc) + '\n').encode('utf-8'))
+        except OSError:
+            pass
 
 
 @lru_cache(maxsize=1)
@@ -112,10 +157,27 @@ async def set_character(req: CharacterSelection, request: Request):
         characters.select_character(req.id)
     except characters.PackError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    voices.clear()
-    voices.update(characters.current_voice_profiles())
+    _sync_voice_profiles()
+    scheduled = _schedule_managed_character_refresh()
     return {'active': characters.active_id(),
-            'tts_restart_required': bool(voices)}
+            'tts_restart_required': bool(voices) and not characters.tts_binding_matches(),
+            'tts_refresh_scheduled': scheduled}
+
+
+@app.post('/api/characters/refresh-tts')
+async def retry_character_tts(request: Request):
+    """Retry the selected character's managed TTS from the application UI."""
+    _require_local_exit_request(request)
+    _same_origin(request, require_browser_origin=True)
+    if characters.active_id() == 'default' or not characters.current_voice_profiles():
+        raise HTTPException(status_code=409, detail='请先导入并选择带有 TTS 权重的角色')
+    if not settings.tts_enabled:
+        raise HTTPException(status_code=409, detail='TTS_ENABLED 已关闭，请在设置中启用')
+    if not _managed_run_id():
+        raise HTTPException(status_code=409, detail='当前网页没有受管启动登记，请重新双击 Start AnimeVoiceTutor.cmd')
+    if not _schedule_managed_character_refresh():
+        raise HTTPException(status_code=503, detail='TTS 重载组件不可用，请检查安装文件')
+    return {'tts_refresh_scheduled': True, 'active': characters.active_id()}
 
 
 @app.get('/api/characters/active/content')
@@ -125,7 +187,7 @@ async def character_content():
 
 @app.get('/api/characters/{identity}/{kind}')
 async def character_media(identity: str, kind: str):
-    if kind not in ('portrait', 'effects'):
+    if kind not in ('portrait', 'avatar', 'effects'):
         raise HTTPException(status_code=404, detail='Unknown character asset')
     try:
         path = characters.public_pack_asset(identity, kind)
@@ -157,10 +219,11 @@ async def character_import(request: Request, archive: UploadFile = File(...)):
         # The model is deliberately not treated as loaded until a managed TTS
         # listener has started with the selected weights.
         characters.select_character(installed['id'])
-        voices.clear()
-        voices.update(characters.current_voice_profiles())
+        _sync_voice_profiles()
+        scheduled = _schedule_managed_character_refresh()
         return {'installed': installed, 'active': characters.active_id(),
-                'tts_restart_required': bool(voices)}
+                'tts_restart_required': bool(voices) and not characters.tts_binding_matches(),
+                'tts_refresh_scheduled': scheduled}
     except (characters.PackError, OSError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     finally:
@@ -217,21 +280,54 @@ def _require_local_exit_request(request: Request, *, post: bool = False) -> None
             raise HTTPException(status_code=403, detail="Invalid exit token")
 
 
+def _valid_run_id(candidate: object) -> bool:
+    return (isinstance(candidate, str) and len(candidate) == 32
+            and all(c in '0123456789abcdef' for c in candidate.lower()))
+
+
 def _managed_run_id() -> str | None:
-    # Never stop processes unless this very server belongs to the current managed run.
-    state_path = ROOT / "data" / "app" / "local_services.json"
+    """Identify this Web instance without guessing from venv/Conda paths.
+
+    New one-click launches pass a unique ID to the child Web process. The same
+    ID must appear in the on-disk record for this exact Web port and in the
+    process environment. Older managed runs can still use their registered
+    listener PID. Manual Web sessions have neither proof and remain unmanaged.
+    """
     try:
-        state = json.loads(state_path.read_text(encoding="utf-8-sig"))
-        run_id = state["run_id"]
-        if not isinstance(run_id, str) or len(run_id) != 32 or any(c not in "0123456789abcdef" for c in run_id.lower()):
+        state = json.loads((ROOT / 'data' / 'app' / 'local_services.json').read_text(encoding='utf-8-sig'))
+        run_id = state.get('run_id')
+        if not _valid_run_id(run_id):
             return None
-        for proc in state.get("processes", []):
-            if (proc.get("name") == "web" and proc.get("kind") == "listener"
-                    and int(proc.get("pid", -1)) == os.getpid() and int(proc.get("port", -1)) == web_port()):
+        if int(state.get('web_port', -1)) != web_port():
+            return None
+        if os.environ.get('AVT_MANAGED_RUN_ID') == run_id:
+            if any(item.get('name') == 'web' and item.get('kind') != 'listener'
+                   and int(item.get('pid', -1)) > 0 for item in state.get('processes', [])):
                 return run_id
-    except (OSError, TypeError, KeyError, ValueError):
+        for proc in state.get('processes', []):
+            if (proc.get('name') == 'web' and proc.get('kind') == 'listener'
+                    and int(proc.get('pid', -1)) == os.getpid()
+                    and int(proc.get('port', -1)) == web_port()):
+                return run_id
+    except (OSError, TypeError, KeyError, ValueError, AttributeError):
         pass
     return None
+
+
+@app.get('/api/system/managed-identity')
+async def managed_identity(request: Request):
+    """Prove Web listener PID to the launcher using its per-run secret.
+
+    The random ID is never returned to a browser or public status endpoint.
+    Only the one-click launcher knows it; a foreign Web on the same port
+    cannot impersonate this run by reporting the application's API version.
+    """
+    _require_local_exit_request(request)
+    run_id = _managed_run_id()
+    presented = request.headers.get('x-avt-run-id', '')
+    if not run_id or not secrets.compare_digest(run_id, presented):
+        raise HTTPException(status_code=403, detail='Unmanaged or different Web session')
+    return {'pid': os.getpid(), 'web_port': web_port(), 'managed': True}
 
 
 @app.get("/api/system/exit-token")
@@ -301,13 +397,24 @@ async def asr_health() -> tuple[bool, str]:
 
 @app.get("/api/status")
 async def status():
+    _sync_voice_profiles()
     (asr, asr_detail), tts = await asyncio.gather(asr_health(), tcp_ready(settings.tts_url))
     active_llm = llm_config.public()
     active_character = characters.active_id()
+    managed_run = _managed_run_id()
     pack_voice_installed = bool(characters.current_voice_profiles())
     engine_root = Path(os.environ.get('AVT_TTS_ROOT') or (ROOT / 'external' / 'GPT-SoVITS-v5'))
     engine_present = (engine_root / 'api_v2.py').is_file()
     bound = bool(tts and characters.tts_binding_matches()) if settings.tts_enabled else False
+    refresh_state = None
+    try:
+        candidate = json.loads((ROOT / 'data' / 'app' / 'tts_refresh_state.json').read_text(encoding='utf-8-sig'))
+        if (candidate.get('character_id') == active_character
+                and candidate.get('run_id') == _managed_run_id()):
+            refresh_state = {'status': str(candidate.get('status', ''))[:40],
+                             'detail': str(candidate.get('detail', ''))[:200]}
+    except (OSError, ValueError, AttributeError, TypeError):
+        pass
     if active_character == 'default':
         tts_detail = '标准日语模式：未配置角色语音（可选）'
     elif not pack_voice_installed:
@@ -316,13 +423,26 @@ async def status():
         tts_detail = 'TTS_ENABLED 已关闭；角色模型尚未启用'
     elif bound:
         tts_detail = '当前角色模型已加载，语音服务可用'
+    elif refresh_state and refresh_state['status'] == 'failed':
+        tts_detail = '角色已安装，但 TTS 启动失败：' + refresh_state['detail']
+    elif refresh_state and refresh_state['status'] == 'loading':
+        tts_detail = '正在加载当前角色的 GPT-SoVITS 模型'
+    elif not managed_run and (time.monotonic() - _started_monotonic) >= 50:
+        tts_detail = '角色已安装，但本次 Web 服务缺少启动管理记录；请通过应用内服务状态检查'
+    elif not managed_run:
+        tts_detail = '正在连接本次启动的语音管理服务'
     elif tts:
-        tts_detail = '9880 端口已有 TTS 服务，但未验证为当前角色模型；请停止旧服务并重启测试版'
+        tts_detail = 'TTS 端口已占用，但当前角色模型尚未验证加载；正在刷新或需要关闭其他 TTS 实例'
     elif not engine_present:
         tts_detail = '角色权重已安装；GPT-SoVITS 引擎源码尚未配置（Quick Setup 不包含引擎）'
     else:
-        tts_detail = '角色权重已安装；TTS 未启动。请用 Start AnimeVoiceTutor.cmd 正常启动，不要使用 -TextOnly'
+        tts_detail = '正在启动并加载当前角色的语音模型' if (time.monotonic() - _started_monotonic) < 180 else '角色已安装，但 TTS 服务尚未就绪；可点击重试加载角色语音'
+    initializing = bool(active_character != 'default' and pack_voice_installed and not bound and
+                        ((refresh_state or {}).get('status') == 'loading' or
+                         ((time.monotonic() - _started_monotonic) < 180 and
+                          not ((refresh_state or {}).get('status') == 'failed'))))
     return {
+        "tts_initializing": initializing,
         "deepseek_configured": active_llm["configured"],
         "llm_configured": active_llm["configured"],
         "llm_provider": active_llm["provider"],
@@ -334,12 +454,14 @@ async def status():
         "tts_pack_installed": pack_voice_installed,
         "tts_engine_available": engine_present,
         "tts_port_listening": bool(tts),
+        "tts_refresh": refresh_state,
+        "managed_session": bool(managed_run),
         "model": active_llm["model"],
         "voices": [{"id": p["id"], "label": p["label"],
                     "ready": bool(p["reference_audio_path"] and Path(p["reference_audio_path"]).is_file())}
                    for p in voices.values()],
         "character_id": active_character,
-        "version": "0.12.0",
+        "version": "0.13.1",
     }
 
 

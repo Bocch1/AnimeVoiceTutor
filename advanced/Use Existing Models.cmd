@@ -1,6 +1,6 @@
 @echo off
 setlocal
-cd /d "%~dp0"
+cd /d "%~dp0.."
 if "%~1"=="" (
   echo To reuse your current installation, run:
   echo Use Existing Models.cmd "FULL_PATH_TO_EXISTING_PROJECT"
@@ -8,6 +8,6 @@ if "%~1"=="" (
   pause
   exit /b 2
 )
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\reuse_existing_installation.ps1" -ExistingProjectRoot "%~1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\reuse_existing_installation.ps1" -ExistingProjectRoot "%~1"
 if errorlevel 1 ( echo Linking failed. & pause & exit /b 1 )
 pause

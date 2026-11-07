@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "release": "0.13.1",
+  "platform": "windows-x64",
+  "validated_target": "Windows 10/11 x64, compatible NVIDIA GPU + CUDA 12.8 driver",
+  "web_python": "3.11.18",
+  "asr_python": "3.12.16",
+  "tts_python": "3.10.22",
+  "runtime_lock_sha256": {
+    "tts": "7bd263daccc8df787729789556d8f75449f11aba6aca61710d049c8f828cc137",
+    "asr": "f1fa0b4b5dd34bf0e7436d3ba2690d125b1c7feca3ab9413584420d32967d902",
+    "web": "4ef6c9412ecf27f2347e449e4b65968372349889ee92158e46171c0768ad943a"
+  },
+  "asr_model": {
+    "repo": "Qwen/Qwen3-ASR-1.7B",
+    "revision": "main",
+    "revision_verified": false
+  },
+  "tts_engine": {
+    "repository": "https://github.com/RVC-Boss/GPT-SoVITS.git",
+    "reference": "04a44eb977586645f33594b72af13a035a2056c6",
+    "expected_family": "GPT-SoVITS v5",
+    "same_as_developer_verified_engine": false,
+    "developer_base_commit_confirmed": true,
+    "developer_worktree_modified": true,
+    "note": "The developer used this base commit with uncommitted local changes. A clean checkout alone is NOT a verified reproduction of the live inference engine."
+  },
+  "pretrained_japanese": {
+    "url": "https://huggingface.co/XXXXRT/GPT-SoVITS-Pretrained/resolve/main/pretrained_models.zip",
+    "expected_sha256": null
+  },
+  "warnings": [
+    "Pinned TTS engine commit matches the developer base commit, but the developer worktree contains unpublished modifications; clean checkout parity is NOT verified.",
+    "ASR and upstream pretrained model downloads are not immutable; downloaded asset SHA-256 values are recorded locally.",
+    "Matching configuration and weights does not guarantee byte-identical audio on all hardware."
+  ],
+  "ffmpeg": {
+    "winget_id": "Gyan.FFmpeg",
+    "winget_version": "9.0.2",
+    "same_as_developer_verified_version": false
+  },
+  "installation_profile": "voice-first-with-character-release",
+  "engine_overlay": {
+    "required_for_developer_parity": true,
+    "published_overlay_sha256": null,
+    "note": "Developer custom inference modifications have not yet been exported as a verified compatibility overlay."
+  }
+}

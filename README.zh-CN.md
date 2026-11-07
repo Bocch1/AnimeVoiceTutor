@@ -1,89 +1,46 @@
 # AnimeVoiceTutor
 
-**本地优先的日语会话练习工具**，支持 AI 对话、可选语音识别，以及独立安装的角色语音包。
+**自托管日语对话练习工具，支持本地语音识别和独立安装的人物语音包。**
 
-[English](README.md) | **简体中文** | [日本語](README.ja.md)
+[English](README.md) | 简体中文 | [日本語](README.ja.md)
 
-AnimeVoiceTutor 是一款自托管的浏览器应用，用于日语会话练习和表达纠正。基础版（Core）不绑定任何动漫人物，可以进行文字对话；需要语音输入、语音合成或人物形象时，再分别安装相应的运行环境和资源。应用不提供托管的 AI 服务或预置 API Key。
+程序使用 Qwen3-ASR 识别语音、GPT-SoVITS 合成人物语音；AI 对话需在网页设置中填写自己的 OpenAI / DeepSeek 等受支持服务商 API Key。Core ZIP 不包含模型权重、人物素材或 API Key。
 
-## 功能
+## 首次使用（Windows）
 
-- 连接用户自行配置的 OpenAI 或 DeepSeek API，进行日语会话。
-- 查看表达纠正、编辑已发送消息，并结合上下文继续对话。
-- 保存会话、自动生成标题及置顶常用会话。
-- 通过可选的本地 Qwen3-ASR 进行日语语音输入。
-- 使用可选的 GPT-SoVITS 和兼容角色包合成、播放日语语音。
-- 提供简体中文、英语及日语界面。
-- 默认使用中性的时间问候页面；人物立绘、动效、专属问候和声音由独立角色包提供。
+1. 从项目的 GitHub Releases 下载 **`AnimeVoiceTutor_Core_v0.13.1.zip`**，把整个 ZIP 解压到可写入的目录。不要进入增量补丁 ZIP 的 `payload` 目录运行安装器。
+2. 双击 **`First Run Setup.cmd`**。语言切换入口始终显示为 **Language**（简体中文 / English / 日本語）。第一步只需使用 **安装环境、环境诊断、高级选项**：先点击安装；如果已经装过，可以直接诊断；高级选项可选本机已有 GPT-SoVITS 引擎或 ASR 模型。
+3. 在第二步刷新 GitHub Releases 人物列表，选择角色 ZIP 并点击**下载并安装角色**；也可选择电脑里已有的可信 ZIP。后续还可以从 Web 设置中导入。
+4. 双击 **`Start AnimeVoiceTutor.cmd`** 启动网页应用。在设置中填写自己的 AI API Key，进行日语录音、对话和实时语音播放。结束时点击网页侧边栏的**退出应用**；必要时可双击 `Stop AnimeVoiceTutor.cmd`。
 
-## 下载内容
+**日常使用不需要控制台命令。** “环境诊断”检查基础环境是否完整，不等同于验证某个人物的权重已经加载。TTS 启动中应等待模型初始化；若一直失败，可在网页的“服务状态”中查看详情。
 
-| 组件 | Core 源码包内是否包含 | 说明 |
-| --- | --- | --- |
-| 网页程序与 Windows 启动脚本 | 是 | 无语音模型也可启动 |
-| 依赖配置、安装脚本和测试 | 是 | 安装时仍需下载 Python/依赖 |
-| Qwen3-ASR 模型 | 否 | 按需单独下载 |
-| GPT-SoVITS 推理引擎 | 否 | 单独安装或关联已有引擎 |
-| 人物素材、语音权重和录音 | 否 | 按授权安装可选角色 ZIP |
-| AI 服务商账号和 API Key | 否 | 用户自行配置 |
+**当前目标平台**为 Windows 10/11 x64、兼容 CUDA 12.8 的 NVIDIA 显卡与驱动。首次下载依赖和模型需要网络，并不能保证所有电脑都可自动完成。尽管已固定 GPT-SoVITS 上游版本，你本机额外修改过的推理文件尚未制成正式兼容包，因此不能承诺所有电脑的音频结果完全相同。
 
-**Core ZIP 是源码和启动脚本，不是免安装的 `.exe`，也不是离线语音整合包。** 未安装角色包时，Core 不具备专属人物语音。
+## 本地安装包放在哪里？
 
-## Windows 快速开始
+首次安装窗口会在项目根目录自动创建：
 
-1. 从 [GitHub Releases](../../releases) 下载 Core 源码 ZIP，或克隆仓库；解压到独立文件夹。
-2. 双击 **`Setup AnimeVoiceTutor.cmd`** 安装网页运行环境；也可以使用 **`Quick Setup.cmd`** 按需选择 Web、ASR、TTS 环境。
-3. 双击 **`Start AnimeVoiceTutor.cmd`**，默认打开 `http://127.0.0.1:8767`。
-4. 在**设置**中填写 AI 服务商和 API Key，才能进行在线 AI 对话。
-5. 从网页退出，或运行 **`Stop AnimeVoiceTutor.cmd`**。
-
-没有 ASR 模型、人物资源或 TTS 也能启动网页。Quick Setup **只安装 Python 及依赖**，不自动下载 ASR 模型、GPT-SoVITS 引擎、人物资源或 FFmpeg。
-
-**系统要求：**Windows x64、PowerShell 5.1 或更新版本。GPU 语音功能需要兼容的 NVIDIA 驱动、CUDA/PyTorch 及 FFmpeg/ffprobe。提供的锁定环境分别采用 Python 3.11（Web）、3.12（ASR）、3.10（TTS）。详细要求见[安装指南](docs/INSTALLATION.md)。
-
-## 可选语音与角色包
-
-日语语音输入：安装 ASR 环境后运行 **`Download ASR Model.cmd`**，按需下载 Qwen3-ASR 模型。
-
-人物语音：单独安装兼容的 GPT-SoVITS-v5 引擎及其运行环境，再通过 **设置 → 角色 → 安装 ZIP** 导入有权使用的角色包。完整语音角色包应包含人物权重、参考音频和推理参数，但**不包含推理引擎本身**。切换不同权重时需要重新启动受管理的 TTS 服务。
-
-角色包可以独立安装、切换；安装本身不等于取得人物图片、配音素材或模型权重的公开分发权。不要安装来源不可信的模型文件。详见[角色包说明](docs/CHARACTER_PACKS.md)。
-
-## 诊断和测试
-
-在项目目录的 PowerShell 中运行：
-
-```powershell
-& '.\Doctor AnimeVoiceTutor.cmd'       # 检查本地依赖与模型路径
-& '.\Verify Source.cmd'                # 检查公开源码与回归测试
-& '.\Test AnimeVoiceTutor.cmd'         # 检查运行中的网页服务
-& '.\Test AnimeVoiceTutor.cmd' -Voice  # 需要已配置的 TTS 和 ASR
+```text
+packages/
+  updates/       AnimeVoiceTutor_Core_v0.13.1.zip、AnimeVoiceTutor_Update_v0.13.1.zip
+  characters/    AnimeVoiceTutor_Character_<角色id>_v<版本>.zip
 ```
 
-语音测试会生成 WAV 并让 ASR 识别，但不能证明人物音色相似度，也不会验证在线 AI 服务商。可在设置中单独测试服务商连接。
+从 First Run 或网页成功导入的人物 ZIP 会自动保存一份到 `packages/characters`，方便备份和转移；实际解压并运行的模型仍在 `data/character_packs`，不会被移动。通过高级构建工具生成的 Core ZIP 默认放入 `packages/updates`。两个归档文件夹都被 Git 忽略，不会进入公开源码 ZIP。见 [本地文件夹与命名说明](docs/LOCAL_PACKAGES.md)。
 
-开发者可选择自己的 Python 环境：
+## 根目录保留三个 CMD
 
-```powershell
-python -m pip install -e ".[test]"
-python -m pytest -q tests
-```
+| 双击文件 | 用途 |
+| --- | --- |
+| `First Run Setup.cmd` | 安装或诊断语音环境、下载导入人物 |
+| `Start AnimeVoiceTutor.cmd` | 正常启动程序，无需一直打开控制台 |
+| `Stop AnimeVoiceTutor.cmd` | 网页退出失败时停止本程序管理的服务 |
 
-上述 pip 安装仅覆盖 Web 与测试依赖，不会安装 GPU 推理引擎或模型。更多内容见[安装](docs/INSTALLATION.md)和[测试](docs/TESTING.md)。
+**CMD 文件名中有空格完全正常**，不必改名。脚本已经对带空格的调用路径加引号；旧的诊断、测试、手动安装与发布工具统一放在 [`advanced/`](advanced/)。
 
-## 项目结构
+## 更多说明
 
-- `voice_tutor/`：后端和角色包机制
-- `web/`：浏览器界面
-- `services/`：ASR 服务
-- `scripts/`：安装、启动、诊断与公开源码构建
-- `tools/`：角色包制作、导入及本地工具
-- `release/`：公开文件清单及依赖版本
-- `tests/`：自动化回归测试
-- `docs/`：安装、角色、测试和发布文档
+[安装与诊断](docs/INSTALLATION.md) · [本地安装包归档](docs/LOCAL_PACKAGES.md) · [人物包格式](docs/CHARACTER_PACKS.md) · [测试说明](docs/TESTING.md) · [发布说明](docs/PUBLISHING.md)
 
-维护者运行 **`Build Public Source.cmd`** 即可从开发目录生成公开源码 ZIP。构建器仅包含 `release/public_source_files.txt` 中的文件，不包括本地模型、凭据、缓存及虚拟环境。通过 GitHub 网页发布 ZIP 或使用 GitHub Desktop 更新仓库，参见[发布指南](docs/PUBLISHING.md)。
-
-## 许可证与第三方素材
-
-应用源码采用 [MIT 许可证](LICENSE)。第三方依赖、模型、语音和人物素材受各自的条款约束。Core 不分发人物立绘、角色权重、参考音频或第三方引擎源码。详见[第三方说明](THIRD_PARTY_NOTICES.md)及[安全说明](SECURITY.md)。
+**版权与安全：** Core 程序源代码采用 MIT 许可证，但第三方模型、人物立绘、声音权重和录音各有自己的许可。未经适当授权，不应公开发布相关人物包；“侵权联系删除”并不能代替授权。详见 [安全说明](SECURITY.md) 和 [第三方声明](THIRD_PARTY_NOTICES.md)。

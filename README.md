@@ -1,89 +1,50 @@
 # AnimeVoiceTutor
 
-**Local-first Japanese conversation practice** with AI chat, optional speech recognition, and installable character voices.
+**A self-hosted Japanese conversation tutor with optional local character voices.**
 
-**English** | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-AnimeVoiceTutor is a self-hosted, browser-based application for practicing Japanese. Use the character-neutral Core for text conversations and corrections, then add optional ASR and speech synthesis when the required models and runtime are configured. The application does not provide a hosted AI service or an included commercial API key.
+AnimeVoiceTutor provides Japanese conversation, speech recognition (Qwen3-ASR), and character speech synthesis (GPT-SoVITS). Chat with an AI provider requires your own OpenAI/DeepSeek API key. No models, API keys or copyrighted character media are included in the small Core ZIP.
 
-## What it does
+## Get started (Windows)
 
-- Practice conversations in Japanese using a configured OpenAI or DeepSeek API provider.
-- Review corrections, edit messages, and continue a conversation with its context.
-- Keep conversation history with automatic titles and pinned sessions.
-- Dictate Japanese with optional local Qwen3-ASR.
-- Listen to responses using optional local GPT-SoVITS and an installed compatible character voice pack.
-- Switch between English, Simplified Chinese, and Japanese interface languages.
-- Start with a neutral, time-aware welcome screen; install character portraits, animations, greetings, and voices separately.
+1. Download **`AnimeVoiceTutor_Core_v0.13.1.zip`** from the project's GitHub Releases page. Extract the **entire** ZIP to a writable folder. Do not run setup from an incremental update ZIP's `payload` directory.
+2. Double-click **`First Run Setup.cmd`**. The language selector is always called **Language** (English / 简体中文 / 日本語). In Step 1, click **Install voice base**. **Diagnostics** checks the installed base and reports what is missing; **Advanced options** lets you use your existing ASR model or GPT-SoVITS engine.
+3. In Step 2, select a **character ZIP** from the project's published GitHub Releases list, then click **Download and install selected character**. Alternatively, choose a trusted character ZIP already on your computer. You can also import a ZIP later in the Web app.
+4. Double-click **`Start AnimeVoiceTutor.cmd`**. Use the app's Settings page to enter your own AI provider credentials. Speak, chat, listen to generated audio, and use **Exit application** in the sidebar when finished. `Stop AnimeVoiceTutor.cmd` is an emergency fallback.
 
-## Downloads and editions
+You do **not** need to run a terminal for normal use. The setup window distinguishes environment installation/diagnosis from live speech: a successful environment check does not claim that a specific character's TTS weights are loaded. If TTS is initializing, allow it to load; check **Service status** if it fails.
 
-| Component | Included in Core source ZIP? | Notes |
-| --- | --- | --- |
-| Web application and Windows launch scripts | Yes | Runs without speech models |
-| Dependency definitions, setup scripts and tests | Yes | Setup requires downloads of Python/packages |
-| Qwen3-ASR model | No | Optional separate model download |
-| GPT-SoVITS inference engine | No | Install or link a compatible engine separately |
-| Character voice weights, portrait and recordings | No | Optional authorized character ZIP |
-| AI provider access or API key | No | Configure your own provider |
+**Platform target:** Windows 10/11 x64 and a compatible NVIDIA GPU/driver for CUDA 12.8. Fully automated installation is not guaranteed on all PCs, and an internet connection is needed for dependency/model downloads. The TTS source reference is pinned, but equivalence with the developer's locally modified GPT-SoVITS inference files has **not** been established. See [Installation](docs/INSTALLATION.md).
 
-The Core archive is **source code plus launch/setup scripts**, not a packaged `.exe` or an offline voice installer. Character packs are optional, and the standard Core does not speak in a character voice by itself.
+## Where are my downloaded packages?
 
-## Quick start on Windows
+The first-run wizard creates these local folders beside your Core source:
 
-1. Download the Core source ZIP from [GitHub Releases](../../releases), or clone the repository. Extract the ZIP to a new folder.
-2. Double-click **`Setup AnimeVoiceTutor.cmd`** to install the Web runtime. Alternatively, choose Web, ASR, and/or TTS environments through **`Quick Setup.cmd`**.
-3. Double-click **`Start AnimeVoiceTutor.cmd`**. The default address is `http://127.0.0.1:8767`.
-4. In **Settings**, configure an AI provider and an API key for online conversations.
-5. Exit in the application or run **`Stop AnimeVoiceTutor.cmd`**.
-
-The Web UI can launch without an ASR model or character pack. Actual AI responses require a configured provider and network connectivity. Quick Setup installs Python dependencies only; it does **not** download ASR weights, the GPT-SoVITS engine, character media, or FFmpeg.
-
-**System support:** Windows x64 with PowerShell 5.1 or later. Speech acceleration requires compatible NVIDIA drivers, CUDA/PyTorch and FFmpeg/ffprobe. The locked environment recipes use Python 3.11 (Web), 3.12 (ASR), and 3.10 (TTS). See [Installation](docs/INSTALLATION.md) for supported setup methods and limitations.
-
-## Optional speech and character packs
-
-For Japanese microphone transcription, install the ASR runtime and then run **`Download ASR Model.cmd`**. A larger Qwen3-ASR option is also available.
-
-For character TTS, provide a compatible GPT-SoVITS-v5 engine and its Python runtime, then install an authorized character ZIP through **Settings → Character → Install ZIP**. A complete voice pack contains its own voice weights, reference audio and configuration; the engine itself remains a separate dependency. Switch characters in Settings and restart the managed TTS service when changing voice weights.
-
-An installed pack does not grant permissions to share its artwork, source recordings, or weights. Do not install untrusted model files. See [Character packs](docs/CHARACTER_PACKS.md).
-
-## Diagnostics and development
-
-From the project folder in PowerShell:
-
-```powershell
-& '.\Doctor AnimeVoiceTutor.cmd'    # Check installed paths and dependencies
-& '.\Verify Source.cmd'             # Public source structure and regression tests
-& '.\Test AnimeVoiceTutor.cmd'      # Check a running Web service
-& '.\Test AnimeVoiceTutor.cmd' -Voice  # Real TTS + ASR smoke test when configured
+```text
+packages/
+  updates/       AnimeVoiceTutor_Core_v0.13.1.zip, AnimeVoiceTutor_Update_v0.13.1.zip
+  characters/    AnimeVoiceTutor_Character_<id>_v<version>.zip
 ```
 
-The voice smoke test verifies an audible WAV and ASR transcription, not speaker similarity or an online AI-provider response. Configure the provider separately in Settings.
+Imported character ZIPs are archived automatically. The installed/extracted character data continues to live in `data/character_packs/` and is not moved. When building a new Core locally, the output goes to `packages/updates/`. These folders are **private and Git-ignored**; neither the original character ZIP nor the installed weights are included in the public Core source package. See [Local package folders](docs/LOCAL_PACKAGES.md).
 
-For development with your own Python environment:
+## Three everyday files
 
-```powershell
-python -m pip install -e ".[test]"
-python -m pytest -q tests
-```
+| Double-click | Purpose |
+| --- | --- |
+| `First Run Setup.cmd` | Install/check the base and import character ZIPs |
+| `Start AnimeVoiceTutor.cmd` | Open the application without a persistent console |
+| `Stop AnimeVoiceTutor.cmd` | Stop managed services if the in-app Exit control is unavailable |
 
-This pip path installs the Web/test dependencies, not the optional GPU engines or weights. Refer to [Installation](docs/INSTALLATION.md) and [Testing](docs/TESTING.md) for further checks.
+Spaces in CMD filenames are supported by Windows. Keep the names unchanged; the provided scripts quote their paths. Diagnostic, test and export commands live in [`advanced/`](advanced/).
 
-## Repository layout
+## Documentation
 
-- `voice_tutor/` — application backend and character-pack integration
-- `web/` — browser interface
-- `services/` — ASR service
-- `scripts/` — setup, startup, diagnostics, and source export
-- `tools/` — pack building, installation, and other local utilities
-- `release/` — public-file allowlist and dependency specifications
-- `tests/` — automated regression tests
-- `docs/` — installation, character-pack, testing, and publishing guides
+- [Installation and environment checks](docs/INSTALLATION.md)
+- [Local ZIP archive and naming rules](docs/LOCAL_PACKAGES.md)
+- [Character ZIP format](docs/CHARACTER_PACKS.md)
+- [Real-user testing](docs/TESTING.md)
+- [Publishing Core and updates](docs/PUBLISHING.md)
 
-To make a public source ZIP from a development checkout, run **`Build Public Source.cmd`**. The exporter includes only files in `release/public_source_files.txt`, tests the clean source stage and excludes local configurations, models, histories, and environments. Instructions for updating GitHub through its website or GitHub Desktop are in [Publishing](docs/PUBLISHING.md).
-
-## License and attribution
-
-Application source is licensed under [MIT](LICENSE). Third-party dependencies, pretrained models, audio, artwork, and derivative character assets have **separate** licenses or permissions. No character art, fine-tuned voice weights, reference recordings, or third-party engine source is bundled in Core. See [Third-party notices](THIRD_PARTY_NOTICES.md) and [Security](SECURITY.md).
+**Licenses:** The Core application source is MIT-licensed; GPT-SoVITS, FFmpeg, pretrained models, and character artwork/audio/weights have independent rights. Do not distribute third-party character media without permission. A takedown notice is not permission. See [Security](SECURITY.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).

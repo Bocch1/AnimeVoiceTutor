@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_public_export_manifest_is_valid():
     paths = public_paths(ROOT)
     assert paths == sorted(paths)
-    assert 'Build Public Source.cmd' in paths
+    assert 'advanced/Build Public Source.cmd' in paths
     assert '.env.example' in paths
     assert 'release/public_source_files.txt' in paths
     assert 'tools/build_public_source.py' in paths

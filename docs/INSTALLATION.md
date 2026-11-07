@@ -1,103 +1,44 @@
-# Installation guide
+# Installation and environment checks
 
-AnimeVoiceTutor is distributed as source code and Windows launch scripts. The Web app, speech recognition, speech synthesis, and character data are separate components. Install only what you intend to use.
+For ordinary use, open the project folder in **Windows File Explorer** and double-click the files described here. A terminal is not required.
 
 ## Requirements
 
-- Windows x64 and PowerShell 5.1 or later for the provided `.cmd`/`.ps1` launchers.
-- Internet access to download required Python packages. Online AI chat also requires a user-configured API provider and API key.
-- For accelerated speech: a compatible NVIDIA GPU/driver, CUDA-compatible PyTorch, and FFmpeg/ffprobe on `PATH`. Hardware compatibility is not established by installing Python packages alone.
+The supported accelerated profile is **Windows 10/11 x64** with a compatible NVIDIA GPU and driver supporting CUDA 12.8. Internet access and sufficient disk space are required to download dependencies, Qwen3-ASR, GPT-SoVITS and pretrained resources. FFmpeg/ffprobe are also required. AI chat needs a separately configured OpenAI/DeepSeek API key. Compatibility with all PCs, macOS, Linux or other GPUs is not guaranteed.
 
-## Choose an installation method
+## First use: two steps
 
-| Method | Installs | When to use |
-| --- | --- | --- |
-| `Setup AnimeVoiceTutor.cmd` | Web Python and packages | Text-only Core |
-| `Quick Setup.cmd` → `web` | Web Python and packages | Same as Web-only setup |
-| `Quick Setup.cmd` → `full` | Separate Web, ASR and TTS Python environments | Local speech planned |
-| Manual `venv`, uv, or Conda | Selected dependencies | Custom and development environments |
+1. Download `AnimeVoiceTutor_Core_v0.13.1.zip` from the **official GitHub Releases** page. Extract the **whole** ZIP into a writable local folder, for example `C:\Apps\AnimeVoiceTutor`. Do not launch scripts from a patch ZIP's `payload` directory.
+2. Double-click `First Run Setup.cmd`. Choose your language from **Language** (this label is always English).
+3. **Step 1 — Voice environment:** click **Install voice base** to install or repair the Web, ASR and TTS runtimes, the Qwen3-ASR 1.7B model and the GPT-SoVITS inference prerequisites. **Diagnostics** checks the installed components; green success means the base checks passed. **Advanced options** permits existing engine and ASR model paths, a smaller ASR model, and a separately reviewed engine overlay. Installation may download multiple gigabytes.
+4. **Step 2 — Character:** use **Refresh releases**, choose a published character, then click **Download and install selected character**. You can instead select a trusted local ZIP. This is a separate action from the base installation. Do not use character packs you are not authorized to possess or distribute.
+5. Double-click `Start AnimeVoiceTutor.cmd`. The app opens in a browser-style window without a persistent console. Enter your own AI provider key under Settings. Confirm recording, transcription and newly generated character speech in the Web interface.
+6. Click **Exit application** in the Web sidebar. `Stop AnimeVoiceTutor.cmd` is a fallback if the Web exit is unavailable.
 
-The quick installer calls `scripts/setup_source.ps1` through `scripts/quick_setup.ps1`. It synchronizes the selected `runtime/<role>` environment to the supplied lock file. Do not run it against a custom environment containing packages you want to preserve. Quick Setup can bootstrap `uv`, including managed Python versions, but does not install GPU drivers or FFmpeg.
+When using an existing compatible installation, **Diagnostics** may pass without running Install again. If it fails, inspect the named missing component; **Install** attempts to repair it. A successful environment diagnosis is **not a claim that a selected character's weights have already loaded**. A pre-recorded greeting can play without live GPT-SoVITS inference. If live TTS is unavailable, open Web **Service status** and choose **Retry character voice**.
 
-Provided lock recipes target Web Python 3.11.18, ASR 3.12.16, TTS 3.10.22, with CUDA 12.8 PyTorch for speech. They are tested recommendations, not a guarantee of compatibility for every GPU.
+## Local package organization
 
-Run the graphical selector by double-clicking **`Quick Setup.cmd`**, or select a role:
+`First Run Setup.cmd` creates `packages/updates` and `packages/characters`. Imported character ZIPs are archived in the latter and extracted model files remain in `data/character_packs`. Building a Core release places the ZIP in `packages/updates`. See [Local packages](LOCAL_PACKAGES.md) for naming and version rules.
 
-```powershell
-& '.\Quick Setup.cmd' web
-& '.\Quick Setup.cmd' full
-```
+## Existing models and reproducibility
 
-To preview the plan without installing:
+Advanced installation can use an existing GPT-SoVITS folder containing `api_v2.py` and an existing Qwen3-ASR model folder. It checks important paths but cannot guarantee that every unseen model is compatible. The published `release/install_specs/voice_baseline.json` pins the upstream GPT-SoVITS source commit (`04a44eb977586645f33594b72af13a035a2056c6`) and Python dependency lock digests; the original developer's engine **also has local uncommitted changes** that are not yet part of a distributable overlay. Upstream pretrained and ASR downloads are not all locked to developer-verified hashes. Do not claim that this preview perfectly reproduces every audio sample on every GPU.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\quick_setup.ps1 -Mode full -DryRun
-```
+If a trusted compatibility overlay is published, it can be selected under **Advanced options**. Overlays require explicit opt-in and validate file SHA-256 before applying, with backups. A plain upstream source ZIP is not a compatibility overlay.
 
-**The setup scripts do not download** Qwen3-ASR weights, a GPT-SoVITS engine, character ZIPs, reference recordings, or an LLM provider key.
+## If something fails
 
-## Manual Web installation
+- **Installation fails:** check its component-specific error and `data/logs/first_run/`; retry Install after resolving driver, disk, download or file-permission issues.
+- **Cannot download character:** verify the project's real GitHub Releases URL and whether an authorized character ZIP has actually been published. The default `release/project_links.json` contains no invented repository owner.
+- **Character installed but no live speech:** open **Service status** and select **Retry character voice**. Check `data/logs/tts_refresh.log` if the error persists. An unrelated listener on port 9880 is not automatically killed.
+- **App does not open:** see `data/logs/desktop_start.log`. The launcher may use an alternative Web port if the preferred port is occupied.
+- **App does not exit:** double-click `Stop AnimeVoiceTutor.cmd` to end services owned by this installation; do not terminate unknown Python processes.
 
-From the source root, with Python 3.11 available:
+Developer diagnostics and manual source tests remain in `advanced/`. See [Testing](TESTING.md). CMD filenames with spaces are intentional; scripts use quoted paths.
 
-```powershell
-py -3.11 -m venv .venv
-& '.\.venv\Scripts\python.exe' -m pip install --upgrade pip
-& '.\.venv\Scripts\python.exe' -m pip install -e '.[test]'
-& '.\.venv\Scripts\python.exe' -m pytest -q tests
-```
+## Advanced: manual development environment
 
-The standard pip editable install installs Web/test requirements only. If using a nonstandard Web Python location, configure `AVT_WEB_PYTHON`. ASR and TTS need their own compatible environments; do not merge incompatible package sets.
+Maintainers may install the Web package into an intentionally selected development Python environment with `python -m pip install -e .`, then use tools under `advanced/` to configure ASR and TTS independently. This is **not** the standard user installation flow and does not automatically install all model weights or GPU prerequisites. Do not run it inside a custom shared environment unless you understand the dependency changes.
 
-To create locked speech environments manually, install `uv` and use the project's lock files:
-
-```powershell
-uv python install 3.12.16 3.10.22
-uv venv --python 3.12.16 runtime/asr
-uv pip sync --python runtime/asr/Scripts/python.exe --require-hashes --index-strategy first-index --torch-backend cu128 release/install_specs/asr_requirements.lock
-uv venv --python 3.10.22 runtime/tts
-uv pip sync --python runtime/tts/Scripts/python.exe --require-hashes --index-strategy first-index --torch-backend cu128 release/install_specs/tts_requirements.lock
-```
-
-Custom ASR/TTS interpreters can be referenced through `AVT_ASR_PYTHON` and `AVT_TTS_PYTHON`; or use `scripts/reuse_existing_installation.ps1` to create machine-local settings.
-
-## Configure AI chat
-
-Start the Web interface and configure an OpenAI or DeepSeek provider and API key in **Settings**. No API key is supplied with the repository. Web startup alone does not demonstrate a successful provider connection.
-
-## Optional ASR
-
-After installing an ASR Python environment, run:
-
-```powershell
-& '.\Download ASR Model.cmd'         # Qwen3-ASR-0.6B
-& '.\Download ASR Model.cmd' 1.7B    # larger option
-```
-
-An existing ASR model may be referenced using `JVT_ASR_MODEL_PATH` or the local reuse script, rather than downloaded again.
-
-## Optional GPT-SoVITS voice
-
-1. Install or link a compatible GPT-SoVITS-v5 engine; `api_v2.py` must exist in the engine directory. Use `AVT_TTS_ROOT` or `scripts/reuse_existing_installation.ps1 -TtsRoot` if it lives outside the project.
-2. Supply a compatible Python environment (`AVT_TTS_PYTHON`, or `-TtsPython` in the reuse script) with the engine's requirements.
-3. In **Settings → Character**, install an authorized voice-pack ZIP containing the model weights, reference WAV, transcript and inference preset. The pack is not the engine.
-4. Select the character and start AnimeVoiceTutor normally, without `-TextOnly`/`-SkipTTS`.
-5. Confirm `tts_ready: true` through the status panel or `/api/status`, then test real synthesis.
-
-The TTS service normally listens on localhost port `9880`. Another process listening there is **not** proof that the selected voice is loaded; the app validates its character-to-model binding. Stop an old, known service before starting a different character's voice, and do not terminate unidentified processes.
-
-For existing installations, **`Use Existing Models.cmd`** can link ASR model and engine/Python paths without copying large weights. It does not automatically convert legacy private voice settings into a new character pack; install a character ZIP separately. Read [Character packs](CHARACTER_PACKS.md) for details.
-
-## Run and verify
-
-```powershell
-& '.\Doctor AnimeVoiceTutor.cmd'
-& '.\Verify Source.cmd'
-& '.\Start AnimeVoiceTutor.cmd' -NoBrowser
-& '.\Test AnimeVoiceTutor.cmd'
-& '.\Test AnimeVoiceTutor.cmd' -Voice
-```
-
-Use `Stop AnimeVoiceTutor.cmd` to end managed services. The Web app defaults to `http://127.0.0.1:8767`; choose a different available Web port by setting `AVT_WEB_PORT`. Local ASR and TTS generally use ports `8766` and `9880`.
-
-`Doctor` checks paths and dependencies; it does not load a neural model. `Test ... -Voice` performs an actual TTS WAV generation and ASR transcription test. See [Testing](TESTING.md).
+For the isolated install workflow, `scripts/quick_setup.ps1` uses `uv pip sync` against the role-specific lock files. Paths such as `AVT_TTS_PYTHON` and `AVT_ASR_PYTHON` select previously installed compatible interpreter environments; users do not need to set them manually for the standard installer.

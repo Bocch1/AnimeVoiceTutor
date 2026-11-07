@@ -6,6 +6,7 @@ and relative paths can be extracted from a user-supplied ZIP.
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -84,10 +85,10 @@ def validate_manifest(folder: Path) -> dict:
     title = raw.get('display_name')
     if not isinstance(title, str) or not 1 <= len(title) <= 100:
         raise PackError('Invalid character display name')
-    for field in ('portrait', 'effect_data'):
+    for field in ('portrait', 'avatar_color', 'effect_data'):
         if raw.get(field):
             file_path = _local_file(folder, raw[field])
-            if field == 'portrait' and file_path.suffix.lower() not in {'.png', '.jpg', '.jpeg', '.webp'}:
+            if field in ('portrait', 'avatar_color') and file_path.suffix.lower() not in {'.png', '.jpg', '.jpeg', '.webp'}:
                 raise PackError('Portrait must be an image')
             if field == 'effect_data':
                 if file_path.suffix.lower() != '.json' or file_path.stat().st_size > 2_000_000:
@@ -143,6 +144,7 @@ def list_installed() -> list[dict]:
             records += raw.get('hidden_greetings', [])
             result.append({'id': raw['id'], 'label': raw['display_name'],
                            'has_portrait': bool(raw.get('portrait')),
+                           'has_color_avatar': bool(raw.get('avatar_color') or (folder / 'assets' / 'avatar_color.png').is_file()),
                            'voice_ready': bool(raw.get('voice')),
                            'recordings_present': sum(bool(entry.get('audio')) for entry in records),
                            'recordings_total': len(records),
@@ -218,6 +220,17 @@ def public_pack_asset(identity: str, kind: str) -> Path:
     if identity not in {item['id'] for item in list_installed()}:
         raise PackError('Character pack not found')
     raw = validate_manifest(folder)
+    if kind == 'avatar':
+        # Dedicated original-color avatar is optional and independent of the
+        # monochrome line-art source used by the welcome animation.
+        if raw.get('avatar_color'):
+            return _local_file(folder, raw['avatar_color'])
+        local_color = folder / 'assets' / 'avatar_color.png'
+        if local_color.is_file() and not local_color.is_symlink():
+            return _local_file(folder, 'assets/avatar_color.png')
+        if raw.get('portrait'):
+            return _local_file(folder, raw['portrait'])
+        raise PackError('No avatar image available')
     key = {'portrait': 'portrait', 'effects': 'effect_data'}.get(kind)
     if not key or not raw.get(key):
         raise PackError('Asset not available')
@@ -272,6 +285,12 @@ def import_pack(archive: Path) -> dict:
         target = PACK_ROOT / identity
         if target.exists():
             raise PackError('Character already installed; remove existing pack manually before replacing')
+        # Keep a local copy of each imported ZIP for reinstall / transfer.
+        # Isolated tests may override PACK_ROOT with a temp folder; archive only
+        # when using the canonical data/character_packs location.
+        if PACK_ROOT == ROOT / 'data' / 'character_packs':
+            from tools.local_package_store import archive_character
+            archive_character(archive, ROOT)
         os.replace(stage, target)
         return {'id': identity, 'label': manifest['display_name']}
 
@@ -321,4 +340,48 @@ def tts_binding_matches() -> bool:
             return False
         return _process_running(pid)
     except (OSError, ValueError, TypeError, AttributeError):
+        return False
+
+
+def archive_matches_installed(archive: Path, identity: str) -> bool:
+    """Accept a repeated import only when every archived file equals the installed pack.
+
+    No extraction occurs on this path. A different archive with the same ID must
+    not silently select or overwrite existing voice weights.
+    """
+    folder = PACK_ROOT / identity
+    try:
+        if archive.stat().st_size > MAX_ZIP_BYTES:
+            return False
+        if validate_manifest(folder)['id'] != identity:
+            return False
+        actual = {p.relative_to(folder).as_posix(): p for p in folder.rglob('*') if p.is_file()}
+        if any(p.is_symlink() for p in folder.rglob('*')):
+            return False
+        with zipfile.ZipFile(archive) as source:
+            members = [m for m in source.infolist() if not m.is_dir()]
+            if len(members) > MAX_FILES or sum(m.file_size for m in members) > MAX_TOTAL_BYTES:
+                return False
+            seen = set()
+            for member in members:
+                rel = member.orig_filename
+                parts = PurePosixPath(rel)
+                file_type = (member.external_attr >> 16) & 0o170000
+                if ('\\' in rel or parts.is_absolute() or any(x in ('.', '..') for x in parts.parts)
+                    or len(parts.parts) > 7 or parts.suffix.lower() not in ALLOWED_EXT
+                    or file_type == 0o120000 or rel in seen or rel not in actual):
+                    return False
+                seen.add(rel)
+                digest = hashlib.sha256()
+                with source.open(member) as handle:
+                    for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+                        digest.update(chunk)
+                installed_hash = hashlib.sha256()
+                with actual[rel].open('rb') as handle:
+                    for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+                        installed_hash.update(chunk)
+                if digest.digest() != installed_hash.digest():
+                    return False
+            return seen == set(actual)
+    except (OSError, ValueError, zipfile.BadZipFile, RuntimeError, PackError):
         return False

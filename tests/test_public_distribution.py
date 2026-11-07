@@ -8,7 +8,7 @@ from scripts.verify_public_source import is_private_path, verify_archive
 ROOT=Path(__file__).resolve().parents[1]
 
 def test_local_launchers_and_docs_exist():
-    assert all((ROOT/p).is_file() for p in ['README.md','README.zh-CN.md','README.ja.md','Start AnimeVoiceTutor.cmd','Stop AnimeVoiceTutor.cmd','Setup AnimeVoiceTutor.cmd','scripts/setup_source.ps1'])
+    assert all((ROOT/p).is_file() for p in ['README.md','README.zh-CN.md','README.ja.md','Start AnimeVoiceTutor.cmd','Stop AnimeVoiceTutor.cmd','advanced/Setup AnimeVoiceTutor.cmd','scripts/setup_source.ps1'])
 
 def test_original_hidden_greetings_and_replay_logic_preserved():
     text=(ROOT/'web/index.html').read_text(encoding='utf-8')

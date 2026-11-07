@@ -39,6 +39,7 @@ Example `character.json` (the `model` and `voice` sections are omitted in a UI-o
 ```json
 {
   "schema_version": 1,
+  "pack_version": "1",
   "id": "example_character",
   "display_name": "Example Character",
   "avatar": "日",
@@ -89,10 +90,20 @@ The migration helper copies the configured weights, reference WAV, frozen voice 
 - `voice_ready: true` in character listing means the pack contains expected voice resources. It does **not** mean a GPU inference engine is running.
 - `tts_engine_available: true` means the configured GPT-SoVITS engine source can be found.
 - `tts_ready: true` in `/api/status` means the active voice has a validated binding to the running TTS service.
-- `Test AnimeVoiceTutor.cmd -Voice` performs actual TTS synthesis and ASR transcription when both services are configured.
+- `advanced/Test AnimeVoiceTutor.cmd -Voice` performs actual TTS synthesis and ASR transcription when both services are configured.
 
 A process listening on `9880` is not sufficient to claim that the selected character has loaded: the model-binding check must pass. Stop known conflicting TTS services before switching voice weights; do not terminate unrelated processes by PID alone.
 
 ## Distribution rights
 
 The application MIT license covers its code, **not** optional character images, names, recordings, fine-tuned voice weights, or derivative media. Distribute a character ZIP only after confirming permission for **each** resource it contains. Core source releases should remain character-neutral.
+
+## First Run Setup integration
+
+On Windows, `First Run Setup.cmd` can import a local character ZIP and activate it without using the browser. The same archive path validation applies to both import routes. Switching model weights requires stopping and restarting the managed TTS process. Model weight files may contain unsafe serialized objects; only use trusted packs whose redistribution permissions have been established. A removal-on-request notice does not grant redistribution rights.
+
+## Local archiving and version labels (v0.13.1)
+
+After a successful import through First Run or the Web UI, the original ZIP is saved under `packages/characters/` as `AnimeVoiceTutor_Character_<id>_v<pack_version>.zip`. The installed and extracted model files stay in `data/character_packs/<id>/`; these are different locations. Existing character ZIPs without `pack_version` are stored using the **local archive label** `v1`; this does not assert the version of training weights. For future pack updates, specify `pack_version` in `character.json` (for example `"2"` or `"1.1"`).
+
+The archive never overwrites a ZIP with a matching ID/version but different contents. Do not publish local character archives without the necessary rights; the `packages/` folder is Git-ignored and excluded from Core releases.

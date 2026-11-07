@@ -16,11 +16,11 @@ function Show-Help {
     Write-Host 'AnimeVoiceTutor | Optional quick environment setup'
     Write-Host ''
     Write-Host 'Usage:'
-    Write-Host '  Quick Setup.cmd             Interactive role selection'
-    Write-Host '  Quick Setup.cmd full        Web + ASR + TTS environments'
-    Write-Host '  Quick Setup.cmd web         Web only (CPU, no GPU required)'
-    Write-Host '  Quick Setup.cmd asr         ASR runtime only'
-    Write-Host '  Quick Setup.cmd tts         TTS runtime only'
+    Write-Host '  advanced\Quick Setup.cmd             Interactive role selection'
+    Write-Host '  advanced\Quick Setup.cmd full        Web + ASR + TTS environments'
+    Write-Host '  advanced\Quick Setup.cmd web         Web only (CPU, no GPU required)'
+    Write-Host '  advanced\Quick Setup.cmd asr         ASR runtime only'
+    Write-Host '  advanced\Quick Setup.cmd tts         TTS runtime only'
     Write-Host '  powershell -File scripts\quick_setup.ps1 -Mode full -DryRun'
     Write-Host ''
     Write-Host 'Manual installation: docs\INSTALLATION.md'
@@ -44,7 +44,7 @@ if ($Mode -eq 'menu') {
         '3' { $Mode = 'asr'; break }
         '4' { $Mode = 'tts'; break }
         '5' { Write-Host 'Cancelled. No changes made.'; return }
-        default { throw 'Invalid selection. Run Quick Setup.cmd again.' }
+        default { throw 'Invalid selection. Run advanced\Quick Setup.cmd again.' }
     }
 }
 
@@ -76,6 +76,6 @@ if (-not [string]::IsNullOrWhiteSpace($UvPath)) { $params.UvPath = $UvPath }
 if (-not $?) { throw 'Environment setup did not complete.' }
 Write-Host ''
 Write-Host 'QUICK_SETUP_COMPLETE: Python environments are ready.'
-Write-Host 'Optional ASR model: Download ASR Model.cmd (0.6B by default).'
+Write-Host 'Optional ASR model: advanced\Download ASR Model.cmd (0.6B by default).'
 Write-Host 'Manual voice setup: docs\INSTALLATION.md and configs\README.md.'
-Write-Host 'Run Doctor AnimeVoiceTutor.cmd to inspect your local configuration.'
+Write-Host 'Run advanced\Doctor AnimeVoiceTutor.cmd to inspect your local configuration.'

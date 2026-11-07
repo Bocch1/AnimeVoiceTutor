@@ -12,9 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_source_launchers_and_runtime_reuse_are_present():
     for path in (
-        'Use Existing Models.cmd', 'Download ASR Model.cmd', 'Doctor AnimeVoiceTutor.cmd', 'Verify Source.cmd',
+        'advanced/Use Existing Models.cmd', 'advanced/Download ASR Model.cmd', 'advanced/Doctor AnimeVoiceTutor.cmd', 'advanced/Verify Source.cmd',
         'scripts/verify_source_tests.ps1',
-        'Test AnimeVoiceTutor.cmd', 'scripts/bootstrap_uv.ps1',
+        'advanced/Test AnimeVoiceTutor.cmd', 'scripts/bootstrap_uv.ps1',
         'scripts/load_local_runtime.ps1', 'scripts/reuse_existing_installation.ps1',
         'scripts/download_asr_model.ps1', 'scripts/doctor_source.ps1',
         'scripts/test_source.ps1', 'tools/smoke_voice_services.py',

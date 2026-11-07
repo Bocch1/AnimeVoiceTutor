@@ -18,6 +18,7 @@ experiments/
 outputs/
 checkpoints/
 reports/
+packages/
 
 # Runtime, cache and developer installation
 .venv/

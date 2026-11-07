@@ -30,4 +30,4 @@ if ($selected -ne 'default') {
 }
 Check 'FFmpeg' ($null -ne (Get-Command ffmpeg.exe -ErrorAction SilentlyContinue)) 'ffmpeg.exe on PATH'
 Check 'FFprobe' ($null -ne (Get-Command ffprobe.exe -ErrorAction SilentlyContinue)) 'ffprobe.exe on PATH'
-Write-Host 'This preflight checks file paths, not actual model inference. Use Test AnimeVoiceTutor.cmd -Voice after starting the application.'
+Write-Host 'This preflight checks file paths, not actual model inference. Use advanced\Test AnimeVoiceTutor.cmd -Voice after starting the application.'

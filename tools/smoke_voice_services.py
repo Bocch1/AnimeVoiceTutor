@@ -48,9 +48,12 @@ def run(voice: bool, tts_only: bool, asr_only: bool, save_wav: Path) -> None:
         status_response = client.get(BASE + "/api/status")
         status_response.raise_for_status()
         status = status_response.json()
-        if status.get("version") != "0.12.0":
-            raise RuntimeError("Unexpected app version; another instance may be serving the configured Web port (expected 0.12.0)")
-        print("PASS: WebUI and /api/status respond (AnimeVoiceTutor source v0.12.0)")
+        # Accept the installed Core's declared version, not a stale hardcoded
+        # The running listener must identify itself as this exact Core version.
+        local_version = (ROOT / "pyproject.toml").read_text(encoding="utf-8").split('version = "', 1)[1].split('"', 1)[0]
+        if status.get("version") != local_version:
+            raise RuntimeError(f"Unexpected app version on port {BASE}: expected {local_version}, got {status.get('version')!r}. Close another running instance.")
+        print(f"PASS: WebUI and /api/status respond (AnimeVoiceTutor v{local_version})")
         print("INFO: LLM configured:", bool(status.get("llm_configured")))
         if not voice and not tts_only and not asr_only:
             print("Web smoke test complete. Run with --voice for actual ASR and TTS inference.")
@@ -104,7 +107,7 @@ def main() -> int:
         return 0
     except (httpx.HTTPError, ValueError, RuntimeError, OSError, sf.LibsndfileError) as exc:
         print("FAIL:", str(exc)[:500], file=sys.stderr)
-        print("Start the extracted source using Start AnimeVoiceTutor.cmd -NoBrowser; inspect data/logs if needed.", file=sys.stderr)
+        print("Start the installed application using its desktop Start shortcut. Inspect data/logs if needed.", file=sys.stderr)
         return 1
 
 
