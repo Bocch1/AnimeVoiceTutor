@@ -1,0 +1,11 @@
+{
+  "voices": [
+    {
+      "id": "azusa_e36",
+      "label": "Example voice (configure your own authorized speaker)",
+      "reference_audio_path": "data/reference/YOUR_AUTHORIZED_REFERENCE.wav",
+      "prompt_text": "REFERENCE_AUDIO_EXACT_JAPANESE_TRANSCRIPT",
+      "tts_url": "http://127.0.0.1:9880/tts"
+    }
+  ]
+}

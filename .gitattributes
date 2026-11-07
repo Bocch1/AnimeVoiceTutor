@@ -1,0 +1,8 @@
+# Stable checkouts on Windows and Linux
+*.cmd text eol=crlf
+release/install_specs/*.in text eol=lf
+*.lock text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.json text eol=lf

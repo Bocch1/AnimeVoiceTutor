@@ -1,0 +1,104 @@
+# Credentials, personal settings and local voice configuration
+.env
+.env.*
+!.env.example
+configs/*.json
+!configs/*.example.json
+!configs/*.sample.json
+
+# Private media, models and all training assets
+web/assets/
+models/
+external/
+weights/
+datasets/
+data/
+backups/
+experiments/
+outputs/
+checkpoints/
+reports/
+
+# Runtime, cache and developer installation
+.venv/
+.venv*/
+venv/
+runtime/
+.installer/
+installer/bin/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+logs/
+build/
+dist/
+*.egg-info/
+
+# Binary personal and distribution artifacts
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.webm
+*.mp4
+*.mkv
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.bin
+*.sqlite
+*.sqlite3
+*.db
+*.log
+*.bak
+*.pem
+*.key
+*.zip
+*.7z
+*.rar
+*.exe
+*.dll
+*.pyd
+*.pyc
+
+# Editor and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local copies of downloaded installer binaries, trained audio and artifacts
+*.jsonl
+*.sqlite3-*
+.env.local
+local/
+private/
+*.wave
+*.raw
+*.opus
+*.jpeg
+*.jpg
+*.png
+*.webp
+*.gif
+*.tiff
+*.bmp
+*.ico
+*.svg
+
+# Local runtime links to already-installed models and Python environments
+.avt-local.ps1
+.avt-local.ps1.tmp
+
+# The single reviewed home-screen portrait is included in the public repository.
+!web/assets/
+web/assets/*
+
+# Optional character packs and model assets live outside the public core.
+data/character_packs/
+data/app/selected_character.json
+data/app/tts_model_binding.json

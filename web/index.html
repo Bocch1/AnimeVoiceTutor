@@ -1,0 +1,2918 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark"><title>AnimeVoiceTutor</title>
+<meta name="description" content="AnimeVoiceTutor — Japanese conversation, naturally.">
+<style>
+
+:root{--bg:#111112;--sidebar:#171719;--panel:#202023;--hover:#2a2a2e;--line:#343438;--text:#f3f3f4;--muted:#a1a1a8;--accent:#81d8d0;--accent-soft:#163d3a;--bad:#ff9b9b;--shadow:0 18px 64px #0008}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font:14px/1.62 Inter,ui-sans-serif,"Noto Sans JP","Yu Gothic UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text)}button,textarea,select{font:inherit}button{cursor:pointer;color:inherit;background:none;border:0;border-radius:10px}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.38;cursor:not-allowed}button:hover:not(:disabled){background:var(--hover)}.hidden{display:none!important}.app{display:flex;height:100dvh;overflow:hidden}.sidebar{width:260px;flex:0 0 260px;background:var(--sidebar);display:flex;flex-direction:column;border-right:1px solid #242427;z-index:20;transition:transform .2s ease}.side-top{padding:18px 14px 12px}.brand-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.brand{display:flex;align-items:center;gap:10px;font-size:14px;letter-spacing:.01em;font-weight:660}.brandmark{height:24px;width:24px;border-radius:9px;background:var(--accent);color:#10302e;display:grid;place-items:center;font-weight:900}.iconbtn{height:36px;min-width:36px;display:inline-grid;place-items:center;color:#dadade;font-size:17px}.new-btn{display:flex;gap:10px;align-items:center;width:100%;padding:10px 12px;margin-top:16px;color:#efeff0;text-align:left;border:1px solid #35353a}.new-btn span:first-child{color:var(--accent);font-size:21px;line-height:1}.side-label{font-size:11px;color:var(--muted);margin:19px 10px 8px;letter-spacing:.08em}.sessions{flex:1;overflow-y:auto;padding:0 10px;display:flex;flex-direction:column;gap:4px}.session{display:block;text-align:left;padding:10px 12px;width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#c1c1c6}.session.active{background:#303034;color:var(--text)}.side-bottom{border-top:1px solid #303034;padding:10px 12px 14px}.side-action{display:flex;align-items:center;gap:11px;padding:10px 12px;width:100%;text-align:left}.side-action .symbol{width:20px;text-align:center;color:var(--accent)}.side-bottom small{display:block;color:#7e7e85;font-size:10px;padding:8px 12px}.workspace{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 26px;min-height:63px;gap:15px}.top-left{display:flex;align-items:center;gap:13px}.page-title{font-size:14px;font-weight:600;letter-spacing:.01em}.top-sub{font-size:11px;color:var(--muted)}.status-button{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;padding:7px 11px}.dot{height:7px;width:7px;border-radius:50%;background:#7d7d83;box-shadow:0 0 0 3px #5552}.dot.good{background:var(--accent);box-shadow:0 0 0 3px #81d8d015}.dot.warn{background:#f2c27f;box-shadow:0 0 0 3px #f2c27f22}.top-new{color:var(--muted);font-size:12px;padding:7px 11px}.messages{flex:1;min-height:0;overflow:auto;scroll-behavior:smooth}.thread{max-width:850px;margin:0 auto;padding:30px 30px 110px;display:flex;flex-direction:column;gap:24px;min-height:100%}.empty{margin:auto;text-align:center;max-width:540px;padding:0 0 90px}.empty .spark{display:inline-grid;place-items:center;width:47px;height:47px;border:1px solid #81d8d049;border-radius:18px;color:var(--accent);font-size:25px;margin-bottom:20px}.empty h1{font-size:27px;line-height:1.4;letter-spacing:-.03em;font-weight:580;margin:0 0 8px}.empty p{font-size:13px;color:var(--muted);line-height:1.8;margin:0}.message{width:100%;display:flex;flex-direction:column;gap:5px}.message.user{align-items:flex-end}.message.assistant{align-items:flex-start}.bubble{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.88}.user .bubble{background:#2b2b2e;border-radius:20px;padding:11px 16px;max-width:min(79%,640px)}.assistant .bubble{max-width:100%;padding:3px 0}.message-actions{display:flex;align-items:center;gap:2px;flex-wrap:wrap;min-height:30px}.message-actions button{font-size:12px;color:#aaaab0;padding:5px 9px}.message-actions button:hover{color:var(--accent)}.correction{background:#172524;border-left:2px solid var(--accent);padding:10px 13px;border-radius:7px;max-width:680px;font-size:12px;line-height:1.7;color:#cae6e3}.correction small{display:block;font-size:10px;color:var(--accent);margin-bottom:5px}.composer-zone{padding:0 26px 18px;background:linear-gradient(transparent,var(--bg) 10%);position:relative}.composer-wrap{max-width:850px;margin:auto}.composer{border:1px solid #38383b;background:var(--panel);border-radius:23px;padding:10px 12px 9px;box-shadow:0 10px 30px #0002}.composer:focus-within{border-color:#6d827e}.composer textarea{background:transparent;border:0;resize:none;color:var(--text);width:100%;font-size:14px;line-height:1.6;min-height:40px;max-height:160px;outline:none;padding:8px 11px 0;display:block}.composer textarea::placeholder{color:#848489}.composer-tools{display:flex;justify-content:space-between;align-items:center;padding:5px 3px 1px}.tool-group{display:flex;align-items:center;gap:4px}.tool-btn{display:flex;align-items:center;justify-content:center;height:36px;min-width:36px;padding:0 9px;font-size:16px}.tool-btn.active{color:var(--accent);background:var(--accent-soft)}.tool-btn.recording{background:#73363b;color:#fff;animation:pulse 1.2s infinite}.send-btn{border-radius:14px;height:34px;width:34px;background:var(--accent);color:#142c29;display:grid;place-items:center;font-size:20px;font-weight:800}.send-btn:hover:not(:disabled){background:#acebe5}.footer-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 9px 0;color:#848488;font-size:11px;min-height:24px}.notice.error{color:var(--bad)}.meter{width:70px;height:3px;background:#414145;border-radius:20px;overflow:hidden}.meter>div{width:3%;height:100%;background:var(--accent);transition:width .07s}.overlay{display:none;position:fixed;inset:0;background:#0009;z-index:19}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(390px,100vw);background:#19191b;border-left:1px solid #39393d;box-shadow:var(--shadow);z-index:40;transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column}.drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;align-items:center;padding:21px 23px;border-bottom:1px solid var(--line)}.drawer-header strong{font-size:16px}.drawer-scroll{overflow:auto;padding:17px 23px 30px;flex:1}.drawer h3{font-size:12px;font-weight:600;color:#aeafb3;letter-spacing:.06em;margin:21px 0 12px}.setting-line{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:9px 0;min-height:46px}.setting-line label{cursor:pointer}.setting-line select{background:#27272a;color:var(--text);border:1px solid #444449;border-radius:9px;padding:7px;font-size:12px;max-width:185px}.setting-line input{accent-color:var(--accent);height:17px;width:17px}.divider{border:0;border-top:1px solid #343437;margin:17px 0}.info-row{display:flex;justify-content:space-between;gap:12px;margin:8px 0;color:#a7a7ad;font-size:12px}.info-row b{color:#ddd;font-weight:500}.drawer details summary{cursor:pointer;padding:12px 0;color:var(--muted)}.drawer details p{font-size:12px;color:var(--muted);line-height:1.8}.drawer button.muted{background:#27272a;border:1px solid #414147;padding:8px 12px;font-size:12px}.drawer button.danger{color:#ffaaaa}.drawer small{color:var(--muted)}.sidebar-scrim.open{display:block}.settings-scrim.open{display:block}.sidebar.collapsed{margin-left:-260px}.sidebar.collapsed~.workspace .mobile-menu{display:grid}.mobile-menu{display:none}.record-status{display:none}@keyframes pulse{50%{box-shadow:0 0 0 5px #b9535220}}@media(max-width:780px){.sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-105%);box-shadow:var(--shadow);margin-left:0!important}.sidebar.open{transform:translateX(0)}.mobile-menu{display:grid}.topbar{padding:9px 14px;min-height:57px}.thread{padding:23px 17px 90px}.composer-zone{padding:0 10px 12px}.message.user .bubble{max-width:90%}.empty h1{font-size:23px}.status-button{font-size:11px}.top-new{display:none}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* v0.8.4 minimal conversation interface */
+:root{--bg:#101012;--sidebar:#171719;--panel:#242427;--line:#303034;--text:#f4f4f4;--muted:#a0a0a7;--accent:#81d8d0}
+body{font-family:Inter,ui-sans-serif,"Noto Sans JP","Yu Gothic UI","Microsoft YaHei",system-ui,sans-serif}
+.brand-row{padding:0 3px}.brandmark{height:24px;width:24px;font-size:14px}
+.side-bottom{padding:11px 12px}.side-bottom .side-action>span:first-child{height:20px;width:20px;display:grid;place-items:center;color:var(--muted)}
+.side-top{padding-top:20px}.new-btn{border-color:#333339;margin-top:20px}
+.new-btn .plus-symbol{color:var(--text);font-size:20px;line-height:1}
+.sessions{padding:0 10px}.session{border-radius:10px}
+.topbar{padding:15px 25px;min-height:70px}.top-left{gap:12px}.page-title{font-size:16px;font-weight:600}
+.topbar .status-button{min-width:32px;min-height:32px;display:grid;place-items:center;padding:7px}
+.dot{height:7px;width:7px;box-shadow:none}.dot.good{box-shadow:none}.dot.warn{box-shadow:none}
+.thread{max-width:800px;padding:26px 28px 100px;gap:25px}
+.empty{max-width:none;padding:0 0 75px}.empty h1{font-size:29px;font-weight:550;letter-spacing:-.022em}
+.user .bubble{max-width:min(82%,650px);background:#2d2d31;border-radius:20px;padding:10px 16px}
+.assistant .bubble{font-size:15px;line-height:1.9;padding:4px 0}
+.message{gap:4px}
+.message-actions{min-height:29px;gap:1px;opacity:.72;transition:opacity .15s}
+.message:hover .message-actions,.message:focus-within .message-actions{opacity:1}
+.action-button{width:32px;height:32px;display:grid;place-items:center;color:#a9a9b0!important;padding:5px!important;border-radius:9px}
+.action-button svg{display:block}.action-button:hover:not(:disabled){color:var(--accent)!important;background:#222c2c}
+.pending-row{min-height:40px;padding-top:5px}.pending-bubbles{display:flex;align-items:center;gap:5px;padding:13px 2px}
+.pending-bubbles i{height:7px;width:7px;border-radius:50%;background:#999da2;animation:thinking 1.1s infinite ease-in-out}
+.pending-bubbles i:nth-child(2){animation-delay:.15s}.pending-bubbles i:nth-child(3){animation-delay:.3s}
+@keyframes thinking{0%,60%,100%{opacity:.26;transform:translateY(0)}30%{opacity:.9;transform:translateY(-3px)}}
+.composer-zone{padding:0 24px 22px;background:linear-gradient(transparent,#101012 14%)}
+.composer-wrap{max-width:800px;position:relative}
+.composer{border:1px solid #414145;border-radius:25px;background:#242427;padding:10px 12px 9px;box-shadow:none}
+.composer:focus-within{border-color:#677d7a}
+.composer textarea{font-size:15px;min-height:39px;max-height:160px;padding:7px 11px 0}
+.composer textarea:disabled{opacity:.75}.composer textarea::placeholder{color:#929297}
+.composer-tools{padding:4px 3px 1px}.tool-btn{border-radius:18px}
+.tool-btn.active{color:var(--accent);background:#21403d}
+.tool-btn svg{display:block}.tool-btn.recording{background:#6b292e;color:#fff}
+.send-btn{height:36px;width:36px;border-radius:16px;background:var(--accent);color:#143532}
+.send-btn.empty-send{background:#424247;color:#bcbcc1}.send-btn svg{display:block}
+.notice{position:absolute;left:10px;right:10px;bottom:calc(100% + 11px);width:fit-content;max-width:calc(100% - 20px);padding:8px 14px;border:1px solid #3f4245;border-radius:12px;background:#252528;color:#dfdfdf;font-size:12px;box-shadow:0 8px 30px #0008;opacity:0;pointer-events:none;transform:translateY(7px);transition:opacity .18s,transform .18s;z-index:5}
+.notice.visible{opacity:1;transform:translateY(0)}.notice.error{border-color:#7c4346;color:#ffb6b6}
+.meter{width:55px}.correction{font-size:13px;background:#1a2a28}
+.mic-scrim{display:block;z-index:49}.mic-help{position:fixed;z-index:50;top:50%;left:50%;transform:translate(-50%,-50%);width:min(410px,calc(100vw - 40px));padding:23px 24px 25px;border:1px solid #444449;border-radius:20px;background:#212124;box-shadow:0 20px 90px #000b}
+.mic-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.mic-head h2{font-weight:600;font-size:17px;margin:0}.mic-help p{line-height:1.8;color:#b5b5bd;margin:14px 0 20px}
+.mic-retry{background:var(--accent);color:#103332;padding:10px 24px;font-weight:600}.mic-retry:hover{background:#acebe5}
+.drawer{background:#1c1c1f}.settings-actions{flex-wrap:wrap;gap:7px}
+@media(max-width:780px){.topbar{padding:11px 14px;min-height:59px}.thread{padding:18px 17px 90px}.empty h1{font-size:24px}.composer-zone{padding:0 10px 12px}.user .bubble{max-width:92%}.message-actions{opacity:1}}
+@media(hover:none){.message-actions{opacity:1}}
+
+
+/* v0.8.7: ChatGPT-like minimal conversation chrome and accessibility */
+:root{--accent:#81d8d0;--accent-hover:#a5eee8;--accent-ink:#103a37}
+.topbar{padding:12px 25px;min-height:66px}
+.top-left{gap:7px;min-width:0}
+.page-title{font-size:16px;font-weight:620;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:7px}
+.iconbtn{border-radius:12px;transition:background-color .15s,color .15s}
+.iconbtn:hover{background:#2a3736;color:#a9ece5}
+.topbar .mobile-menu{display:none;color:var(--accent);background:#1b2f2e;border:1px solid #2a5451}
+.topbar .mobile-menu:hover{background:#29423f}
+.top-new-shortcut{display:none!important;color:#d5eeeb;border:1px solid #355450;background:#1a2b2a}
+.top-new-shortcut:hover{background:#28413f}
+.sidebar.collapsed~.workspace .mobile-menu,.sidebar.collapsed~.workspace .top-new-shortcut{display:inline-grid!important}
+.settings-trigger{position:relative;display:grid;place-items:center;width:40px!important;height:40px!important;border-radius:13px!important;background:#233a38;color:var(--accent)!important;border:1px solid #3e6a66!important;padding:0!important;transition:background .15s,border-color .15s}
+.settings-trigger:hover{background:#31534f!important;border-color:#83d8cf!important}
+.settings-trigger svg{display:block}
+.settings-trigger .dot{position:absolute;right:4px;bottom:4px;width:6px;height:6px;border:1px solid #233a38}
+.settings-trigger .dot.good{background:var(--accent)}
+.settings-trigger .dot.warn{background:#ffbc79}
+.composer{border-radius:26px;padding:10px 12px 8px}
+.composer-tools{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:4px 2px 0}
+.composer-primary{display:flex;justify-content:flex-end;align-items:center;margin-left:auto}
+.send-btn{display:grid;place-items:center;border-radius:50%;width:39px;height:39px;min-width:39px;background:var(--accent);color:var(--accent-ink)}
+.send-btn:hover:not(:disabled){background:var(--accent-hover)}
+.send-btn.mic-primary{background:#e8eeee;color:#142b29}
+.send-btn.mic-primary:hover:not(:disabled){background:var(--accent)}
+.send-btn.mic-primary.recording{background:#e88385;color:#271317;animation:pulse 1.2s infinite}
+.send-btn svg{height:20px;width:20px}
+.tool-group .tool-btn{height:34px;min-width:34px;border-radius:12px;color:#b3cbc8}
+.sidebar.collapsed{margin-left:-260px;pointer-events:none}
+/* Desktop collapse should never leave a blocking scrim */
+@media(min-width:781px){.sidebar-scrim{display:none!important}}
+@media(max-width:780px){
+ .topbar{padding:10px 14px;min-height:58px}
+ .topbar .mobile-menu{display:inline-grid!important}
+ .top-new-shortcut{display:inline-grid!important}
+ .sidebar:not(.open)~.workspace .top-new-shortcut{display:inline-grid!important}
+ .sidebar.collapsed{margin-left:0;pointer-events:auto}
+ .sidebar-scrim.open{display:block}
+ .page-title{font-size:14px;margin-left:2px;max-width:36vw}
+ .top-left{gap:7px}
+ .settings-trigger{width:38px!important;height:38px!important}
+}
+@media(max-width:380px){.page-title{max-width:28vw}}
+
+
+/* v0.8.9: character-first identity, clean sidebar states, and split status/settings */
+.brand{gap:11px;min-width:0}
+.brandmark{width:30px;height:30px;border-radius:11px;flex-shrink:0;font-size:16px;background:linear-gradient(135deg,#81d8d0,#57bfb5);color:#113331}
+.brand-copy{display:flex;flex-direction:column;gap:0;line-height:1.35;white-space:nowrap}
+.brand-copy strong{font-weight:640;font-size:13.5px;color:#f3f6f6}
+.brand-copy small{font-size:10px;font-weight:400;color:#8aa9a5;letter-spacing:.025em;margin-top:2px}
+.brand-row .iconbtn,.topbar .iconbtn{border:1px solid #34534f;background:#20302f;color:#c5f0eb}
+.brand-row .iconbtn:hover,.topbar .iconbtn:hover{background:#2d4b47;color:#e2fbf7}
+.page-title{font-weight:620;letter-spacing:.005em;color:#eef8f7}
+.sidebar{will-change:width,transform;backface-visibility:hidden}
+.side-bottom{border-top:1px solid #303838;padding:12px}
+#settingsBtn{border:1px solid #334641;background:#222b2a;border-radius:12px;color:#e2e9e7;font-size:13px;transition:background .2s,border-color .2s}
+#settingsBtn:hover{border-color:#517c75;background:#2a3c39}
+#settingsBtn span:first-child{color:var(--accent)}
+.settings-trigger{width:39px!important;height:39px!important;flex-shrink:0;transition:background .2s,transform .2s,border-color .2s}
+.settings-trigger:hover{transform:translateY(-1px)}
+.settings-trigger .dot{right:3px;bottom:3px;width:8px;height:8px;border:2px solid #203531}
+.status-popover{position:absolute;right:24px;top:calc(100% - 1px);z-index:60;width:min(310px,calc(100vw - 32px));border:1px solid #385451;border-radius:19px;padding:15px 16px 14px;background:#222629;box-shadow:0 22px 56px #000a;animation:popover-show .18s ease-out}
+.status-popover[hidden]{display:none!important}
+.status-head,.status-line{display:flex;align-items:center;justify-content:space-between}
+.status-head{padding-bottom:9px;margin-bottom:6px;border-bottom:1px solid #384341}
+.status-head strong{font-size:14px;font-weight:620}
+.status-head .iconbtn{min-width:30px;width:30px;height:30px}
+.status-line{padding:9px 1px;color:#d5e2df;font-size:13px;gap:12px}
+.status-line>span{display:flex;align-items:center;gap:9px}
+.status-line b{font-size:12px;font-weight:500;color:#a9bebb;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.service-dot{display:inline-block;flex-shrink:0;width:7px;height:7px;border-radius:50%;background:#f1af85;box-shadow:0 0 0 3px #f1af8519}
+.service-dot.ready{background:var(--accent);box-shadow:0 0 0 3px #81d8d020}
+.status-recheck{display:block;width:100%;background:#2c4541;color:#b9ebe5;border:1px solid #4a6b65;border-radius:11px;padding:9px 12px;margin-top:11px;font-weight:550}
+.status-recheck:hover{background:#345954}
+@keyframes popover-show{from{opacity:0;transform:translateY(-6px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.drawer{width:min(430px,100vw);border-left:1px solid #38504b;background:#1c2021;transition:transform .34s cubic-bezier(.2,.8,.2,1)}
+.drawer-header{padding:24px 25px 15px;border-bottom:0}
+.drawer-heading{display:flex;flex-direction:column;gap:3px}
+.drawer-header strong{font-size:21px;letter-spacing:-.02em;font-weight:620}
+.drawer-heading small{font-size:12px;color:#9eaaa7}
+.drawer-header .iconbtn{width:36px;min-width:36px;height:36px;background:#273331;border:1px solid #3b514d;color:#e2f2ef}
+.settings-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:0 22px;padding:4px;background:#252b2b;border:1px solid #333d3b;border-radius:13px}
+.settings-tab{padding:9px 1px;font-size:12px;font-weight:550;color:#aebbb8;transition:background .16s,color .16s}
+.settings-tab.active{background:#3b5752;color:#bff9f0;box-shadow:0 2px 8px #0004}
+.drawer-scroll{padding:14px 25px 30px}
+.settings-panel[hidden]{display:none!important}
+.setting-group-title{margin:18px 0 12px;color:#8fd6cd;font-weight:600;font-size:12px;letter-spacing:.035em}
+.setting-line{padding:15px 0;border-bottom:1px solid #303a38;align-items:center;gap:12px}
+.setting-line label{font-size:13px;color:#e4ecea;font-weight:520;flex:1;min-width:0}
+.setting-line label small{display:block;font-weight:400;font-size:11px;color:#8d9e9b;margin-top:3px;line-height:1.45}
+.setting-line select{background:#283332;border:1px solid #46605b;border-radius:11px;font-size:12px;max-width:170px;color:#e2f5f0}
+.setting-line input{accent-color:var(--accent);width:18px;height:18px;cursor:pointer}
+.setting-description{font-size:12px;line-height:1.9;color:#a7b3b0}
+.settings-data-actions{display:flex;flex-direction:column;gap:9px;margin-top:17px}
+.settings-data-actions button{padding:12px!important;font-size:13px!important;text-align:left;border-radius:11px!important;border:1px solid #3a4b46!important;background:#25302d!important}
+.settings-data-actions button:hover{background:#30403b!important}
+.settings-data-actions button.danger{color:#ffb5aa}
+.info-row{font-size:12px;border-bottom:1px solid #303b38;padding:10px 0}
+.info-row b{color:#d7eae6}
+.composer-tools{display:flex;justify-content:flex-end;align-items:center;padding:2px 1px 0;min-height:45px}
+.composer-primary{display:flex;align-items:center;gap:10px;justify-content:flex-end;width:100%;margin-left:auto}
+.composer-primary .meter{margin-left:auto}
+.composer-primary .send-btn{margin-left:auto;box-shadow:0 1px 5px #0004}
+.composer-primary .send-btn:focus-visible{outline:2px solid #b2fff4;outline-offset:3px}
+.audio-floating{display:flex;justify-content:flex-end;min-height:0;pointer-events:none}
+.audio-floating button:not(.hidden){pointer-events:auto;margin:0 5px 8px;background:#223b38;color:#c7ece7;border:1px solid #42706a;border-radius:12px;padding:0 12px}
+.audio-floating button:not(.hidden):before{content:'停止播放';font-size:12px;margin-right:7px}
+.audio-floating .tool-btn:not(.hidden){height:33px;min-width:95px}
+#sidebarScrim{pointer-events:none}
+@media(min-width:781px){
+ .sidebar{width:260px;flex:0 0 260px;margin-left:0!important;overflow:hidden;border-color:#303635;opacity:1;transition:width .38s cubic-bezier(.22,.8,.23,1),flex-basis .38s cubic-bezier(.22,.8,.23,1),border-color .25s,opacity .3s}
+ .sidebar .side-top,.sidebar .sessions,.sidebar .side-bottom{min-width:259px}
+ .sidebar.collapsed{width:0;flex-basis:0;margin-left:0!important;border-color:transparent;opacity:0;pointer-events:none}
+ .sidebar-scrim,.sidebar-scrim.open{display:none!important;pointer-events:none!important}
+ .topbar .mobile-menu{display:none!important}
+ .sidebar.collapsed~.workspace .mobile-menu{display:inline-grid!important}
+ .sidebar.collapsed~.workspace .top-new-shortcut{display:inline-grid!important}
+}
+@media(max-width:780px){
+ .sidebar{width:min(290px,84vw);flex:0 0 min(290px,84vw);margin-left:0!important;overflow-x:hidden;transform:translate3d(-102%,0,0);visibility:hidden;transition:transform .38s cubic-bezier(.23,.83,.22,1),visibility .38s}
+ .sidebar.open{transform:translate3d(0,0,0);visibility:visible}
+ .sidebar:not(.open){pointer-events:none}
+ .sidebar .side-top,.sidebar .sessions,.sidebar .side-bottom{min-width:260px}
+ #sidebarScrim.open{display:block;pointer-events:auto;background:#0006;backdrop-filter:blur(1.5px)}
+ .status-popover{right:12px;top:calc(100% - 2px)}
+ .page-title{max-width:48vw;font-size:13.5px}
+ .topbar .mobile-menu,.topbar .top-new-shortcut{display:inline-grid!important}
+}
+@media(prefers-reduced-motion:reduce){.sidebar,.drawer,.status-popover{transition:none!important;animation:none!important}}
+
+
+/* v0.8.9: neutral graphite surfaces, discreet Tiffany Blue interactive accents. */
+:root{
+  --bg:#101114;--sidebar:#151619;--panel:#25272b;--hover:#2b2e32;
+  --line:#303237;--text:#f1f2f3;--muted:#a1a4aa;--accent:#81d8d0;
+  --accent-soft:#273e3b;--shadow:0 18px 54px #0009;
+}
+body,.workspace,.messages,.thread,.empty{background:transparent}
+body{background:var(--bg)}
+.sidebar{background:var(--sidebar)!important;border-right-color:#292c30!important}
+.topbar{position:relative;z-index:35;background:transparent}
+.page-title{color:#f1f3f5}
+.brandmark{background:#2b3335;color:#a9ebe4;box-shadow:none}
+.brand-row .iconbtn,.topbar .iconbtn{background:transparent!important;border-color:transparent!important;color:#b7c2c3!important}
+.brand-row .iconbtn:hover,.topbar .iconbtn:hover{background:#292d31!important}
+.new-btn,.session.active{background:transparent;color:#e9eced}
+.new-btn:hover,.session:hover{background:#25282c}
+.session.active{background:#282b2f}
+.composer-zone{background:linear-gradient(transparent,var(--bg) 36%)}
+.composer{background:#25272b;border-color:#3b3d42}
+.composer:focus-within{border-color:#668e8b}
+.send-btn,.send-btn.mic-primary{background:#e8e9eb;color:#14171a}
+.send-btn:hover:not(:disabled),.send-btn.mic-primary:hover:not(:disabled){background:#81d8d0;color:#0d2928}
+.send-btn.recording{background:#a45457;color:#fff}
+.user .bubble{background:#292b30}
+.correction{background:#212628;border-color:var(--accent)}
+#settingsBtn{background:transparent!important;border-color:transparent!important;color:#d8dddf!important}
+#settingsBtn:hover{background:#252a2d!important}
+.settings-trigger{background:#22262a!important;color:#e6eded!important;border:1px solid #3b4247!important;position:relative;z-index:2}
+.settings-trigger:hover{background:#2d3338!important;border-color:#6d9693!important}
+.settings-trigger .dot{border-color:#22262a}
+.status-popover{position:absolute;top:calc(100% - 2px);right:24px;z-index:85;
+ background:#1c1e22!important;border:1px solid #383b41!important;box-shadow:0 18px 60px #000a;
+}
+.status-head{border-bottom-color:#35383e}
+.status-line{background:#24262b;border-radius:11px;margin:6px 0;padding:10px 11px}
+.status-head strong{color:#f0f2f4}
+.status-line b{color:#a9b0b6}
+.status-recheck{background:#2a2e33!important;color:#d5e3e5!important;border-color:#41464c!important}
+.status-recheck:hover{background:#33383e!important}
+.drawer{background:#181a1e!important;border-left-color:#34373c!important;box-shadow:-22px 0 58px #0009}
+.drawer-header,.drawer-scroll,.settings-panel{background:transparent!important}
+.settings-tabs{background:transparent!important;border-color:#33363b!important}
+.settings-tab{background:transparent;color:#a9afb5}
+.settings-tab.active{background:#292c31!important;color:#f4f5f7!important;box-shadow:none;border-bottom:2px solid #81d8d0}
+.settings-tab:hover:not(.active){background:#24272b}
+.setting-line{background:transparent!important}
+.setting-line select{background:#282c31!important;border-color:#454a4f!important;color:#e9edef!important}
+.setting-line input{accent-color:#81d8d0}
+.drawer-heading small,.setting-description{color:#a4a8af}
+.settings-data-actions button{background:#272b30!important;border-color:#40444b!important}
+.settings-data-actions button:hover{background:#30363b!important}
+.status-popover[hidden]{display:none!important}
+
+/* The source image is sampled into particles; no visible photo or image card. */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+ max-width:100%;padding:8px 0 60px}
+.particle-stage{width:min(340px,80vw);height:min(400px,53vh);position:relative;
+ background:transparent;border:none;box-shadow:none;touch-action:pan-y;cursor:crosshair;
+ opacity:1;overflow:visible}
+.particle-stage canvas{display:block;width:100%;height:100%;background:transparent}
+.empty h1{font-size:24px;font-weight:560;margin:4px 0 0;letter-spacing:-.01em;color:#e9edf0}
+@media(max-width:780px){
+  .status-popover{right:10px;top:calc(100% + 2px)}
+  .particle-stage{width:min(294px,78vw);height:min(350px,46vh)}
+  .empty{padding:0 0 62px}
+  .empty h1{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.particle-stage{cursor:default}}
+
+
+/* v0.9.0 — Chinese glyph consistency, stable home portrait, restrained interactive settings. */
+html[lang="zh-CN"],body,button,textarea,select,input{
+  font-family:Inter,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC",sans-serif!important;
+}
+:lang(ja){font-family:Inter,"Noto Sans JP","Yu Gothic UI","Yu Gothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif!important}
+/* The welcome view is centered independently of previous chat scroll height. */
+.thread.is-welcome{position:relative;min-height:100%;padding:0 20px;display:block;overflow:visible}
+.thread.is-welcome .empty{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(440px,calc(100% - 20px));margin:0;padding:0!important;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  max-width:none;white-space:normal;gap:0;
+}
+.thread.is-welcome .particle-stage{flex:0 0 auto;display:block;opacity:1;
+  width:min(350px,78vw);height:min(405px,50dvh);min-height:220px;visibility:visible;
+}
+.thread.is-welcome .particle-stage canvas{display:block;width:100%;height:100%;opacity:1}
+.thread.is-welcome .empty h1{margin:12px 0 0!important;white-space:nowrap;font-weight:550}
+.messages:has(.thread.is-welcome){overscroll-behavior:contain}
+@media(max-width:780px){
+  .thread.is-welcome .particle-stage{width:min(295px,75vw);height:min(350px,43dvh);min-height:210px}
+  .thread.is-welcome .empty h1{font-size:21px}
+}
+/* Settings navigation is neutral and tactile, without colored underlines or filled cards. */
+.settings-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;
+  padding:4px;margin:0 21px;background:transparent!important;border:1px solid #30333a!important;border-radius:15px;
+}
+.settings-tab{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;
+  min-height:56px;border:1px solid transparent!important;border-radius:11px!important;
+  padding:8px 3px!important;background:transparent!important;color:#a9afb8!important;
+  font-size:12px;line-height:1.3;transition:background .2s,border-color .2s,color .2s,transform .2s,box-shadow .2s;
+  box-shadow:none!important;
+}
+.settings-tab svg{display:block;width:19px;height:19px;transition:transform .2s,color .2s}
+.settings-tab:hover:not(.active){background:#26292e!important;color:#ecedef!important;transform:translateY(-1px)}
+.settings-tab:hover svg{transform:translateY(-1px)}
+.settings-tab.active{background:#292c32!important;color:#f5f7f7!important;
+  border:1px solid #454e55!important;box-shadow:inset 0 0 0 1px #22262b!important;
+  transform:none;border-bottom:1px solid #454e55!important;
+}
+.settings-tab.active svg{color:var(--accent)}
+.settings-panel.active{animation:settings-in .18s ease-out}
+@keyframes settings-in{from{opacity:.55;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.setting-line{border-radius:10px;padding:13px 8px!important;margin:0 -8px;
+  transition:background .17s ease,border-color .17s ease;}
+.setting-line:hover{background:#22252b!important}
+.setting-line select{transition:border-color .17s,background .17s,box-shadow .17s}
+.setting-line select:hover,.setting-line select:focus{background:#30343b!important;border-color:#7baba6!important}
+.setting-line input[type="checkbox"]{
+  appearance:none;-webkit-appearance:none;width:41px!important;min-width:41px;height:24px!important;
+  border-radius:15px;background:#454951;border:1px solid #59606a;cursor:pointer;
+  position:relative;transition:background .2s,border-color .2s,box-shadow .2s;outline-offset:3px;
+}
+.setting-line input[type="checkbox"]:before{content:"";position:absolute;left:3px;top:3px;
+  width:16px;height:16px;border-radius:50%;background:#e9edf0;transition:transform .2s cubic-bezier(.18,.8,.23,1)}
+.setting-line input[type="checkbox"]:checked{background:#81d8d0;border-color:#81d8d0}
+.setting-line input[type="checkbox"]:checked:before{transform:translateX(17px);background:#12302f}
+.setting-line input[type="checkbox"]:focus-visible{outline:2px solid #d0efeb}
+.settings-data-actions button{transition:transform .18s,border-color .18s,background .18s!important}
+.settings-data-actions button:hover{transform:translateY(-1px);border-color:#657d79!important}
+@media(prefers-reduced-motion:reduce){.settings-tab,.settings-tab svg,.settings-panel.active,
+  .setting-line,.setting-line input[type="checkbox"],.setting-line input[type="checkbox"]:before,
+  .settings-data-actions button{animation:none!important;transition:none!important}}
+
+/* v0.9.1 — clean point-line portrait, exact half-body ratio, compact composer. */
+.thread.is-welcome .particle-stage{
+  display:block!important;width:min(307px,76vw,calc(55dvh * .6289655))!important;
+  height:auto!important;aspect-ratio:456 / 725!important;
+  min-height:0!important;max-height:none!important;overflow:visible;
+}
+.thread.is-welcome .particle-stage canvas{display:block;width:100%;height:100%}
+.thread.is-welcome .empty h1{margin-top:14px!important}
+.status-popover{width:min(355px,calc(100vw - 24px))!important;padding:13px 14px!important}
+.status-popover .status-line{padding:10px 11px!important;align-items:center;min-height:58px}
+.status-line .status-service{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;flex:1}
+.status-line .status-name{display:flex;gap:9px;align-items:center;color:#e4e7e9;font-size:13px}
+.status-line .status-service small{display:block;min-width:0;max-width:230px;
+  padding-left:16px;color:#959ba4;font-size:10.5px;line-height:1.45;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400}
+.status-line b{flex-shrink:0;font-size:11.5px!important}
+.composer{min-height:58px!important;display:flex!important;align-items:flex-end!important;
+  gap:8px!important;padding:8px 10px 8px 16px!important;border-radius:28px!important}
+.composer textarea{min-width:0!important;min-height:38px!important;
+  height:38px;flex:1!important;align-self:center;max-height:160px;
+  padding:7px 3px 6px!important;line-height:24px!important;resize:none;overflow-y:auto}
+.composer-tools{display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  flex:0 0 auto!important;min-height:0!important;width:auto!important;margin:0!important;padding:0!important}
+.composer-primary{display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  gap:7px!important;width:auto!important;min-width:40px;margin:0!important}
+.composer-primary .send-btn{margin:0!important;box-shadow:none!important;
+  width:40px!important;height:40px!important;min-width:40px!important;
+  border-radius:50%!important;transition:background .16s ease,color .16s ease,transform .16s ease!important}
+/* Permanent, unambiguous button colors without hover interaction. */
+.composer-primary #record{background:#81d8d0!important;color:#112e2d!important}
+.composer-primary #send{background:#f1f2f4!important;color:#17191c!important}
+.composer-primary #record:hover:not(:disabled){background:#a3e7df!important;transform:scale(1.035)}
+.composer-primary #send:hover:not(:disabled){background:#ffffff!important;transform:scale(1.035)}
+.composer-primary #record.recording{background:#d94d5b!important;color:white!important;
+  animation:recording-halo 1.35s ease-in-out infinite!important}
+.composer-primary #record.recording:hover:not(:disabled){background:#c83b49!important}
+.composer-primary #record:disabled,.composer-primary #send:disabled{opacity:.5!important;filter:saturate(.55)}
+.audio-floating button:not(.hidden){background:#b53d4b!important;color:#fff!important;
+  border:1px solid #d96b76!important}
+@keyframes recording-halo{0%,100%{box-shadow:0 0 0 0 #d94d5b40}50%{box-shadow:0 0 0 5px #d94d5b24}}
+@media(max-width:780px){
+  .thread.is-welcome .particle-stage{width:min(250px,67vw,calc(46dvh * .6289655))!important}
+  .composer{min-height:56px!important;padding:7px 9px 7px 13px!important}
+  .composer-primary .send-btn{width:39px!important;min-width:39px!important;height:39px!important}
+  .status-popover{right:8px!important}
+}
+@media(prefers-reduced-motion:reduce){.composer-primary #record.recording{animation:none!important}}
+
+/* v0.9.2.2: full half-body, manga greeting, low-amplitude particle hover. */
+.thread.is-welcome .empty{
+  width:min(820px,calc(100% - 24px))!important;display:grid!important;
+  grid-template-columns:minmax(0,399px) minmax(210px,1fr)!important;
+  align-items:center!important;justify-content:center!important;gap:22px!important;
+  overflow:visible!important;
+}
+.thread.is-welcome .particle-stage{
+  width:min(399px,100%)!important;height:auto!important;aspect-ratio:456 / 725!important;
+  max-height:min(72dvh,690px)!important;max-width:calc(min(72dvh,690px)*456/725)!important;
+  position:relative!important;transition:filter .55s ease!important;
+}
+/* Hover restores a restrained point response while keeping the portrait readable. */
+.thread.is-welcome .particle-stage:after{
+  content:"";position:absolute;inset:8% 2%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 43%,transparent 32%,rgba(175,177,179,.03) 68%,transparent 76%);
+  opacity:0;transform:scale(.99);transition:opacity .5s ease,transform .65s ease;
+}
+.thread.is-welcome .particle-stage:hover:after{opacity:.45;transform:scale(1.01)}
+.thread.is-welcome .particle-stage:hover{filter:drop-shadow(0 0 6px rgba(195,197,200,.05))}
+.manga-speech{
+  position:relative;align-self:center;justify-self:start;margin:0 0 18% 0;
+  border:1.6px solid #9a9ca1;border-radius:54% 48% 53% 49% / 55% 56% 44% 45%;
+  min-width:255px;min-height:125px;padding:30px 22px;
+  display:grid;place-items:center;background:rgba(20,21,24,.2);
+  box-shadow:0 2px 24px rgba(0,0,0,.09);
+  animation:bubble-arrive .95s cubic-bezier(.2,.7,.25,1) both;
+}
+/* A two-sided manga speech tail pointing left/down toward the active character. */
+.manga-speech:before{content:none!important}
+.manga-tail{position:absolute;width:82px;height:73px;left:-75px;bottom:3px;
+  pointer-events:none;overflow:visible;z-index:1}
+.manga-tail-fill{fill:#141518;stroke:none}
+.manga-tail-outline{fill:none;stroke:#9a9ca1;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.manga-tail-tip{fill:none;stroke:#9a9ca1;stroke-width:1.8;stroke-linecap:round}
+.manga-speech h1{margin:0!important;font-size:23px!important;white-space:nowrap;letter-spacing:-.025em}
+@keyframes bubble-arrive{from{opacity:0;transform:translateY(8px) scale(.965)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:780px){
+  .thread.is-welcome .empty{width:min(370px,calc(100% - 8px))!important;display:block!important;min-height:0}
+  .thread.is-welcome .particle-stage{width:min(300px,78vw)!important;max-width:calc(min(54dvh,510px)*456/725)!important;
+    max-height:min(54dvh,510px)!important;margin:0 auto 0 0}
+  .manga-speech{position:absolute;right:0;top:13%;width:176px;min-width:0;min-height:83px;
+    padding:16px 10px;margin:0;border-radius:50%}
+  .manga-speech h1{font-size:14px!important;white-space:normal!important;text-align:center;line-height:1.45}
+  .manga-tail{left:-37px;bottom:0;width:43px;height:41px}
+}
+@media(prefers-reduced-motion:reduce){.manga-speech{animation:none}}
+/* API models are user-facing; credentials are not stored in browser storage. */
+.settings-tabs{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.provider-settings{display:grid;gap:12px}
+.provider-settings label{font-size:12px;color:#bfc3ca;display:block;margin-bottom:4px}
+.provider-settings select,.provider-settings input{width:100%;font:inherit;font-size:13px;
+  background:#25272b;border:1px solid #41434a;border-radius:11px;color:#eceef0;
+  min-height:40px;padding:9px 12px;outline:none}
+.provider-settings input:focus,.provider-settings select:focus{border-color:#81d8d0}
+.provider-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.provider-actions button{border:1px solid #464a50;border-radius:10px;padding:9px 13px;background:#26292d;
+  font-size:12px;transition:background .2s,transform .2s}
+.provider-actions button:hover{background:#363a3f;transform:translateY(-1px)}
+.provider-actions button.primary{background:#81d8d0;border-color:#81d8d0;color:#15302d;font-weight:700}
+.provider-actions button.primary:hover{background:#ade8e1}
+.provider-hint{color:#8e929b;font-size:11px;line-height:1.7;min-height:14px}
+.provider-hint.error{color:#f49ca7}
+.provider-hint.success{color:#97d6cc}
+
+
+/* v0.9.4: restrained ~45-degree manga pointer from near lower-left edge. */
+.manga-speech{background:#141518!important}
+.manga-tail{left:-38px!important;bottom:12px!important;width:45px!important;height:45px!important;z-index:1!important}
+.manga-tail-fill{fill:#141518!important}
+.manga-tail-outline{stroke:#9a9ca1!important;stroke-width:1.65!important;fill:none!important}
+.manga-speech::after{content:""!important;position:absolute!important;left:-2px!important;bottom:22px!important;width:4px!important;height:22px!important;background:#141518!important;z-index:2!important;border:0!important}
+@media(max-width:780px){.manga-tail{left:-24px!important;bottom:8px!important;width:30px!important;height:30px!important}.manga-speech::after{bottom:14px!important;height:14px!important}}
+/* Sidebar: a quiet typography system, compact rows and accessible actions. */
+.brand-copy strong{font-weight:680;letter-spacing:.015em}
+.side-top{padding-bottom:8px}
+.side-label{display:none}
+.sessions{padding:4px 9px 20px!important;gap:2px!important;min-height:0}
+.session-group-label{font-size:11px;font-weight:650;letter-spacing:.06em;color:#888f96;padding:17px 12px 7px;user-select:none}
+.session-row{display:flex;align-items:center;position:relative;min-height:39px;border-radius:11px;transition:background .18s ease,color .18s ease}
+.session-row:hover,.session-row:focus-within{background:#24282d}
+.session-row.active{background:#2b2f34}
+.session-row>.session{min-width:0;flex:1;display:flex;align-items:center;gap:8px;padding:9px 10px 9px 13px!important;font-size:13px!important;line-height:1.4!important;color:#bfc3c9;background:transparent!important;white-space:nowrap;overflow:hidden;text-align:left}
+.session-row.active>.session{color:#f3f4f5;font-weight:570}
+.session-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-pinned-mark{flex:0 0 auto;color:#81d8d0;display:inline-flex;opacity:.8}
+.session-more{width:29px;height:29px;flex:0 0 29px;display:grid;place-items:center;border-radius:8px;color:#959ca4;opacity:0;transition:opacity .16s,background .16s}
+.session-row:hover .session-more,.session-row:focus-within .session-more,.session-row.active .session-more{opacity:1}
+.session-more:hover{color:#e8eaed;background:#383c41}
+.session-menu{position:fixed;z-index:200;width:176px;display:grid;gap:3px;padding:5px;background:#25282d;border:1px solid #3d4249;box-shadow:0 12px 38px #0009;border-radius:12px}
+.session-menu button{display:flex;gap:9px;align-items:center;width:100%;padding:10px 12px;text-align:left;border-radius:8px;color:#e3e5e9;font-size:12px}
+.session-menu button:hover{background:#373d43;color:#fff}
+@media(hover:none){.session-more{opacity:1}}
+.provider-key-mask{width:100%;min-height:40px;display:flex;align-items:center;padding:9px 12px;background:#1d2024;border:1px solid #373b41;border-radius:10px;color:#d4d8dd;font:13px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.06em;user-select:none}
+
+
+/* v0.9.5: solid black sidebar and accessible session typography. */
+.sidebar{background:#000!important;border-right:1px solid #25272a!important}
+.brand-copy strong,.session-row>.session{color:#e6e8eb!important}
+.session-row>.session{font-weight:500!important;font-size:13.5px!important}
+.session-row.active>.session{font-weight:620!important;color:#fff!important}
+.session-group-label{color:#aeb5bd!important;font-size:12px!important;letter-spacing:.025em!important}
+.session-row:hover,.session-row:focus-within{background:#222326!important}
+.session-row.active{background:#272a2e!important}
+.session-more{color:#bec3cb!important;opacity:.75}
+.session-menu{background:#151719!important;border-color:#363a40!important}
+/* The send control uses a constant Tiffany Blue fill, not hover-only white. */
+.composer-primary #send.send-btn:not(.hidden){background:#81d8d0!important;color:#102522!important;
+  border:1px solid #81d8d0!important;box-shadow:0 0 0 1px #81d8d020!important;
+  transition:background .16s ease,transform .16s ease,box-shadow .16s ease}
+.composer-primary #send.send-btn:hover:not(:disabled){background:#a1ece5!important;transform:translateY(-1px)!important}
+.composer-primary #send.send-btn:active:not(:disabled){transform:scale(.94)!important}
+.composer-primary #send.send-btn:disabled{opacity:.45}
+/* Compact manga tail; both lines meet at the same tip, with a closed seam. */
+.manga-speech{transform:translateY(-17px);margin-bottom:calc(18% + 8px)!important;
+  background:#141518!important;isolation:isolate}
+.manga-tail{width:53px!important;height:56px!important;left:-48px!important;
+  bottom:5px!important;overflow:visible!important;z-index:1!important}
+.manga-tail-fill{fill:#141518!important}
+.manga-tail-outline{fill:none!important;stroke:#9a9ca1!important;stroke-width:2!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important}
+.manga-speech::after{content:""!important;position:absolute!important;left:-2px!important;
+  bottom:37px!important;width:7px!important;height:27px!important;background:#141518!important;
+  z-index:2!important;border:0!important}
+/* Greeting replay button is deliberately small and separate from chat audio. */
+.greeting-play{position:absolute;right:22px;bottom:13px;display:grid;place-items:center;
+  width:27px;height:27px;padding:0;border:1px solid #3c4044;border-radius:50%;
+  color:#bac2c9;background:#1f2125;transition:background .2s,color .2s,transform .2s}
+.greeting-play:hover:not(:disabled){color:#101f1e;background:#81d8d0;transform:scale(1.08)}
+.greeting-play.loading{opacity:.5;cursor:progress}
+.manga-speech h1{padding-bottom:16px;line-height:1.5!important;white-space:normal!important;
+  max-width:290px;text-align:center}
+@media(max-width:780px){
+ .manga-speech{top:8%!important;margin-bottom:0!important;transform:none}
+ .manga-tail{left:-29px!important;bottom:7px!important;width:32px!important;height:36px!important}
+ .manga-speech::after{height:21px!important;bottom:27px!important}
+ .manga-speech h1{font-size:13px!important;padding-bottom:11px;line-height:1.45!important}
+ .greeting-play{right:12px;bottom:7px;width:24px;height:24px}
+}
+
+/* v0.9.6: neutral native-free confirmations and deliberate sidebar spacing. */
+#sidebar .side-top > .side-label{display:none!important}
+#sidebar .sessions{padding-top:30px!important}
+#sidebar .session-group-label:first-child{padding-top:9px!important}
+.confirm-overlay[hidden]{display:none!important}
+.confirm-overlay{position:fixed;inset:0;z-index:600;display:grid;place-items:center;
+  background:rgba(0,0,0,.68);backdrop-filter:blur(4px);padding:18px}
+.confirm-dialog{width:min(420px,100%);background:#1b1c1e;border:1px solid #3b3e42;
+  border-radius:20px;padding:24px 24px 20px;box-shadow:0 26px 90px rgba(0,0,0,.58);
+  animation:confirm-arrive .19s cubic-bezier(.2,.8,.2,1) both}
+.confirm-danger-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;
+  background:#42282b;color:#ffb4b7;margin-bottom:14px}
+.confirm-dialog h2{font-size:17px;font-weight:670;letter-spacing:0;margin:0 0 9px;color:#f4f4f5}
+.confirm-dialog p{font-size:13px;line-height:1.75;margin:0;color:#b5b5ba}
+.confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:25px}
+.confirm-actions button{min-height:38px;padding:8px 18px;border-radius:11px;
+  font-size:13px;font-weight:620;transition:background .16s,transform .16s,border-color .16s}
+.confirm-actions button:active{transform:scale(.97)}
+.confirm-cancel{background:#303136;border:1px solid #42444a;color:#eee}
+.confirm-cancel:hover{background:#3d3f44}
+.confirm-proceed{background:#ce4c59;border:1px solid #ce4c59;color:#fff}
+.confirm-proceed:hover{background:#e05c69}
+@keyframes confirm-arrive{from{opacity:0;transform:translateY(9px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:780px){#sidebar .sessions{padding-top:33px!important}.confirm-dialog{padding:21px 19px 19px}}
+@media(prefers-reduced-motion:reduce){.confirm-dialog{animation:none}}
+
+
+/* v0.9.7: one-piece manga bubble; continuous monochrome line-particle flow. */
+.manga-speech{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  isolation:isolate;overflow:visible!important;transform:translateY(-17px);
+}
+.manga-speech::after,.manga-speech::before{content:none!important;display:none!important}
+.manga-tail{display:none!important}
+.manga-shape{position:absolute;left:-61px;top:-12px;
+  width:calc(100% + 74px);height:calc(100% + 55px);
+  overflow:visible;pointer-events:none;z-index:0}
+.manga-shape path{fill:#141518;stroke:#9a9ca1;stroke-width:1.9;vector-effect:non-scaling-stroke;
+  stroke-linecap:round;stroke-linejoin:round}
+.manga-speech h1,.manga-speech .greeting-play{position:relative;z-index:1}
+.manga-speech .greeting-play{position:absolute;z-index:2}
+/* Pure-black sidebar, a well-spaced voice switcher, and a familiar compose action. */
+#sidebar .side-top{padding-bottom:6px!important}
+#sidebar .sessions{padding-top:50px!important}
+.role-picker{position:relative;margin-top:20px}
+.role-trigger{width:100%;min-height:58px;padding:7px 10px;display:flex;align-items:center;gap:10px;
+  text-align:left;color:#eef0f2;border:1px solid transparent;border-radius:14px;
+  transition:background-color .2s,border-color .2s,transform .2s}
+.role-trigger:hover,.role-trigger[aria-expanded="true"]{background:#191c1f;border-color:#32373c}
+.role-avatar{width:34px;height:34px;display:grid;place-items:center;flex-shrink:0;
+  border-radius:12px;background:#26292d;color:#d9e1e4;font-size:14px;font-weight:650}
+.role-copy{display:flex;flex-direction:column;min-width:0;gap:1px;flex:1}
+.role-copy strong{font-size:13.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:640}
+.role-copy small{font-size:11px;color:#a1a9b0;line-height:1.4}
+.role-chevron{width:18px;height:18px;display:grid;place-items:center;color:#b4bbc1;transition:transform .25s}
+.role-trigger[aria-expanded="true"] .role-chevron{transform:rotate(180deg)}
+.role-menu[hidden]{display:none!important}
+.role-menu{position:absolute;z-index:90;top:calc(100% + 5px);left:0;right:0;
+  padding:5px;background:#1c1e22;border:1px solid #3c4046;border-radius:14px;
+  box-shadow:0 16px 45px #000b;animation:role-menu-in .19s ease both}
+.role-menu-item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:11px 10px;color:#e3e6e9;font-size:12px;text-align:left;border-radius:9px}
+.role-menu-item small{color:#a5b0b6;font-size:10px;flex:0 0 auto}
+.role-menu-item:hover,.role-menu-item.chosen{background:#31353a}
+.role-menu-item:disabled{cursor:default;opacity:.52}
+.role-menu p{padding:9px;color:#aab2b9;margin:0;font-size:12px}
+@keyframes role-menu-in{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+#sidebar .new-btn{margin-top:7px!important;min-height:45px;padding:8px 12px!important;
+  border:1px solid transparent!important;background:transparent!important;border-radius:12px;
+  font-weight:570;color:#eaeced;display:flex;align-items:center;gap:12px;
+  transition:background-color .17s,color .17s,transform .17s}
+#sidebar .new-btn:hover{background:#202327!important}
+.nav-compose-icon{width:22px;display:grid;place-items:center;color:#eef0f2}
+.nav-compose-icon svg{width:19px;height:19px}
+/* One contextual action on the right, with a voice waveform instead of a mic pictogram. */
+.composer-primary #record{background:#81d8d0!important;color:#132a29!important}
+.composer-primary #record.recording{background:#c43d4d!important;color:#fff!important}
+@media(max-width:780px){
+  .manga-shape{left:-30px;top:-9px;width:calc(100% + 35px);height:calc(100% + 29px)}
+  #sidebar .sessions{padding-top:51px!important}
+  .role-trigger{min-height:53px}
+  .sidebar.open{z-index:110!important}
+  #sidebarScrim.open{z-index:95!important}
+}
+@media(prefers-reduced-motion:reduce){.role-trigger,.role-chevron,.role-menu,.new-btn{transition:none!important;animation:none!important}}
+
+
+
+/* v0.9.8: no passing color/opacity waves, unified role picker, precise oval balloon. */
+.thread.is-welcome .particle-stage::after{content:none!important;display:none!important}
+.thread.is-welcome .particle-stage:hover{filter:none!important}
+/* Reuse the original sidebar avatar and brand title; this is the only role selector. */
+#sidebar .brand-row{gap:4px;align-items:center}
+#sidebar .role-picker{margin:0;min-width:0;flex:1}
+#sidebar .role-trigger{padding:4px 3px;min-height:40px;gap:9px;border:0!important;
+  border-radius:11px;box-shadow:none!important}
+#sidebar .role-trigger:hover,#sidebar .role-trigger[aria-expanded="true"]{background:#17191c}
+#sidebar .role-trigger .brandmark{height:30px;width:30px;flex:0 0 30px}
+#sidebar .role-trigger .brand-copy{min-width:0;flex:1;text-align:left}
+#sidebar .role-trigger .brand-copy strong{font-size:13px}
+#sidebar .role-trigger .brand-copy small{font-size:10px}
+#sidebar .role-trigger .role-chevron{width:16px;height:16px;flex:0 0 16px}
+#sidebar .role-menu{top:calc(100% + 7px);left:0;right:-30px;min-width:0}
+#sidebar .new-btn{margin-top:16px!important}
+/* Single closed elliptical manga outline; no irregular hand-drawn curvature. */
+.manga-speech{border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;isolation:isolate}
+.manga-shape{left:-42px!important;top:-15px!important;width:calc(100% + 60px)!important;
+  height:calc(100% + 49px)!important;overflow:visible!important;pointer-events:none!important}
+.manga-shape path{stroke:#a2a5a9!important;stroke-width:1.8!important;
+  fill:#141518!important;stroke-linejoin:round!important;vector-effect:non-scaling-stroke}
+.manga-speech h1{position:relative!important;z-index:1!important;
+  max-width:290px!important;padding-bottom:19px!important}
+/* Visible speaker emblem on the existing cached-greeting replay control. */
+.manga-speech .greeting-play{display:grid!important;place-items:center!important;
+  right:19px!important;bottom:8px!important;width:31px!important;height:31px!important;
+  color:#e3e7eb!important;border:1px solid #53595e!important;background:#24272a!important;
+  opacity:1!important;z-index:4!important;transition:background .18s,color .18s!important}
+.manga-speech .greeting-play svg{display:block!important;width:18px!important;height:18px!important;
+  stroke-width:1.9!important;opacity:1!important;visibility:visible!important}
+.manga-speech .greeting-play:hover:not(:disabled){background:#34393e!important;color:#fff!important}
+/* ChatGPT-like subdued pin symbol; operation continues through the existing menu. */
+.session-pinned-mark{color:#a4aab1!important;opacity:.72!important;align-items:center}
+.session-pinned-mark svg{width:13px;height:13px;stroke-width:1.7}
+.session-menu svg{flex:0 0 auto;stroke-width:1.75}
+@media(max-width:780px){
+  .manga-shape{left:-27px!important;top:-11px!important;
+    width:calc(100% + 37px)!important;height:calc(100% + 32px)!important}
+  .manga-speech h1{padding-bottom:12px!important}
+  .manga-speech .greeting-play{right:10px!important;bottom:4px!important;
+    width:27px!important;height:27px!important}
+  .manga-speech .greeting-play svg{width:16px!important;height:16px!important}
+}
+
+
+/* v0.9.9: restrained playback chrome, monochrome moving tracers, black settings, fluid panels. */
+.audio-floating #stopAudio:not(.hidden){
+  background:#262a2e!important;color:#e0e5e9!important;
+  border:1px solid #454d53!important;border-radius:11px!important;
+  box-shadow:none!important;transition:background-color .17s ease,border-color .17s ease,
+    color .17s ease,transform .17s ease!important
+}
+.audio-floating #stopAudio:hover:not(:disabled){background:#343a40!important;
+  border-color:#8baca8!important;color:#b5f0e9!important;transform:translateY(-1px)}
+.audio-floating #stopAudio:active:not(:disabled){transform:scale(.975)}
+.audio-floating #stopAudio svg{width:15px;height:15px;stroke-width:1.9}
+.manga-speech .greeting-play{transition:background-color .18s ease,color .18s ease,
+ border-color .18s ease,transform .18s cubic-bezier(.2,.8,.2,1)!important}
+.manga-speech .greeting-play:hover:not(:disabled),
+.manga-speech .greeting-play:focus-visible{background:#81d8d0!important;
+ color:#0c2422!important;border-color:#b2f1ea!important;transform:scale(1.1)!important}
+.manga-speech .greeting-play:active:not(:disabled){transform:scale(.96)!important}
+/* The settings surface itself is true black; nested controls remain legible. */
+#drawer{background:#000!important;border-left:1px solid #272a2e!important;
+  box-shadow:-18px 0 58px rgba(0,0,0,.48)!important;
+  transform:translate3d(103%,0,0)!important;
+  transition:transform .39s cubic-bezier(.18,.88,.22,1)!important;
+  backface-visibility:hidden;will-change:transform}
+#drawer.open{transform:translate3d(0,0,0)!important}
+#drawer .drawer-header,#drawer .drawer-scroll,#drawer .settings-panel{background:transparent!important}
+#drawer .settings-tabs{grid-template-columns:repeat(6,minmax(0,1fr));background:#000!important;
+  border-color:#292c30!important}
+#drawer .settings-tab.active{background:#171a1d!important;border-color:#434a4f!important}
+#drawer .settings-tab:hover:not(.active){background:#15191c!important}
+#drawer .setting-line:hover{background:#101417!important}
+#settingsScrim{display:block!important;visibility:hidden;opacity:0;pointer-events:none;
+ background:rgba(0,0,0,.72);backdrop-filter:none!important;
+ transition:opacity .28s ease,visibility .28s ease}
+#settingsScrim.open{visibility:visible;opacity:1;pointer-events:auto}
+/* On desktop use a single grid track, rather than animating width + flex-basis + opacity.
+   The expensive portrait is backed by a prerendered canvas, avoiding dropped frames. */
+@media(min-width:781px){
+ .app{display:grid;grid-template-columns:260px minmax(0,1fr);
+   transition:grid-template-columns .34s cubic-bezier(.2,.82,.22,1)}
+ .app:has(#sidebar.collapsed){grid-template-columns:0px minmax(0,1fr)}
+ #sidebar{width:auto!important;min-width:0!important;flex:none!important;
+   margin-left:0!important;opacity:1!important;will-change:auto!important;
+   transition:none!important;overflow:hidden!important}
+ #sidebar.collapsed{width:auto!important;flex-basis:auto!important;
+   margin-left:0!important;opacity:1!important;border-right-color:transparent!important}
+ .workspace{min-width:0;max-width:100%}
+}
+/* Mobile: GPU-friendly transform, never force width animation. */
+@media(max-width:780px){
+ .app{display:flex;transition:none}
+ #sidebar{width:min(290px,84vw)!important;min-width:0;
+   transform:translate3d(-103%,0,0)!important;
+   transition:transform .35s cubic-bezier(.18,.88,.22,1),visibility .35s!important;
+   will-change:transform;backface-visibility:hidden}
+ #sidebar.open{transform:translate3d(0,0,0)!important}
+ #sidebarScrim{display:block!important;visibility:hidden;opacity:0;pointer-events:none!important;
+   background:rgba(0,0,0,.56)!important;backdrop-filter:none!important;
+   transition:opacity .27s ease,visibility .27s ease}
+ #sidebarScrim.open{visibility:visible;opacity:1;pointer-events:auto!important}
+ #drawer .settings-tabs{gap:2px;margin-left:12px;margin-right:12px}
+ #drawer .settings-tab{font-size:11px;padding-left:1px!important;padding-right:1px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .app,#sidebar,#drawer,#settingsScrim,#sidebarScrim,
+ .audio-floating #stopAudio,.manga-speech .greeting-play{transition:none!important}
+}
+
+
+/* v0.9.10: understated local exit, no changes to existing sidebar hierarchy. */
+#sidebar .exit-action{font-size:12px;color:#8f959b;border-radius:10px;
+  transition:background-color .16s ease,color .16s ease}
+#sidebar .exit-action:hover:not(:disabled){background:#20282b;color:#c5e7e4}
+#sidebar .exit-action svg{width:18px;height:18px;stroke-width:1.7}
+.exit-screen{position:fixed;inset:0;z-index:9999;min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:9px;background:#000;color:#e3e7e6;padding:28px}
+.exit-screen-mark{width:52px;height:52px;border:1px solid #38534f;background:#172523;
+  border-radius:16px;display:grid;place-items:center;color:#81d8d0;font-size:25px;margin-bottom:12px}
+.exit-screen h1{font-size:19px;font-weight:570;margin:0}
+.exit-screen p{font-size:13px;color:#929a9b;margin:0}
+
+/* v0.9.11: interaction only on moving tracer layer; the underlying portrait stays fixed. */
+.thread.is-welcome .particle-stage{cursor:crosshair}
+/* Keep stop-playback UI outside layout to prevent the welcome scene from recentering. */
+.composer-wrap{position:relative}
+.audio-floating{position:absolute!important;right:5px;bottom:calc(100% + 9px);
+  z-index:9;min-height:0!important;height:0!important;pointer-events:none!important;
+  overflow:visible;display:flex;justify-content:flex-end}
+.audio-floating #stopAudio:not(.hidden){pointer-events:auto!important;margin:0!important}
+/* Manga oval remains one closed SVG. Only its elevation and stroke react to hover. */
+.manga-speech{animation:none!important;transition:transform .3s cubic-bezier(.18,.78,.2,1)!important;
+  transform:translate3d(0,-17px,0)!important;will-change:transform}
+.manga-speech .manga-shape path{transition:stroke .25s ease!important}
+@media(hover:hover){
+  .manga-speech:hover{transform:translate3d(0,-20px,0)!important}
+  .manga-speech:hover .manga-shape path{stroke:#bdc8cb!important}
+}
+.manga-speech:active{transform:translate3d(0,-18px,0)!important}
+@media(max-width:780px){
+  .manga-speech{transform:translate3d(0,0,0)!important}
+  .manga-speech:active{transform:translate3d(0,1px,0)!important}
+  @media(hover:hover){.manga-speech:hover{transform:translate3d(0,-3px,0)!important}}
+  .audio-floating{right:3px;bottom:calc(100% + 7px)}
+}
+@media(prefers-reduced-motion:reduce){.manga-speech,.manga-speech .manga-shape path{transition:none!important}}
+
+
+/* v0.9.13: contour-string interaction. The portrait stays anchored; only an ink line flexes. */
+.thread.is-welcome .particle-stage{
+  cursor:pointer!important;transform:none!important;
+  transition:none!important;filter:none!important;will-change:auto!important;
+}
+.thread.is-welcome .particle-stage:hover,
+.thread.is-welcome .particle-stage:active,
+.thread.is-welcome .particle-stage.portrait-bounce{transform:none!important;animation:none!important;filter:none!important}
+.manga-speech{cursor:pointer}
+.manga-speech h1{cursor:pointer}
+.manga-speech h1:focus-visible{outline:1.5px solid #81d8d0;outline-offset:4px;border-radius:8px}
+.manga-time-label{position:absolute;z-index:3;top:14px;left:12px;right:12px;
+  text-align:center;font-size:10px;letter-spacing:.045em;color:#9caeb1;pointer-events:none}
+.manga-speech .welcome-controls{position:absolute;z-index:6;right:14px;bottom:8px;
+  display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:31px;
+  pointer-events:auto}
+.manga-speech .welcome-controls .greeting-play{position:static!important;right:auto!important;
+  bottom:auto!important;margin:0!important;flex:0 0 31px}
+.manga-speech .welcome-controls #stopAudio:not(.hidden){position:static!important;display:grid!important;
+  place-items:center!important;min-width:31px!important;width:31px!important;height:31px!important;
+  padding:0!important;margin:0!important;border-radius:50%!important;
+  background:#262a2e!important;color:#dce5e5!important;border:1px solid #505b60!important;
+  box-shadow:none!important;pointer-events:auto!important;flex:0 0 31px}
+.manga-speech .welcome-controls #stopAudio:hover:not(:disabled){background:#81d8d0!important;
+  color:#0d2625!important;border-color:#b2f1ea!important}
+.manga-speech .welcome-controls #stopAudio::before{content:none!important;display:none!important}
+.manga-speech .welcome-controls #stopAudio svg{display:block;width:16px;height:16px}
+.session-pinned-mark{color:#81d8d0!important;opacity:.98!important;}
+.session-pinned-mark svg{width:17px!important;height:17px!important;stroke-width:1.85!important}
+@media(max-width:780px){
+  .manga-time-label{top:6px;font-size:9px}
+  .manga-speech .welcome-controls{right:7px;bottom:4px;gap:5px}
+  .manga-speech .welcome-controls .greeting-play{flex-basis:27px!important}
+  .manga-speech .welcome-controls #stopAudio:not(.hidden){width:27px!important;
+    min-width:27px!important;height:27px!important;flex-basis:27px!important}
+  .manga-speech .welcome-controls #stopAudio svg{width:14px;height:14px}
+}
+@media(prefers-reduced-motion:reduce){
+}
+
+/* v0.11.0q: contextual message revision and correction-mode presentation. */
+.revision-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  color:var(--text);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:7px;padding:7px 11px;font-size:12px;background:var(--panel,#1d2025)}
+.revision-banner[hidden]{display:none!important}
+.revision-banner button{font-size:12px;border:0;background:transparent;color:var(--accent);padding:3px 6px}
+.revision-indicator{font-size:11px;opacity:.72;margin-bottom:3px}
+body.corrections-off .correction{display:none!important}
+/* v0.11.0s: a text-free rotating status indicator for ASR/chat/TTS. */
+.avt-working-spinner{display:inline-block;width:22px;height:22px;box-sizing:border-box;
+  border:2px solid rgba(160,170,174,.24);border-top-color:var(--accent,#b4d0c9);
+  border-radius:50%;animation:avt-working-spin .8s linear infinite}
+/* v0.11.0t: pending activity belongs to its speaker, not thread center. */
+.pending-row.avt-working-row{display:flex;min-height:44px;padding:0;gap:0}
+.pending-row.avt-working-row.user{align-items:flex-end}
+.pending-row.avt-working-row.assistant{align-items:flex-start}
+.avt-working-bubble{box-sizing:border-box;display:flex;align-items:center;
+  justify-content:center;width:56px;min-height:44px;border-radius:18px}
+.pending-row.user .avt-working-bubble{background:#2d2d31;padding:10px 16px;max-width:unset}
+.pending-row.assistant .avt-working-bubble{background:rgba(129,216,208,.09);padding:10px 16px;max-width:unset}
+@keyframes avt-working-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.avt-working-spinner{animation-duration:2.5s}}
+
+.thread.is-welcome .empty.neutral{min-height:min(48vh,380px);padding:0;justify-content:center}
+.thread.is-welcome .empty.neutral .manga-speech{position:relative!important;inset:auto!important;transform:none!important;margin:0 auto!important;max-width:min(500px,85vw)}
+.thread.is-welcome .empty.neutral .manga-shape{display:none!important}
+.thread.is-welcome .empty.neutral h1{white-space:normal!important;font-size:23px!important;line-height:1.7!important}
+.character-static-image{width:100%;height:100%;object-fit:contain}
+/* Character pack installation and active-role feedback: keep the original UI language. */
+.role-portrait-thumb{width:32px;height:32px;flex:0 0 32px;border-radius:10px;overflow:hidden;
+  display:grid;place-items:center;background:#293c3b;color:#c4ede7;font-weight:650}
+.role-portrait-thumb img,#roleAvatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 13%}
+#roleAvatar{overflow:hidden}
+.role-menu-item{justify-content:flex-start!important;text-align:left}
+.role-menu-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+.role-menu-copy>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role-menu-copy small{font-size:10px}
+.character-voice-detail{border-left:2px solid #6c8e88;padding:8px 10px;background:#202829;
+  border-radius:0 8px 8px 0;overflow-wrap:anywhere}
+.character-import-feedback[hidden],.character-activation[hidden]{display:none!important}
+.character-import-feedback{margin:15px 0 0;padding:14px;border-radius:12px;border:1px solid #43534f;
+  background:#202c2b;animation:character-feedback-in .25s ease-out}
+.character-import-heading{display:flex;gap:9px;align-items:center;margin-bottom:11px;color:#dceae6}
+.character-import-heading strong{flex:1;font-size:12px;font-weight:600}
+.character-import-heading b{font-size:11px;color:#9bbcb7}
+.character-import-track{height:5px;background:#344240;border-radius:20px;overflow:hidden}
+.character-import-track>div{height:100%;width:0;background:#81d8d0;border-radius:20px;transition:width .18s ease}
+.character-import-feedback small{display:block;margin-top:8px;font-size:11px;line-height:1.6}
+.character-import-feedback[data-phase="success"]{border-color:#6baa9b}
+.character-import-feedback[data-phase="success"] .character-import-heading>span{animation:character-success-pop .35s ease-out}
+.character-import-feedback[data-phase="error"]{border-color:#a06666;background:#322727}
+.character-import-feedback[data-phase="error"] .character-import-track>div{background:#d78f86}
+.character-activation{position:fixed;z-index:65;inset:0;pointer-events:none;display:grid;place-items:center;
+  background:#05090ac2;animation:character-overlay-in .28s ease-out}
+.character-activation-card{width:min(340px,86vw);padding:28px 22px;text-align:center;border-radius:20px;
+  border:1px solid #445d59;background:#1b2425;box-shadow:0 18px 60px #000b;
+  display:flex;align-items:center;flex-direction:column;gap:9px;animation:character-success-pop .45s cubic-bezier(.17,.89,.32,1.3)}
+.character-activation-check{width:52px;height:52px;display:grid;place-items:center;border-radius:50%;
+  color:#102824;background:#89dfd4;margin-bottom:5px}
+.character-activation-card strong{font-size:18px;font-weight:650;color:#eef7f4}
+.character-activation-card small{font-size:12px;line-height:1.8;color:#b4c6c1}
+@keyframes character-feedback-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes character-overlay-in{from{opacity:0}to{opacity:1}}
+@keyframes character-success-pop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.character-activation,.character-activation-card,.character-import-feedback,
+.character-import-feedback[data-phase="success"] .character-import-heading>span{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="overlay sidebar-scrim" id="sidebarScrim"></div>
+  <aside class="sidebar" id="sidebar" aria-label="会话侧边栏">
+    <div class="side-top">
+      <div class="brand-row">
+        <div class="role-picker" id="rolePicker">
+          <button type="button" class="role-trigger" id="roleTrigger" aria-expanded="false" aria-controls="roleMenu" aria-haspopup="menu" title="选择角色语音">
+            <span class="brandmark" id="roleAvatar" aria-hidden="true">あ</span>
+            <span class="brand-copy"><strong id="rolePickerName">AnimeVoiceTutor</strong><small>AnimeVoiceTutor</small></span>
+            <span class="role-chevron" id="roleChevron" aria-hidden="true"></span>
+          </button>
+          <div class="role-menu" id="roleMenu" role="menu" hidden></div>
+        </div>
+        <button class="iconbtn" id="closeSidebar" title="收起侧栏" aria-label="收起侧栏" aria-expanded="true"></button>
+      </div>
+      <button class="new-btn" id="newChat"><span class="nav-compose-icon" id="newChatIcon"></span><span>新对话</span></button>
+      <div class="side-label">最近对话</div>
+    </div>
+    <nav class="sessions" id="sessions" aria-label="历史会话"></nav>
+    <div class="side-bottom">
+      <button class="side-action" id="settingsBtn"><span id="settingsBtnIcon"></span><span>设置与偏好</span></button>
+      <button class="side-action exit-action" id="exitAppBtn" type="button" title="关闭 AnimeVoiceTutor 和本地语音服务"><span id="exitAppIcon"></span><span>退出应用</span></button>
+    </div>
+  </aside>
+  <main class="workspace">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="iconbtn mobile-menu" id="openSidebar" title="展开侧栏" aria-label="展开侧栏" aria-expanded="false"></button>
+        <button class="iconbtn top-new-shortcut" id="topNewChat" title="新对话" aria-label="新对话"></button>
+        <div class="page-title" id="voiceTitle">AnimeVoiceTutor</div>
+      </div>
+      <button class="status-button settings-trigger" id="statusBtn" title="服务状态" aria-label="查看服务状态" aria-expanded="false" aria-controls="statusPopover">
+        <span id="settingsTopIcon" class="settings-top-icon"></span><span class="dot" id="statusDot" aria-hidden="true"></span>
+      </button>
+      <div class="status-popover" id="statusPopover" role="dialog" aria-label="服务状态" aria-hidden="true" hidden>
+        <div class="status-head"><strong>服务状态</strong><button class="iconbtn" id="closeStatus" title="关闭" aria-label="关闭服务状态"></button></div>
+        <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="llmDot"></i>AI 对话</span><small id="llmModel">DeepSeek API</small></span><b id="llmStatus">检查中</b></div>
+        <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="asrDot"></i>语音识别</span><small>Qwen3-ASR · 1.7B</small></span><b id="asrStatus">检查中</b></div>
+        <div class="status-line"><span class="status-service"><span class="status-name"><i class="service-dot" id="ttsDot"></i>语音合成</span><small>可选角色 TTS</small></span><b id="ttsStatus">检查中</b></div>
+        <button class="status-recheck" id="refreshStatus">重新检查</button>
+      </div>
+    </header>
+    <div class="messages" id="messages" aria-label="对话内容">
+      <div class="thread is-welcome" id="thread"><section class="empty neutral" id="welcome"><div class="manga-speech"><svg class="manga-shape" viewBox="0 0 430 205" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M235 13 C328.9 13 405 47.5 405 90 C405 132.5 328.9 167 235 167 C189 167 147 159 121 147 L42 184 L87 128 C73 117 65 104 65 90 C65 47.5 141.1 13 235 13 Z"/></svg><h1 lang="ja">こんにちは。今日は何についてお話ししましょうか。</h1><button type="button" class="greeting-play hidden" id="greetingPlayBtn" title="播放问候语" aria-label="播放问候语"></button></div></section></div>
+    </div>
+    <div class="composer-zone">
+      <div class="composer-wrap">
+        <div class="revision-banner" id="revisionBanner" hidden><span>正在更正此前发送的发言</span><button type="button" id="cancelRevision">取消更正</button></div>
+        <div class="audio-floating"><button class="tool-btn hidden" id="stopAudio" title="停止播放" aria-label="停止播放"></button></div>
+        <div class="composer" id="composer">
+          <textarea id="text" rows="1" maxlength="2000" placeholder="用日语开始对话" aria-label="输入消息"></textarea>
+          <div class="composer-tools">
+            <div class="composer-primary">
+              <div class="meter hidden" id="meter" aria-label="麦克风音量"><div id="meterFill"></div></div>
+              <button class="send-btn mic-primary" id="record" title="语音输入" aria-label="语音输入"></button>
+              <button class="send-btn hidden" id="send" title="发送" aria-label="发送"></button>
+            </div>
+          </div>
+        </div>
+        <div id="notice" class="notice" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="overlay settings-scrim" id="settingsScrim"></div>
+<section class="drawer" id="drawer" aria-label="设置" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="drawer-header"><div class="drawer-heading"><strong>设置</strong><small>个性化你的对话体验</small></div><button id="closeSettings" class="iconbtn" aria-label="关闭设置"></button></div>
+  <div class="settings-tabs" role="tablist" aria-label="设置类别">
+    <button type="button" class="settings-tab active" data-tab="conversation" role="tab" aria-selected="true" aria-controls="settings-conversation"><span data-settings-icon="message"></span><span>对话</span></button>
+    <button type="button" class="settings-tab" data-tab="model" role="tab" aria-selected="false" aria-controls="settings-model"><span data-settings-icon="cpu"></span><span>模型</span></button>
+    <button type="button" class="settings-tab" data-tab="character" role="tab" aria-selected="false" aria-controls="settings-character"><span data-settings-icon="user"></span><span>角色</span></button>
+    <button type="button" class="settings-tab" data-tab="speech" role="tab" aria-selected="false" aria-controls="settings-speech"><span data-settings-icon="wave"></span><span>语音</span></button>
+    <button type="button" class="settings-tab" data-tab="data" role="tab" aria-selected="false" aria-controls="settings-data"><span data-settings-icon="archive"></span><span>数据</span></button>
+    <button type="button" class="settings-tab" data-tab="about" role="tab" aria-selected="false" aria-controls="settings-about"><span data-settings-icon="info"></span><span>关于</span></button>
+  </div>
+  <div class="drawer-scroll">
+    <section class="settings-panel active" data-panel="conversation" id="settings-conversation" role="tabpanel">
+      <!-- v0.11.0u: UI-only language selection. -->
+      <div class="setting-line" id="uiLocaleSetting"><label for="uiLocale">界面语言<small>只更改界面文字；不影响日语对话、识别和语音</small></label><select id="uiLocale" aria-label="界面语言"><option value="zh-CN">简体中文</option><option value="en">English</option><option value="ja">日本語</option></select></div>
+      <div class="setting-group-title">回复偏好</div>
+      <div class="setting-line"><label for="correction">日语纠错<small>关闭：不提供纠错；简洁：只改明显错误；详细：解释原因并可提出具体改进</small></label><select id="correction"><option value="off">关闭（不纠错）</option><option value="gentle">简洁纠错</option><option value="detailed">详细纠错与建议</option></select></div>
+      <div class="setting-line"><label for="enterToSend">按 Enter 发送<small>Shift + Enter 可换行</small></label><input id="enterToSend" type="checkbox" checked></div>
+    </section>
+    <section class="settings-panel" data-panel="model" id="settings-model" role="tabpanel" hidden>
+      <div class="setting-group-title">对话模型与 API</div>
+      <div class="provider-settings">
+        <div><label for="llmProvider">API 服务商</label><select id="llmProvider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI (ChatGPT API)</option></select></div>
+        <div class="provider-hint" id="llmSelectedModel" aria-live="polite">模型由服务自动选择</div>
+        <div><label>当前 API Key</label><div class="provider-key-mask" id="llmKeyMask" aria-live="polite">尚未设置</div></div>
+        <div><label for="llmKeyInput">更换 API Key</label><input id="llmKeyInput" type="password" autocomplete="new-password" placeholder="输入新 Key；不修改则留空"></div>
+        <div class="provider-hint" id="llmKeyStatus">尚未检查连接配置</div>
+        <div class="provider-actions"><button class="primary" id="llmSave" type="button">保存并应用</button><button id="llmTest" type="button">测试连接</button><button id="llmClearKey" type="button">移除 Key</button></div>
+        <div class="provider-hint" id="llmSaveStatus" role="status" aria-live="polite"></div>
+        <p class="setting-description">保存 API Key 后会自动匹配可用模型。下一条消息立即生效，不必重启应用。</p>
+      </div>
+    </section>
+    <section class="settings-panel" data-panel="character" id="settings-character" role="tabpanel" hidden>
+      <div class="setting-group-title">角色包</div>
+      <div class="setting-line"><label for="characterSelect">当前角色<small>安装成功后自动启用；切换会打开该角色的欢迎页面</small></label><select id="characterSelect"><option value="default">Standard Japanese</option></select></div>
+      <p class="setting-description" id="characterStatus">从 GitHub Releases 下载独立角色包。</p>
+      <p class="setting-description character-voice-detail" id="characterVoiceStatus" role="status" aria-live="polite"></p>
+      <div class="setting-group-title">安装角色包</div>
+      <input id="characterZip" type="file" accept=".zip,application/zip" aria-label="角色包 ZIP">
+      <p class="setting-description">请选择可信来源的角色包；模型权重文件可能较大。</p>
+      <div class="provider-actions"><button type="button" id="characterInstall">安装并启用 ZIP</button></div>
+      <div class="character-import-feedback" id="characterInstallFeedback" role="status" aria-live="polite" hidden>
+        <div class="character-import-heading"><span id="characterInstallFeedbackIcon" aria-hidden="true"></span><strong id="characterInstallFeedbackTitle">准备安装角色包</strong><b id="characterInstallFeedbackPercent">0%</b></div>
+        <div class="character-import-track" role="progressbar" id="characterInstallProgress" aria-label="角色包上传" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="characterInstallProgressFill"></div></div>
+        <small id="characterInstallFeedbackDetail">上传、校验并安装到本地</small>
+      </div>
+    </section>
+    <section class="settings-panel" data-panel="speech" id="settings-speech" role="tabpanel" hidden>
+      <div class="setting-group-title">语音体验</div>
+      <div class="setting-line"><label for="autoPlay">自动生成并播放回复<small>关闭后仍可手动生成语音</small></label><input id="autoPlay" type="checkbox" checked></div>
+      <div class="setting-line"><label for="reviewSpeech">语音识别后先确认<small>开启：显示在输入框供修改；关闭：自动发送，可在消息下方更正</small></label><input id="reviewSpeech" type="checkbox" checked></div>
+      <div class="setting-line"><label for="autoStop">停顿后结束录音<small>检测到停顿后结束录音</small></label><input id="autoStop" type="checkbox"></div>
+      <div class="setting-line"><label for="continuous">连续语音对话<small>播放结束后继续录音</small></label><input id="continuous" type="checkbox"></div>
+      <div class="setting-line"><label for="playbackSpeed">播放速度<small>只影响播放，不改变合成权重</small></label><select id="playbackSpeed"><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.1">1.1×</option><option value="1.25">1.25×</option></select></div>
+      <div class="setting-group-title">角色声音</div>
+      <div class="setting-line"><label for="voice">当前音色</label><select id="voice"></select></div>
+    </section>
+    <section class="settings-panel" data-panel="data" id="settings-data" role="tabpanel" hidden>
+      <div class="setting-group-title">会话记录</div>
+      <p class="setting-description">可以导出或删除当前聊天记录。删除会话时一并清理保存的语音。</p>
+      <div class="settings-data-actions"><button id="export" class="muted">导出当前会话</button><button id="clearChat" class="muted danger">删除当前会话</button></div>
+    </section>
+    <section class="settings-panel" data-panel="about" id="settings-about" role="tabpanel" hidden>
+      <div class="setting-group-title">AnimeVoiceTutor</div>
+      <p class="setting-description">以日语文字和语音自然交流的桌面应用。</p>
+      <div class="info-row"><span>当前角色</span><b>可选角色包</b></div>
+      <div class="info-row"><span>语音方案</span><b>角色独立配置</b></div>
+      <div class="info-row"><span>界面版本</span><b>v0.9.12</b></div>
+      <p class="setting-description">连接情况请查看右上角服务状态按钮。</p>
+    </section>
+  </div>
+</section>
+
+<!-- Application-owned confirmation: no browser origin banner. -->
+<div class="confirm-overlay" id="confirmOverlay" hidden>
+  <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmDescription">
+    <div class="confirm-danger-icon" id="confirmIcon" aria-hidden="true"></div>
+    <h2 id="confirmTitle">删除对话？</h2>
+    <p id="confirmDescription">删除后将无法恢复。</p>
+    <div class="confirm-actions">
+      <button type="button" class="confirm-cancel" id="confirmCancel">取消</button>
+      <button type="button" class="confirm-proceed" id="confirmProceed">删除</button>
+    </div>
+  </section>
+</div>
+
+<div class="character-activation" id="characterActivation" role="status" aria-live="polite" hidden>
+  <div class="character-activation-card">
+    <span class="character-activation-check" id="characterActivationIcon" aria-hidden="true"></span>
+    <strong id="characterActivationTitle">角色已启用</strong>
+    <small id="characterActivationDetail">正在进入角色欢迎页面</small>
+  </div>
+</div>
+<div class="overlay mic-scrim hidden" id="micHelpScrim"></div>
+<section class="mic-help hidden" id="micHelp" role="dialog" aria-modal="true" aria-labelledby="micHelpTitle">
+  <div class="mic-head"><h2 id="micHelpTitle">麦克风不可用</h2><button id="micClose" class="iconbtn" aria-label="关闭"></button></div>
+  <p id="micHelpText">请在浏览器设置中允许使用麦克风。</p>
+  <button id="micRetry" class="mic-retry">重试</button>
+</section>
+
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const audioObjects = new Map();
+const icons = {
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  volume: '<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/>',
+  refresh: '<path d="M20 11a8 8 0 0 0-14.8-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.8 4M20 20v-4h-4"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/>',
+  chevron: '<path d="m9 18 6-6-6-6"/>',
+  menu: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  settings: '<path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/>' ,
+  activity: '<path d="M3 12h4l3-6 4 12 3-6h4"/>',
+  send: '<path d="M12 19V5m-7 7 7-7 7 7"/>',
+  compose: '<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m16 4 4 4m-8 4 8-8a2 2 0 0 0-3-3l-8 8-1 5 5-1Z"/>',
+  chevron: '<path d="m6 9 6 6 6-6"/>',
+  voice: '<path d="M3 10v4M7 7v10M11 4v16M15 7v10M19 10v4"/>',
+  stop: '<rect x="5" y="5" width="14" height="14" rx="2"/>',
+  power: '<path d="M12 2v10M6.5 5.5a9 9 0 1 0 11 0"/>',
+  close: '<path d="M18 6 6 18M6 6l12 12"/>',
+  note: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  message: '<path d="M21 11.5a8 8 0 0 1-8 8 9.5 9.5 0 0 1-4-.9L3 21l2-5a8 8 0 1 1 16-4.5Z"/>',
+  wave: '<path d="M2 10v4M6 6v12M10 3v18M14 6v12M18 9v6M22 11v2"/>',
+  archive: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M10 13h4"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>',
+  more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+  trash: '<path d="M3 6h18M8 6V4h8v2m-11 0 1 15h12l1-15M10 10v7m4-7v7"/>',
+  pin: '<path d="M12 17v5"/><path d="M9 10.76V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7.76l1.88 2.82A1 1 0 0 1 16.05 15H7.95a1 1 0 0 1-.83-1.42Z"/>',
+  'pin-off': '<path d="M12 17v5M9 5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7.76l1.88 2.82a1 1 0 0 1-.15 1.28M7.5 15a1 1 0 0 1-.38-1.42L8.5 11"/><path d="m2 2 20 20"/>',
+  sparkle: '<path d="m12 2 2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2Z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+  cpu: '<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9zM9 1v4m6-4v4M9 19v4m6-4v4M1 9h4m-4 6h4m14-6h4m-4 6h4"/>',
+  check: '<path d="M5 12l4 4L19 6"/>',
+  package: '<path d="m12 2 9 5-9 5-9-5 9-5ZM3 7v10l9 5 9-5V7M12 12v10"/>',
+};
+function svg(name, size = 19) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
+}
+function setIcon(id, name) { $(id).innerHTML = svg(name); }
+let sessionId = null, busy = false, recorder = null, micStream = null, audioCtx = null,
+  analyser = null, meterTimer = null, recorded = [], heardVoice = false, silenceSince = 0,
+  recordingStartedAt = 0, currentAudio = null, viewEpoch = 0,
+  selectedVoice = '', appStatus = null, toastTimer = null, editingRevision = null;
+
+function note(text, error = false) {
+  const toast = $('notice');
+  clearTimeout(toastTimer);
+  toast.textContent = text;
+  toast.classList.toggle('error', error);
+  toast.classList.add('visible');
+  toastTimer = setTimeout(() => toast.classList.remove('visible'), error ? 6000 : 3800);
+}
+async function api(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    let error = 'HTTP ' + response.status;
+    try { const data = await response.json(); error = data.detail || data.message || error; } catch (_) {}
+    throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
+  }
+  return response;
+}
+// v0.11.0p: reviewed ASR draft and bounded TTS warmup retry.
+// A TTS service can open its port before the model accepts its first request.
+const SPEECH_WARMUP_DELAYS = [1500, 3200, 6000, 9000];
+const waitForSpeech = ms => new Promise(resolve => setTimeout(resolve, ms));
+async function fetchSpeechWithWarmup(makeRequest, stillCurrent = () => true) {
+  let response;
+  for (let attempt = 0; attempt <= SPEECH_WARMUP_DELAYS.length; attempt++) {
+    if (!stillCurrent()) return response || new Response(null, {status: 503});
+    response = await makeRequest();
+    if (response.ok || ![502, 503, 504].includes(response.status) ||
+        attempt === SPEECH_WARMUP_DELAYS.length) return response;
+    if (attempt === 0) note('语音服务正在准备，正在自动重试…');
+    await waitForSpeech(SPEECH_WARMUP_DELAYS[attempt]);
+  }
+  return response;
+}
+const jsonPost = (obj) => ({method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(obj)});
+// Local time controls the greeting language; phrase selection varies per fresh chat.
+let WELCOME_GREETINGS = {"morning": [["morning_1", "おはようございます。今日は何についてお話ししましょうか。"], ["morning_2", "おはようございます。日本語で会話を始めましょう。"], ["morning_3", "おはようございます。今日はどんなことを練習しますか。"], ["morning_4", "おはようございます。ご希望の話題を教えてください。"]], "afternoon": [["afternoon_1", "こんにちは。今日は何についてお話ししましょうか。"], ["afternoon_2", "こんにちは。日本語の会話を練習しましょう。"], ["afternoon_3", "こんにちは。練習したい話題はありますか。"], ["afternoon_4", "こんにちは。自由にお話しください。"]], "evening": [["evening_1", "こんばんは。今日は何についてお話ししましょうか。"], ["evening_2", "こんばんは。日本語で会話を練習しましょう。"], ["evening_3", "こんばんは。今日の出来事についてお話ししますか。"], ["evening_4", "こんばんは。話したいことを教えてください。"]], "night": [["night_1", "こんばんは。少し日本語でお話ししましょうか。"], ["night_2", "こんばんは。ご希望の話題を教えてください。"], ["night_3", "こんばんは。今日はどんな練習をしましょうか。"], ["night_4", "こんばんは。日本語の会話を始めましょう。"]]};
+// Character-only lines and prerecorded audio are loaded from an installed pack.
+let SECRET_GREETINGS=[];
+let activeCharacter='default',availableCharacters=[],hasCharacterPortrait=false;
+const NORMAL_WELCOME_GREETINGS=JSON.parse(JSON.stringify(WELCOME_GREETINGS));
+async function loadCharacterContent(){
+  const list=await (await api('/api/characters')).json();
+  activeCharacter=list.active||'default';availableCharacters=list.characters||[];
+  const data=await (await api('/api/characters/active/content')).json();
+  WELCOME_GREETINGS=JSON.parse(JSON.stringify(NORMAL_WELCOME_GREETINGS));
+  SECRET_GREETINGS=[];
+  if(activeCharacter!=='default'){
+    for(const [group,records] of Object.entries(data.greetings||{})){
+      if(records?.length)WELCOME_GREETINGS[group]=records.map(r=>[r.id,r.text,r.ttsText,r.audio]);
+    }
+    SECRET_GREETINGS=data.hidden_greetings||[];
+  }
+  CHARACTER_LINE_POINTS_BASE64='';CHARACTER_OUTER_SILHOUETTE_BASE64='';
+  characterPointCoordinates=null;characterOuterContourCache=null;hasCharacterPortrait=false;
+  if(activeCharacter!=='default'){
+    hasCharacterPortrait=Boolean(availableCharacters.find(c=>c.id===activeCharacter)?.has_portrait);
+    const response=await fetch('/api/characters/'+encodeURIComponent(activeCharacter)+'/effects',{cache:'no-store'});
+    if(response.ok){
+      const e=await response.json();
+      if(e.type==='point_line_v1'){
+        CHARACTER_LINE_POINTS_BASE64=e.points_base64||'';CHARACTER_OUTER_SILHOUETTE_BASE64=e.outline_base64||'';
+        CHARACTER_LINE_SIZE={width:Number(e.width)||456,height:Number(e.height)||725};
+      }
+    }
+  }
+  refreshCharacterControls();
+  if($('thread')?.classList.contains('is-welcome')){
+    hideWelcome();renderWelcome();
+  }
+}
+let welcomeGreeting={id:'afternoon_1',text:'こんにちは。今日は何についてお話ししましょうか。',secret:false};
+let previousWelcomeId='', welcomeTapCount=0, secretGreetingIndex=0;
+let greetingPlaySequence=0, greetingSwitchTimer=null;
+const welcomeAudioCache=new Map();
+function greetingClock(){
+  const now=new Date(),h=now.getHours();
+  const group=(h>=5&&h<11)?'morning':(h>=11&&h<18)?'afternoon':(h>=18&&h<23)?'evening':'night';
+  const labels={morning:'朝',afternoon:'昼',evening:'夕方',night:'夜'};
+  return {group,label:labels[group],time:String(h).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')};
+}
+function selectWelcomeGreeting(){
+  const options=WELCOME_GREETINGS[greetingClock().group];
+  const choices=options.filter(item=>item[0]!==previousWelcomeId);
+  const chosen=(choices.length?choices:options)[Math.floor(Math.random()*(choices.length||options.length))];
+  welcomeGreeting={id:chosen[0],text:chosen[1],ttsText:chosen[2],audio:chosen[3],secret:false};
+  previousWelcomeId=chosen[0];
+}
+function updateWelcomeBubble(){
+  const balloon=$('welcome')?.querySelector('.manga-speech');
+  if(!balloon)return;
+  const heading=balloon.querySelector('h1');
+  if(heading)heading.textContent=welcomeGreeting.text;
+  const play=balloon.querySelector('.greeting-play');
+  if(play)play.classList.toggle('hidden',!(selectedVoice||welcomeGreeting.audio));
+}
+function nextWelcomeGreeting(){
+  // Each third balloon tap reveals one extra line; normal taps stay time-aware.
+  welcomeTapCount++;
+  if(welcomeTapCount%3===0 && SECRET_GREETINGS.length>0){
+    const secret=SECRET_GREETINGS[secretGreetingIndex++%SECRET_GREETINGS.length];
+    welcomeGreeting={...secret,secret:true};
+  }else selectWelcomeGreeting();
+  greetingPlaySequence++; // Ignore a response for a greeting that was replaced.
+  clearTimeout(greetingSwitchTimer);
+  stopPlayback();
+  updateWelcomeBubble();
+  greetingSwitchTimer=setTimeout(()=>playWelcomeGreeting(),110);
+}
+async function playWelcomeGreeting(){
+  const greeting={...welcomeGreeting};
+  const id=greeting.id;
+  const button=$('greetingPlayBtn');
+  const request=++greetingPlaySequence;
+  if(!selectedVoice&&!greeting.audio){note('请先安装角色语音模型或带录音的角色包。');return;}
+  if(button){button.disabled=true;button.classList.add('loading');}
+  const epoch=viewEpoch;
+  try{
+    const speechText=String(greeting.ttsText||greeting.text||'').trim();
+    if(!speechText)throw new Error('隐藏台词朗读内容为空');
+    const cacheKey=JSON.stringify([activeCharacter,id,speechText,selectedVoice]);
+    let url=welcomeAudioCache.get(cacheKey);
+    if(!url){
+      let resp;
+      if(greeting.audio && activeCharacter!=='default'){
+        resp=await fetch('/api/characters/'+encodeURIComponent(activeCharacter)+'/greeting-audio/'+encodeURIComponent(id),{cache:'no-store'});
+      }else if(greeting.secret || activeCharacter!=='default'){
+        resp=await fetchSpeechWithWarmup(()=>fetch('/api/secret-greetings/speak',jsonPost({identity:String(id),text:speechText,voice_id:selectedVoice})),()=>epoch===viewEpoch&&request===greetingPlaySequence);
+        // A running old Web process might not yet have loaded the disk-cache endpoint.
+        // Recover voice playback; a full app restart enables persistent caching.
+        if(resp.status===404){
+          resp=await fetchSpeechWithWarmup(()=>fetch('/api/speak',jsonPost({text:speechText,voice_id:selectedVoice})),()=>epoch===viewEpoch&&request===greetingPlaySequence);
+          if(resp.ok && !window.avtLegacyGreetingWarned){
+            window.avtLegacyGreetingWarned=true;
+            note('正在使用旧版语音接口。完全退出并重启应用后，将启用隐藏台词磁盘缓存。');
+          }
+        }
+      }else{
+        const target='/api/greetings/'+encodeURIComponent(id);
+        resp=await fetch(target+'/audio',{cache:'no-store'});
+        if(resp.status===404)resp=await fetchSpeechWithWarmup(()=>fetch(target+'/speak',jsonPost({})),()=>epoch===viewEpoch&&request===greetingPlaySequence);
+      }
+      if(!resp.ok){
+        let reason='';
+        try{
+          const body=await resp.json(),detail=body?.detail;
+          reason=typeof detail==='string'?detail:
+            Array.isArray(detail)?detail.map(item=>item.msg||'').filter(Boolean).join('; '):'';
+        }catch(_){/* Show HTTP status even if response is not JSON. */}
+        throw new Error('HTTP '+resp.status+(reason?': '+reason.slice(0,220):''));
+      }
+      const blob=await resp.blob();
+      if(!blob.size)throw new Error('生成的语音为空');
+      url=URL.createObjectURL(blob);
+      const previous=welcomeAudioCache.get(cacheKey);
+      if(!previous)welcomeAudioCache.set(cacheKey,url);
+      else{URL.revokeObjectURL(url);url=previous;}
+    }
+    if(epoch===viewEpoch&&request===greetingPlaySequence)playAudioUrl(url,false,epoch);
+  }catch(e){if(epoch===viewEpoch&&request===greetingPlaySequence)note('问候语播放失败：'+e.message,true);}
+  finally{if(request===greetingPlaySequence&&button){button.disabled=false;button.classList.remove('loading');}}
+}
+// Move the existing stop control into an absolutely positioned bubble cluster.
+// A single control is reused; the chat composer keeps its original behavior.
+function configureWelcomeBubble(balloon){
+  if(!balloon)return;
+  const heading=balloon.querySelector('h1');
+  const play=balloon.querySelector('.greeting-play');
+  if(!heading||!play)return;
+  heading.tabIndex=0;
+  heading.setAttribute('role','button');
+  heading.setAttribute('aria-label','点击切换并播放下一条问候语');
+  heading.onkeydown=e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();nextWelcomeGreeting();}
+  };
+  const controls=document.createElement('div');
+  controls.className='welcome-controls';
+  balloon.appendChild(controls);
+  controls.appendChild(play);
+  const stop=$('stopAudio');
+  if(stop)controls.appendChild(stop);
+  play.innerHTML=svg('volume',17);
+  play.onclick=e=>{e.stopPropagation();playWelcomeGreeting();};
+  controls.onclick=e=>e.stopPropagation();
+  balloon.onclick=e=>{
+    if(e.target.closest('button'))return;
+    nextWelcomeGreeting();
+  };
+  updateWelcomeBubble();
+}
+const audioLink = (sid, id, voice = selectedVoice) => '/api/audio/' + encodeURIComponent(sid) + '/' + encodeURIComponent(id) + '?voice_id=' + encodeURIComponent(voice);
+function setBusy(value) {
+  busy = value;
+  $('send').disabled = value;
+  $('text').disabled = value;
+  $('record').disabled = value;
+  syncComposerAction();
+}
+function scrollBottom() {
+  const pane = $('messages');
+  pane.scrollTop = pane.scrollHeight;
+}
+
+// v0.9.1 — animated monochrome point-line portrait loaded from a character pack.
+// Data is precomputed from a masked grayscale Canny line drawing; no source-image pixels,
+ // gradients, multicolor points or raster photo are rendered in the browser.
+let CHARACTER_LINE_POINTS_BASE64 = '';
+let CHARACTER_LINE_SIZE = {width:456,height:725};
+let characterPointCoordinates = null;
+function getCharacterLinePoints() {
+  if (characterPointCoordinates) return characterPointCoordinates;
+  const raw=atob(CHARACTER_LINE_POINTS_BASE64), coords=new Uint16Array(raw.length/2);
+  // Decoding explicitly for little endian, including platforms with different byte order.
+  for(let i=0,j=0;i<raw.length;i+=4,j+=2){
+    coords[j]=raw.charCodeAt(i)|(raw.charCodeAt(i+1)<<8);
+    coords[j+1]=raw.charCodeAt(i+2)|(raw.charCodeAt(i+3)<<8);
+  }
+  characterPointCoordinates=coords;
+  return coords;
+}
+const portraitMotion={frame:0,alive:false,canvas:null,stage:null,pointer:null,
+  lastWidth:0,lastHeight:0,bursts:[],hover:null,outline:null,clicks:0};
+// Precomputed exterior silhouette only, not eyes, hair strands, fingers' inner ink, or clothes folds.
+// Points originate from the outermost connected component of the pack-provided portrait geometry.
+let CHARACTER_OUTER_SILHOUETTE_BASE64 = '';
+let characterOuterContourCache=null;
+function getCharacterOuterContour(){
+  if(characterOuterContourCache)return characterOuterContourCache;
+  const raw=atob(CHARACTER_OUTER_SILHOUETTE_BASE64),result=[];
+  for(let i=0;i+3<raw.length;i+=4){
+    result.push({x:raw.charCodeAt(i)|(raw.charCodeAt(i+1)<<8),
+      y:raw.charCodeAt(i+2)|(raw.charCodeAt(i+3)<<8)});
+  }
+  characterOuterContourCache=result;
+  return result;
+}
+function stopCharacterPortrait(){
+  const o=portraitMotion;
+  o.alive=false;
+  if(o.frame)cancelAnimationFrame(o.frame);
+  o.frame=0;o.canvas=null;o.stage=null;o.pointer=null;
+  o.bursts=[];o.hover=null;o.outline=null;o.surprise=null;
+  o.pluckAt=null;
+}
+function startCharacterPortrait(){
+  stopCharacterPortrait();
+  const stage=$('portraitStage'),canvas=$('characterPortraitCanvas');
+  if(!stage||!canvas||!CHARACTER_LINE_POINTS_BASE64||!CHARACTER_OUTER_SILHOUETTE_BASE64)return;
+  const o=portraitMotion;
+  o.stage=stage;o.canvas=canvas;o.alive=true;
+  initCharacterPortrait();
+  const location=ev=>{const rect=stage.getBoundingClientRect();return {x:ev.clientX-rect.left,y:ev.clientY-rect.top};};
+  stage.onpointermove=ev=>{
+    const p=location(ev);o.pointer=p;
+    o.hover=o.findOuter?.(p.x,p.y,95)||null;
+  };
+  stage.onpointerleave=()=>{o.pointer=null;o.hover=null;};
+  stage.onpointerup=null;
+  stage.onpointercancel=null;
+  stage.onpointerdown=ev=>{
+    if(ev.button!==undefined&&ev.button!==0)return;
+    const p=location(ev);o.pluckAt?.(p.x,p.y);
+  };
+  stage.tabIndex=0;
+  stage.setAttribute('role','button');
+  stage.setAttribute('aria-label','点击角色，外侧会出现波纹和小音符');
+  stage.onkeydown=ev=>{
+    if(ev.key==='Enter'||ev.key===' '){
+      ev.preventDefault();o.pluckAt?.(stage.clientWidth*.5,stage.clientHeight*.44);
+    }
+  };
+}
+function initCharacterPortrait(){
+  const o=portraitMotion,canvas=o.canvas,stage=o.stage;
+  if(!o.alive||!canvas||!stage)return;
+  const w=Math.round(stage.clientWidth),h=Math.round(stage.clientHeight);
+  if(w<2||h<2)return;
+  if(o.frame)cancelAnimationFrame(o.frame);
+  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const scale=Math.min(w/CHARACTER_LINE_SIZE.width,h/CHARACTER_LINE_SIZE.height)*.975;
+  const offx=(w-CHARACTER_LINE_SIZE.width*scale)/2;
+  const offy=(h-CHARACTER_LINE_SIZE.height*scale)/2;
+  o.lastWidth=w;o.lastHeight=h;o.bursts=[];o.hover=null;
+  // Keep the portrait's actual ink completely static: no scale, bounce or line deformation.
+  const backing=document.createElement('canvas');backing.width=canvas.width;backing.height=canvas.height;
+  const bctx=backing.getContext('2d',{alpha:true});if(!bctx)return;
+  bctx.setTransform(dpr,0,0,dpr,0,0);
+  bctx.fillStyle='rgba(166,166,166,.80)';bctx.beginPath();
+  const coordinates=getCharacterLinePoints(),count=Math.min(w<270?4900:9500,coordinates.length/2);
+  const rad=w<270?.65:.70;
+  for(let i=0;i<count;i++){
+    const x=coordinates[2*i]*scale+offx,y=coordinates[2*i+1]*scale+offy;
+    bctx.moveTo(x+rad,y);bctx.arc(x,y,rad,0,Math.PI*2);
+  }
+  bctx.fill();
+  // The outline is a closed vector of the *exterior* boundary, independent of inner line art.
+  const original=getCharacterOuterContour();
+  const pts=original.map(q=>({x:q.x*scale+offx,y:q.y*scale+offy}));
+  const lengths=[0];let total=0,area=0;
+  for(let i=0;i<pts.length;i++){
+    const a=pts[i],b=pts[(i+1)%pts.length];
+    total+=Math.hypot(b.x-a.x,b.y-a.y);lengths.push(total);
+    area+=a.x*b.y-b.x*a.y;
+  }
+  const winding=area>=0?1:-1;
+  const outline={pts,lengths,total,winding};o.outline=outline;
+  // At rest, the silhouette is fully static; there are no orbiting dots.
+  function sample(at){
+    const dist=((at%total)+total)%total;
+    let lo=0,hi=lengths.length-1;
+    while(lo+1<hi){const mid=(lo+hi)>>1;if(lengths[mid]<=dist)lo=mid;else hi=mid;}
+    const a=pts[lo],b=pts[(lo+1)%pts.length],frac=(dist-lengths[lo])/(lengths[lo+1]-lengths[lo]||1);
+    return {x:a.x+(b.x-a.x)*frac,y:a.y+(b.y-a.y)*frac};
+  }
+  function basis(at){
+    const p=sample(at),p1=sample(at-3),p2=sample(at+3);
+    const dx=p2.x-p1.x,dy=p2.y-p1.y,mag=Math.hypot(dx,dy)||1;
+    const tx=dx/mag,ty=dy/mag;
+    return {x:p.x,y:p.y,tx,ty,nx:winding*ty,ny:-winding*tx};
+  }
+  // True point-to-segment nearest exterior boundary; interior features are never candidates.
+  function closest(x,y){
+    let dist2=Infinity,nearest=0;
+    for(let i=0;i<pts.length;i++){
+      const a=pts[i],b=pts[(i+1)%pts.length],dx=b.x-a.x,dy=b.y-a.y;
+      const t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1)));
+      const px=a.x+dx*t,py=a.y+dy*t,d2=(px-x)**2+(py-y)**2;
+      if(d2<dist2){dist2=d2;nearest=lengths[i]+(lengths[i+1]-lengths[i])*t;}
+    }
+    return {at:nearest,d:Math.sqrt(dist2)};
+  }
+  function inside(x,y){
+    let yes=false;
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+      const a=pts[i],b=pts[j];
+      if((a.y>y)!==(b.y>y) && x<(b.x-a.x)*(y-a.y)/(b.y-a.y)+a.x)yes=!yes;
+    }
+    return yes;
+  }
+  o.findOuter=(x,y,limit=78)=>{
+    const nearest=closest(x,y);
+    return nearest.d<=limit?nearest:null;
+  };
+  o.pluckAt=(x,y)=>{
+    if(!o.alive||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const hit=closest(x,y);
+    if(hit.d>104&&!inside(x,y))return;
+    o.clicks++;
+    o.bursts=o.bursts.filter(t=>performance.now()-t.started<1180);
+    o.bursts.push({at:hit.at,started:performance.now(),note:o.clicks%3===2,
+      sparkle:o.clicks%4===0,seed:o.clicks*.71});
+    o.bursts=o.bursts.slice(-5);
+  };
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    ctx.clearRect(0,0,w,h);ctx.drawImage(backing,0,0,w,h);
+    return;
+  }
+  // Outside-only short ripples: all coordinates are offset along the outward normal.
+  function edgeArc(at,halfSpan,offset,wiggle,alpha,phase,thickness=1.35){
+    if(alpha<=.008)return;
+    ctx.strokeStyle=`rgba(218,221,224,${Math.min(.90,alpha)})`;
+    ctx.lineWidth=(w<270?.88:1)*thickness;
+    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+    const steps=30;
+    for(let i=0;i<=steps;i++){
+      const t=i/steps,z=t*2-1,b=basis(at+z*halfSpan);
+      const envelope=(1-z*z)**2;
+      const bump=Math.sin(t*Math.PI*3+phase)*wiggle*envelope;
+      const x=b.x+b.nx*(offset+bump),y=b.y+b.ny*(offset+bump);
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  function sparkle(at,time,alpha){
+    const b=basis(at),offset=17+17*time,x=b.x+b.nx*offset,y=b.y+b.ny*offset;
+    const r=2.3+3*time;
+    ctx.strokeStyle=`rgba(224,226,230,${alpha})`;ctx.lineWidth=1.65;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();
+  }
+  function musicNote(at,time,alpha){
+    const b=basis(at+time*9),out=25+time*20;
+    let x=b.x+b.nx*out,y=b.y+b.ny*out-time*8;
+    if(x<9||x>w-9||y<11||y>h-9)return;
+    const s=w<270?.83:1;
+    ctx.save();ctx.translate(x,y);ctx.rotate(-.15+time*.12);ctx.scale(s,s);
+    ctx.globalAlpha=alpha;ctx.fillStyle='#e1e3e6';ctx.strokeStyle='#e1e3e6';
+    ctx.lineWidth=1.85;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();ctx.moveTo(1,2);ctx.lineTo(1,-8);ctx.quadraticCurveTo(5,-9,8,-7);
+    ctx.stroke();
+    ctx.beginPath();ctx.ellipse(-2,2,3.2,2.3,-.3,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  let lastPaint=-1,wasActive=false;
+  const draw=now=>{
+    if(!o.alive||o.canvas!==canvas)return;
+    const active=!!(o.hover&&o.hover.d<85)||o.bursts.some(b=>now-b.started<1180);
+    if(!active&&lastPaint>=0&&!wasActive){o.frame=requestAnimationFrame(draw);return;}
+    if(!document.hidden&&stage.isConnected&&(lastPaint<0||now-lastPaint>=(w<270?23:18))){
+      lastPaint=now;wasActive=active;
+      ctx.clearRect(0,0,w,h);ctx.drawImage(backing,0,0,w,h);
+      // Hover becomes a long, clearly visible pair of exterior arcs, not interior line motion.
+      if(o.hover&&o.hover.d<85){
+        const strength=Math.max(0,1-o.hover.d/95);
+        edgeArc(o.hover.at,64,11,2.9,.25+strength*.48,now*.006,2.25);
+        edgeArc(o.hover.at+10,48,18,2.2,.13+strength*.28,now*.006+1.7,1.65);
+      }
+      o.bursts=o.bursts.filter(b=>now-b.started<1180);
+      for(const burst of o.bursts){
+        const t=Math.max(0,Math.min(1,(now-burst.started)/1180));
+        const fade=(1-t)**1.35;
+        edgeArc(burst.at-26*t,59+46*t,13+28*t,4.6,fade*.96,burst.seed+t*9,2.75);
+        edgeArc(burst.at+23*t,49+39*t,22+33*t,3.5,fade*.75,burst.seed+1.2+t*8,2.25);
+        edgeArc(burst.at-16*t,36+32*t,30+32*t,2.7,fade*.43,burst.seed+2.5+t*7,1.7);
+        if(burst.note)musicNote(burst.at+13,t,Math.min(1,fade*1.35));
+        if(burst.sparkle)sparkle(burst.at-20,t,fade*.65);
+      }
+    }
+    o.frame=requestAnimationFrame(draw);
+  };
+  draw(performance.now());
+}
+window.addEventListener('resize',()=>{
+  if(!portraitMotion.alive||!portraitMotion.stage)return;
+  const w=portraitMotion.stage.clientWidth,h=portraitMotion.stage.clientHeight;
+  if(Math.abs(w-portraitMotion.lastWidth)>5||Math.abs(h-portraitMotion.lastHeight)>5)
+    initCharacterPortrait();
+});
+
+// The stop button is a single persistent control that is temporarily placed
+// inside the welcome balloon. Never remove a balloon while it owns the button.
+function restoreStopAudioControl() {
+  const stop=$('stopAudio'),floating=document.querySelector('.audio-floating');
+  if(stop&&floating&&stop.parentElement!==floating)floating.appendChild(stop);
+}
+function hideWelcome() {
+  greetingPlaySequence++;
+  clearTimeout(greetingSwitchTimer);
+  stopCharacterPortrait();
+  restoreStopAudioControl();
+  $('welcome')?.remove();
+  $('thread').classList.remove('is-welcome');
+}
+function stopPlayback() {
+  if (currentAudio) {
+    currentAudio.onended = null;
+    currentAudio.onerror = null;
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  $('stopAudio')?.classList.add('hidden');
+}
+function clearAudioObjects() {
+  stopPlayback();
+  for (const url of audioObjects.values()) URL.revokeObjectURL(url);
+  audioObjects.clear();
+}
+function isCompactLayout() { return matchMedia('(max-width:780px)').matches; }
+function syncSidebarState() {
+  const side = $('sidebar');
+  const compact = isCompactLayout();
+  // Desktop is a resizing column; mobile is an overlay drawer.
+  if (compact) side.classList.remove('collapsed');
+  else side.classList.remove('open');
+  const expanded = compact ? side.classList.contains('open') : !side.classList.contains('collapsed');
+  $('openSidebar').setAttribute('aria-expanded', String(expanded));
+  $('closeSidebar').setAttribute('aria-expanded', String(expanded));
+  const showScrim = compact && expanded;
+  $('sidebarScrim').classList.toggle('open', showScrim);
+  $('sidebarScrim').setAttribute('aria-hidden', String(!showScrim));
+  side.setAttribute('aria-hidden', String(!expanded));
+  side.inert = !expanded;
+  document.body.classList.toggle('sidebar-expanded', expanded);
+}
+function openSidebar() {
+  closeSettings();
+  closeStatusPopover();
+  const side = $('sidebar');
+  side.classList.remove('collapsed');
+  side.classList.toggle('open', isCompactLayout());
+  syncSidebarState();
+}
+function closeSidebar() {
+  closeRoleMenu();
+  const side = $('sidebar');
+  side.classList.remove('open');
+  side.classList.toggle('collapsed', !isCompactLayout());
+  syncSidebarState();
+}
+function openSettings() {
+  closeStatusPopover();
+  if (isCompactLayout()) closeSidebar();
+  $('drawer').classList.add('open');
+  $('settingsScrim').classList.add('open');
+  $('drawer').setAttribute('aria-hidden', 'false');
+  $('drawer').inert = false;
+  $('closeSettings').focus();
+  loadLLMSettings();
+}
+function closeSettings() {
+  $('drawer').classList.remove('open');
+  $('settingsScrim').classList.remove('open');
+  $('drawer').setAttribute('aria-hidden', 'true');
+  $('drawer').inert = true;
+}
+function openStatusPopover() {
+  closeSettings();
+  const panel = $('statusPopover');
+  panel.hidden = false;
+  panel.setAttribute('aria-hidden', 'false');
+  $('statusBtn').setAttribute('aria-expanded', 'true');
+  refreshStatus();
+}
+function closeStatusPopover() {
+  $('statusPopover').hidden = true;
+  $('statusPopover').setAttribute('aria-hidden', 'true');
+  $('statusBtn').setAttribute('aria-expanded', 'false');
+}
+function toggleStatusPopover() {
+  if ($('statusPopover').hidden) openStatusPopover(); else closeStatusPopover();
+}
+function selectSettingsTab(name) {
+  for (const tab of document.querySelectorAll('.settings-tab')) {
+    const active = tab.dataset.tab === name;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+  }
+  for (const panel of document.querySelectorAll('.settings-panel')) {
+    const active = panel.dataset.panel === name;
+    panel.classList.toggle('active', active);
+    panel.hidden = !active;
+  }
+}
+function actionButton(label, iconName, handler) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'action-button';
+  btn.title = label;
+  btn.setAttribute('aria-label', label);
+  btn.innerHTML = svg(iconName, 17);
+  btn.onclick = handler;
+  return btn;
+}
+function markSpeechAction(message) {
+  if (!message.playButton) return;
+  const available = Boolean(message.audio_url || audioObjects.has(message.id));
+  message.playButton.title = available ? '播放已保存语音' : '生成并播放语音';
+  message.playButton.setAttribute('aria-label', message.playButton.title);
+  message.regenButton.disabled = !available || message.synthesizing;
+}
+function isRoutineLanguageAdvice(text) {
+  const value = String(text || '').trim().replace(/[。！!\s]+$/g, '');
+  if (!value) return true;
+  return /^(?:あいさつ|挨拶)は自然です$/.test(value) ||
+    /^(?:自然な(?:表現|言い方|挨拶|あいさつ)です|問題ありません|そのままで大丈夫です)$/.test(value) ||
+    /^(?:朝|昼|夜|今日)の話題で会話を広げてみましょう$/.test(value) ||
+    /^(?:表达自然|说得很好|表达没有问题|没有明显错误|不需要修改)$/.test(value);
+}
+// v0.11.0q: configurable voice review and contextual message revisions
+// v0.11.0r: revision cancel and detailed language analysis
+// v0.11.0s: immediate chat transition and distinct language feedback
+// v0.11.0t: role-aligned pending bubbles
+function updateCorrectionVisibility() {
+  document.body.classList.toggle('corrections-off', $('correction').value === 'off');
+}
+function clearRevision(restoreDraft = false) {
+  const previous = editingRevision;
+  editingRevision = null;
+  $('revisionBanner').hidden = true;
+  if (restoreDraft && previous) {
+    // Cancel means abandon the revision draft, not send or keep its text.
+    $('text').value = '';
+    resizeInput();
+  }
+}
+function beginRevision(message) {
+  if (busy || !message.id || !message.session_id || message.session_id !== sessionId) return;
+  const oldDraft = editingRevision ? editingRevision.previousDraft : $('text').value;
+  editingRevision = {messageId: message.id, sessionId: message.session_id,
+    previousDraft: oldDraft};
+  $('revisionBanner').hidden = false;
+  $('text').value = message.text;
+  resizeInput();
+  $('text').focus({preventScroll:true});
+  $('text').setSelectionRange(message.text.length, message.text.length);
+}
+function attachRevisionAction(message) {
+  if (message.editButton || !message.id || !message.session_id || !message.actions) return;
+  const edit = actionButton('修改', 'compose', () => beginRevision(message));
+  message.actions.prepend(edit);
+  message.editButton = edit;
+}
+function renderMessage(text, role, extra = {}) {
+  hideWelcome();
+  const message = {...extra, id: extra.message_id ?? extra.id,
+    session_id: extra.session_id ?? sessionId, text,
+    voice_id: extra.voice_id || selectedVoice};
+  const outer = document.createElement('article');
+  outer.className = 'message ' + role;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  if (/[\u3040-\u30ff]/.test(text)) bubble.lang = 'ja';
+  if (role === 'user' && extra.corrects_message_id) {
+    const label = document.createElement('div');
+    label.className = 'revision-indicator';
+    label.textContent = '更正此前发言';
+    outer.appendChild(label);
+  }
+  outer.appendChild(bubble);
+  const actions = document.createElement('div');
+  actions.className = 'message-actions';
+  if (role === 'assistant') {
+    const play = actionButton('播放语音', 'volume', async () => {
+      if (message.synthesizing) return;
+      if (message.audio_url || audioObjects.has(message.id)) await playExistingAudio(message);
+      else await synthesizeMessage(message, {autoPlay: true});
+    });
+    const regen = actionButton('重新生成语音', 'refresh', async () => {
+      await synthesizeMessage(message, {autoPlay: true, regenerate: true});
+    });
+    actions.append(play, regen);
+    message.playButton = play;
+    message.regenButton = regen;
+    markSpeechAction(message);
+  }
+  const copy = actionButton('复制', 'copy', async () => {
+    try { await navigator.clipboard.writeText(text); note('已复制'); }
+    catch (_) { note('复制失败，请检查剪贴板权限', true); }
+  });
+  actions.appendChild(copy);
+  message.actions = actions;
+  message.element = outer;
+  if (role === 'user') attachRevisionAction(message);
+  outer.appendChild(actions);
+  if (role === 'assistant') {
+    // Routine encouragement and topic prompts are not language corrections.
+    // Filter on display as well, so old conversation history stays uncluttered.
+    const feedback = [extra.correction_ja, extra.feedback_zh]
+      .filter(part => typeof part === 'string' && part.trim())
+      .map(part => part.trim())
+      .filter(part => !isRoutineLanguageAdvice(part));
+    if (feedback.length) {
+      const detail = document.createElement('div');
+      detail.className = 'correction';
+      const head = document.createElement('small'); head.textContent = extra.correction_mode === 'detailed' ? '详细解释' : extra.correction_mode === 'gentle' ? '简洁纠错' : '表达纠正';
+      detail.appendChild(head);
+      for (const part of feedback) {
+        const line = document.createElement('div'); line.textContent = part;
+        detail.appendChild(line);
+      }
+      outer.appendChild(detail);
+    }
+  }
+  $('thread').appendChild(outer);
+  scrollBottom();
+  return message;
+}
+function renderPending(speaker = 'assistant') {
+  // ASR belongs to the user's right-side bubble; model generation belongs
+  // to the assistant's left-side bubble. Never float a spinner in the center.
+  hideWelcome();
+  const role = speaker === 'user' ? 'user' : 'assistant';
+  const el = document.createElement('article');
+  el.className = 'message ' + role + ' pending-row avt-working-row';
+  el.setAttribute('role', 'status');
+  el.setAttribute('aria-label', role === 'user' ? '正在识别语音' : '正在生成回复');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble avt-working-bubble';
+  const spinner = document.createElement('span');
+  spinner.className = 'avt-working-spinner';
+  spinner.setAttribute('aria-hidden', 'true');
+  bubble.appendChild(spinner);
+  el.appendChild(bubble);
+  $('thread').appendChild(el);
+  scrollBottom();
+  return el;
+}
+function renderWelcome() {
+  welcomeTapCount=0;
+  selectWelcomeGreeting();
+  const thread = $('thread');
+  if (thread.classList.contains('is-welcome') && $('welcome')) {
+    updateWelcomeBubble();
+    return;
+  }
+  const scrollContainer = $('messages');
+  const previousScrollBehavior = scrollContainer.style.scrollBehavior;
+  scrollContainer.style.scrollBehavior = 'auto';
+  scrollContainer.scrollTop = 0;
+  restoreStopAudioControl();
+  thread.classList.add('is-welcome');
+  thread.replaceChildren();
+  const empty = document.createElement('section');
+  empty.className = 'empty';
+  empty.id = 'welcome';
+  const portrait = document.createElement('div');
+  portrait.className = 'particle-stage';
+  portrait.id = 'portraitStage';
+  portrait.setAttribute('aria-label', '角色形象');
+  const canvas = document.createElement('canvas');
+  canvas.id = 'characterPortraitCanvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  portrait.appendChild(canvas);
+  if(hasCharacterPortrait&&!CHARACTER_LINE_POINTS_BASE64){
+    const image=document.createElement('img');image.alt='角色形象';image.className='character-static-image';
+    image.src='/api/characters/'+encodeURIComponent(activeCharacter)+'/portrait';portrait.appendChild(image);
+  }
+  if(hasCharacterPortrait)empty.appendChild(portrait);else empty.classList.add('neutral');
+  const heading = document.createElement('h1');
+  heading.textContent = welcomeGreeting.text;
+  heading.lang = 'ja';
+  const speechBubble = document.createElement('div');
+  speechBubble.className = 'manga-speech';
+  speechBubble.innerHTML = `<svg class="manga-shape" viewBox="0 0 430 205" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M235 13 C328.9 13 405 47.5 405 90 C405 132.5 328.9 167 235 167 C189 167 147 159 121 147 L42 184 L87 128 C73 117 65 104 65 90 C65 47.5 141.1 13 235 13 Z"/></svg>`;
+  speechBubble.appendChild(heading);
+  const greetPlay=document.createElement('button');
+  greetPlay.type='button';greetPlay.className='greeting-play';greetPlay.id='greetingPlayBtn';
+  greetPlay.title='播放问候语';greetPlay.setAttribute('aria-label','播放问候语');
+  greetPlay.innerHTML=svg('volume',17);
+  if(!selectedVoice&&!welcomeGreeting.audio)greetPlay.classList.add('hidden');
+  speechBubble.appendChild(greetPlay);
+  empty.appendChild(speechBubble);
+  thread.appendChild(empty);
+  configureWelcomeBubble(speechBubble);
+  scrollContainer.scrollTop = 0;
+  scrollContainer.style.scrollBehavior = previousScrollBehavior;
+  startCharacterPortrait();
+}
+
+// All destructive confirmations use a native-free, keyboard-accessible application dialog.
+let activeConfirmation = null;
+function confirmAction({title='确认操作？',description='此操作无法撤销。',confirmLabel='删除',iconName='trash'}={}){
+  if(activeConfirmation)return Promise.resolve(false);
+  const overlay=$('confirmOverlay');
+  const previous=document.activeElement;
+  $('confirmTitle').textContent=title;
+  $('confirmDescription').textContent=description;
+  $('confirmProceed').textContent=confirmLabel;
+  $('confirmIcon').innerHTML=svg(iconName,22);
+  overlay.hidden=false;
+  return new Promise(resolve=>{
+    const settle=value=>{
+      if(!activeConfirmation)return;
+      activeConfirmation=null;
+      overlay.hidden=true;
+      overlay.onpointerdown=null;
+      $('confirmCancel').onclick=null;
+      $('confirmProceed').onclick=null;
+      if(previous && previous.isConnected && typeof previous.focus==='function')previous.focus({preventScroll:true});
+      resolve(value);
+    };
+    activeConfirmation=settle;
+    $('confirmCancel').onclick=()=>settle(false);
+    $('confirmProceed').onclick=()=>settle(true);
+    overlay.onpointerdown=event=>{if(event.target===overlay)settle(false)};
+    $('confirmCancel').focus({preventScroll:true});
+  });
+}
+document.addEventListener('keydown',event=>{
+  if($('confirmOverlay').hidden || !activeConfirmation)return;
+  if(event.key==='Escape'){
+    event.preventDefault();event.stopImmediatePropagation();activeConfirmation(false);return;
+  }
+  if(event.key==='Tab'){
+    const cancel=$('confirmCancel'),proceed=$('confirmProceed');
+    if(event.shiftKey && document.activeElement===cancel){event.preventDefault();proceed.focus();}
+    else if(!event.shiftKey && document.activeElement===proceed){event.preventDefault();cancel.focus();}
+  }
+},true);
+
+let currentSessionMenu = null;
+function closeSessionMenu(){
+  if(currentSessionMenu){currentSessionMenu.remove();currentSessionMenu=null;}
+}
+function openSessionMenu(anchor,sess){
+  closeSessionMenu();
+  const menu=document.createElement('div');
+  menu.className='session-menu';menu.setAttribute('role','menu');
+  const addAction=(label,icon,handler)=>{
+    const button=document.createElement('button');button.type='button';button.setAttribute('role','menuitem');
+    button.innerHTML=svg(icon,16);
+    const text=document.createElement('span');text.textContent=label;button.appendChild(text);
+    button.onclick=async ev=>{ev.stopPropagation();closeSessionMenu();try{await handler()}catch(e){note(e.message,true)}};
+    menu.appendChild(button);
+  };
+  addAction(sess.is_pinned?'取消置顶':'置顶会话',sess.is_pinned?'pin-off':'pin',async()=>{
+    await api('/api/sessions/'+encodeURIComponent(sess.id)+'/pin',{
+      method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({pinned:!sess.is_pinned})});
+    await refreshSessions();
+  });
+  addAction('删除对话','trash',async()=>{
+    if(!(await confirmAction({title:'删除这段对话？',description:'对应的聊天记录和已生成语音也会一并删除，且无法恢复。',confirmLabel:'删除对话'})))return;
+    await api('/api/sessions/'+encodeURIComponent(sess.id),{method:'DELETE'});
+    if(sess.id===sessionId)await newChat();
+    else await refreshSessions();
+  });
+  document.body.appendChild(menu);currentSessionMenu=menu;
+  const rect=anchor.getBoundingClientRect();
+  const top=(rect.bottom+menu.offsetHeight+8>window.innerHeight)?rect.top-menu.offsetHeight-4:rect.bottom+4;
+  menu.style.top=Math.max(8,top)+'px';
+  menu.style.left=Math.max(8,Math.min(rect.right-menu.offsetWidth,window.innerWidth-menu.offsetWidth-8))+'px';
+}
+let needsTitleRefresh=false;
+async function refreshSessions() {
+  closeSessionMenu();
+  const data = await (await api('/api/sessions')).json();
+  const list = $('sessions');
+  list.replaceChildren();
+  const sessions=data.sessions||[];
+  const pinned=sessions.filter(s=>Boolean(s.is_pinned));
+  const recent=sessions.filter(s=>!s.is_pinned);
+  const renderGroup=(entries,label)=>{
+    if(!entries.length)return;
+    const caption=document.createElement('div');caption.className='session-group-label';caption.textContent=label;
+    list.appendChild(caption);
+    for(const sess of entries){
+      const row=document.createElement('div');
+      row.className='session-row'+(sess.id===sessionId?' active':'');
+      const main=document.createElement('button');main.type='button';main.className='session';
+      main.title=sess.title||'新对话';main.setAttribute('aria-label','打开会话：'+(sess.title||'新对话'));
+      const title=document.createElement('span');title.className='session-title';title.textContent=sess.title||'新对话';
+      main.appendChild(title);
+      if(sess.is_pinned){const pin=document.createElement('span');pin.className='session-pinned-mark';pin.innerHTML=svg('pin',16);pin.querySelector('svg path:last-child')?.setAttribute('fill','currentColor');main.appendChild(pin);}
+      main.onclick=()=>{closeSessionMenu();openSession(sess.id)};
+      const more=document.createElement('button');more.type='button';more.className='session-more';
+      more.title='会话选项';more.setAttribute('aria-label','会话选项：'+(sess.title||'新对话'));
+      more.innerHTML=svg('more',17);more.onclick=ev=>{ev.stopPropagation();openSessionMenu(more,sess)};
+      row.append(main,more);list.appendChild(row);
+    }
+  };
+  renderGroup(pinned,'已置顶');renderGroup(recent,'最近对话');
+  needsTitleRefresh=sessions.some(s=>s.title_status==='pending'||s.title_status==='processing');
+}
+async function openSession(id) {
+  if (editingRevision) { clearRevision(); $('text').value=''; resizeInput(); }
+  clearAudioObjects();
+  viewEpoch++;
+  const epoch = viewEpoch;
+  try {
+    const data = await (await api('/api/sessions/' + encodeURIComponent(id))).json();
+    if (epoch !== viewEpoch) return;
+    sessionId = id;
+    $('thread').classList.remove('is-welcome');
+    $('thread').replaceChildren();
+    for (const turn of data.messages) {
+      renderMessage(turn.user_text, 'user', {...turn, session_id: id});
+      renderMessage(turn.reply_ja, 'assistant', {...turn, session_id: id});
+    }
+    await refreshSessions();
+    if (isCompactLayout()) closeSidebar();
+  } catch (e) { if (epoch === viewEpoch) note('读取历史对话失败：' + e.message, true); }
+}
+async function newChat() {
+  if (editingRevision) { clearRevision(); $('text').value=''; resizeInput(); }
+  viewEpoch++;
+  clearAudioObjects();
+  sessionId = null;
+  $('messages').scrollTop = 0;
+  renderWelcome();
+  if (isCompactLayout()) closeSidebar();
+  $('text').focus({preventScroll:true});
+  try { await refreshSessions(); } catch (e) { note('会话列表更新失败：' + e.message, true); }
+}
+function playAudioUrl(url, after = false, epoch = viewEpoch) {
+  stopPlayback();
+  const audio = new Audio(url);
+  audio.playbackRate = Number($('playbackSpeed').value) || 1;
+  currentAudio = audio;
+  $('stopAudio')?.classList.remove('hidden');
+  audio.onended = () => {
+    if (currentAudio !== audio) return;
+    stopPlayback();
+    if (after && epoch === viewEpoch && $('continuous').checked && !busy) {
+      setTimeout(() => {
+        if (epoch === viewEpoch && $('continuous').checked && !busy &&
+            (!recorder || recorder.state !== 'recording')) recordToggle();
+      }, 300);
+    }
+  };
+  audio.onerror = () => { if (currentAudio === audio) { stopPlayback(); note('语音播放失败', true); } };
+  audio.play().catch(() => {
+    if (currentAudio === audio) {
+      stopPlayback();
+      note('浏览器阻止了自动播放，请点击回复下方的播放按钮');
+    }
+  });
+}
+async function playExistingAudio(message, after = false) {
+  if (!message.id || !message.session_id) return note('这条回复尚未关联语音', true);
+  const epoch = viewEpoch;
+  let url = audioObjects.get(message.id);
+  if (!url) {
+    if (!message.audio_url) return note('语音尚未生成', true);
+    try {
+      const response = await api(message.audio_url, {cache: 'no-store'});
+      const blob = await response.blob();
+      if (epoch !== viewEpoch) return;
+      url = URL.createObjectURL(blob);
+      audioObjects.set(message.id, url);
+    } catch (e) { return note('读取语音失败：' + e.message, true); }
+  }
+  if (epoch === viewEpoch) playAudioUrl(url, after, epoch);
+}
+async function requestSpeech(message, regenerate = false, epoch = viewEpoch) {
+  if (!message.id || !message.session_id) throw new Error('消息尚未保存');
+  // Retrying regeneration could produce a second distinct take, so only retry
+  // normal generation while the local model is still initializing.
+  const makeRequest = () => fetch('/api/speak', jsonPost({
+    text: message.text,
+    voice_id: message.voice_id,
+    session_id: message.session_id,
+    message_id: message.id,
+    regenerate,
+  }));
+  const response = regenerate ? await makeRequest() : await fetchSpeechWithWarmup(
+    makeRequest, () => epoch===viewEpoch);
+  if (!response.ok) {
+    let detail = 'HTTP ' + response.status;
+    try { const data=await response.json(); detail=data.detail||detail; } catch (_) {}
+    throw new Error(typeof detail==='string'?detail:JSON.stringify(detail));
+  }
+  const blob = await response.blob();
+  if (!blob.size) throw new Error('生成语音为空');
+  if (epoch !== viewEpoch) return false;
+  const url = URL.createObjectURL(blob);
+  const old = audioObjects.get(message.id);
+  audioObjects.set(message.id, url);
+  message.audio_url = audioLink(message.session_id, message.id, message.voice_id);
+  if (old) URL.revokeObjectURL(old);
+  return true;
+}
+async function synthesizeMessage(message, {autoPlay = false, regenerate = false} = {}) {
+  if (message.synthesizing) return;
+  const epoch = viewEpoch;
+  message.synthesizing = true;
+  message.playButton.disabled = true;
+  message.regenButton.disabled = true;
+  try {
+    if (regenerate) stopPlayback();
+    note(regenerate ? '正在重新生成语音…' : '正在生成语音…');
+    const ok = await requestSpeech(message, regenerate, epoch);
+    if (!ok) return;
+    markSpeechAction(message);
+    if (autoPlay) await playExistingAudio(message, false);
+  } catch (e) {
+    if (epoch === viewEpoch) note('语音生成失败：' + e.message, true);
+  } finally {
+    message.synthesizing = false;
+    message.playButton.disabled = false;
+    markSpeechAction(message);
+  }
+}
+async function sendText(value, waitingForTranscript = null) {
+  const content = (value || '').trim();
+  if (!content || busy) return;
+  const epoch = viewEpoch;
+  const withVoice = Boolean(selectedVoice) && $('autoPlay').checked;
+  const correctionMode = $('correction').value;
+  const revision = editingRevision && editingRevision.sessionId === sessionId
+    ? {...editingRevision} : null;
+  stopPlayback();
+  $('text').value = '';
+  resizeInput();
+  setBusy(true);
+  const userRendered = renderMessage(content, 'user', {
+    corrects_message_id: revision?.messageId || null});
+  if (waitingForTranscript) {
+    // Replace the user's ASR spinner in-place with the recognized utterance.
+    // Never turn a user-side pending bubble into an assistant-side indicator.
+    waitingForTranscript.replaceWith(userRendered.element);
+    scrollBottom();
+  }
+  // A second, distinct pending bubble now belongs to the AI on the left.
+  const pending = renderPending('assistant');
+  try {
+    const data = await (await api('/api/chat', jsonPost({
+      text: content,
+      session_id: sessionId,
+      correction_mode: correctionMode,
+      corrects_message_id: revision?.messageId || null,
+    }))).json();
+    if (epoch !== viewEpoch) return;
+    sessionId = data.session_id;
+    userRendered.id = data.message_id;
+    userRendered.session_id = data.session_id;
+    attachRevisionAction(userRendered);
+    if (revision) clearRevision();
+    const message = {text: data.reply_ja, id: data.message_id,
+      session_id: data.session_id, voice_id: selectedVoice, correction_mode: correctionMode, ...data};
+    let speechError = null;
+    // Voice-enabled replies are revealed together with the generated audio.
+    if (withVoice) {
+      try { await requestSpeech(message, false, epoch); }
+      catch (e) { speechError = e; }
+    }
+    if (epoch !== viewEpoch) return;
+    const rendered = renderMessage(data.reply_ja, 'assistant', message);
+    // Replace the left-side AI pending bubble without an empty-frame flash.
+    pending.replaceWith(rendered.element);
+    scrollBottom();
+    refreshSessions().catch(() => {});
+    if (speechError) note('语音暂不可用，文字回复已保留：' + speechError.message, true);
+    else if (withVoice && rendered.audio_url) await playExistingAudio(rendered, true);
+  } catch (e) {
+    if (epoch === viewEpoch) {
+      pending.remove();
+      userRendered.element.remove();
+      $('text').value = content;
+      resizeInput();
+      note('发送失败：' + e.message, true);
+    }
+  } finally {
+    setBusy(false);
+    if (epoch === viewEpoch) $('text').focus();
+  }
+}
+function stopMeter() {
+  if (meterTimer) clearInterval(meterTimer);
+  meterTimer = null;
+  if (audioCtx) audioCtx.close().catch(() => {});
+  audioCtx = null;
+  analyser = null;
+  $('meterFill').style.width = '3%';
+  $('meter').classList.add('hidden');
+}
+function stopRecord() { if (recorder?.state === 'recording') recorder.stop(); }
+function monitorAudio() {
+  if (!analyser) return;
+  const values = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(values);
+  let power = 0;
+  for (const item of values) { const v = (item - 128) / 128; power += v * v; }
+  const rms = Math.sqrt(power / values.length);
+  $('meterFill').style.width = Math.min(100, Math.max(3, rms * 600)) + '%';
+  const now = performance.now();
+  if (rms > .024) { heardVoice = true; silenceSince = 0; }
+  else if (heardVoice && !silenceSince) silenceSince = now;
+  if ($('autoStop').checked && heardVoice && silenceSince && now - silenceSince > 1100 &&
+      now - recordingStartedAt > 1300) stopRecord();
+  if (now - recordingStartedAt > 60000) stopRecord();
+}
+function showMicHelp(error) {
+  const name = error?.name || '';
+  $('micHelpTitle').textContent = name === 'NotFoundError' ? '未检测到麦克风' : '麦克风不可用';
+  $('micHelpText').textContent = name === 'NotFoundError'
+    ? '请连接麦克风，或检查 Windows 的录音设备设置。'
+    : '请在浏览器地址栏的麦克风权限设置中允许此网站使用麦克风，然后重试。';
+  $('micHelp').classList.remove('hidden');
+  $('micHelpScrim').classList.remove('hidden');
+  $('micRetry').focus();
+}
+function closeMicHelp() {
+  $('micHelp').classList.add('hidden');
+  $('micHelpScrim').classList.add('hidden');
+}
+async function recordToggle() {
+  if (recorder?.state === 'recording') return stopRecord();
+  if (busy) return;
+  stopPlayback();
+  const epoch = viewEpoch;
+  try {
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+      showMicHelp({name: 'NotAllowedError'});
+      return;
+    }
+    micStream = await navigator.mediaDevices.getUserMedia({audio: {
+      echoCancellation: true, noiseSuppression: true}, video: false});
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(micStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    source.connect(analyser);
+    const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg']
+      .find(type => MediaRecorder.isTypeSupported(type));
+    recorder = mime ? new MediaRecorder(micStream, {mimeType: mime}) : new MediaRecorder(micStream);
+    recorded = [];
+    heardVoice = false;
+    silenceSince = 0;
+    recordingStartedAt = performance.now();
+    recorder.ondataavailable = (e) => { if (e.data.size) recorded.push(e.data); };
+    recorder.onstop = async () => {
+      stopMeter();
+      micStream?.getTracks().forEach(track => track.stop());
+      micStream = null;
+      $('record').classList.remove('recording');
+      setIcon('record', 'voice');
+      $('record').setAttribute('aria-label', '语音输入');
+      syncComposerAction();
+      if (epoch !== viewEpoch) return;
+      // Do not wait for speech recognition to reveal the conversation screen.
+      // The very first stopped recording immediately shows a rotating spinner.
+      const transcribing = renderPending('user');
+      if (!recorded.length) {
+        transcribing.remove();
+        note('没有录制到语音，请重试', true);
+        return;
+      }
+      setBusy(true);
+      try {
+        const blob = new Blob(recorded, {type: recorder.mimeType});
+        const form = new FormData();
+        form.append('audio', blob, 'speech.webm');
+        const result = await (await api('/api/asr', {method: 'POST', body: form})).json();
+        if (epoch !== viewEpoch) return;
+        if (!result.text) { note('没有识别到语音，请重试', true); return; }
+        setBusy(false);
+        if ($('reviewSpeech').checked || editingRevision) {
+          // Review mode keeps its existing contract: editable, not auto-sent.
+          // Only the transcript is shown, without a success notification.
+          transcribing.remove();
+          $('text').value = result.text;
+          resizeInput();
+          $('text').focus({preventScroll:true});
+          $('text').setSelectionRange(result.text.length, result.text.length);
+        } else {
+          // Convert user ASR pending into the user message; then show a
+          // separate assistant pending bubble while chat and TTS are running.
+          await sendText(result.text, transcribing);
+        }
+      } catch (e) {
+        if (epoch === viewEpoch) note('语音识别失败：' + e.message, true);
+      } finally {
+        transcribing.remove();
+        setBusy(false);
+      }
+    };
+    recorder.start();
+    $('meter').classList.remove('hidden');
+    meterTimer = setInterval(monitorAudio, 70);
+    $('record').classList.add('recording');
+    setIcon('record', 'stop');
+    $('record').setAttribute('aria-label', '停止录音');
+    syncComposerAction();
+    // The red record control indicates recording; no instructional toast.
+  } catch (e) {
+    stopMeter();
+    micStream?.getTracks().forEach(track => track.stop());
+    micStream = null;
+    if (['NotAllowedError', 'PermissionDeniedError', 'NotFoundError', 'SecurityError'].includes(e.name))
+      showMicHelp(e);
+    else note('无法使用麦克风：' + e.message, true);
+  }
+}
+function showStatus(data) {
+  appStatus = data;
+  const ttsOptional = data.character_id === 'default' || !Array.isArray(data.voices) || data.voices.length === 0;
+  const ready = Boolean((data.llm_configured ?? data.deepseek_configured) && data.asr_ready && (data.tts_ready || ttsOptional));
+  $('statusDot').className = 'dot ' + (ready ? 'good' : 'warn');
+  $('statusBtn').title = ready ? '服务就绪' : '部分服务不可用';
+  $('statusBtn').setAttribute('aria-label', $('statusBtn').title);
+  $('llmModel').textContent = (data.llm_provider === 'openai' ? 'OpenAI' : 'DeepSeek') + ' · ' + (typeof data.model === 'string' && data.model.trim() ? data.model.trim() : 'API');
+  $('llmStatus').textContent = (data.llm_configured ?? data.deepseek_configured) ? '已配置' : '未配置';
+  $('asrStatus').textContent = data.asr_ready ? '已就绪' : (data.asr_detail || '未就绪');
+  $('ttsStatus').textContent = data.tts_ready ? '已就绪' : (ttsOptional ? '未配置（可选）' : '尚未启动');
+  $('ttsStatus').title = data.tts_detail || '';
+  if(availableCharacters.length)refreshCharacterControls();
+  for (const [id, active] of [['llmDot',data.llm_configured ?? data.deepseek_configured],['asrDot',data.asr_ready],['ttsDot',data.tts_ready]]) $(id).classList.toggle('ready', Boolean(active));
+}
+async function refreshStatus() {
+  try { showStatus(await (await api('/api/status')).json()); }
+  catch (_) { $('statusDot').className = 'dot warn'; }
+}
+async function setup() {
+  const status = await (await api('/api/status')).json();
+  showStatus(status);
+  await loadCharacterContent();
+  supportedVoiceProfiles.splice(0,supportedVoiceProfiles.length,...(status.voices||[]));
+  const select = $('voice');
+  select.replaceChildren();
+  for (const voice of status.voices || []) {
+    const option = document.createElement('option');
+    option.value = voice.id; option.textContent = voice.label;
+    select.appendChild(option);
+  }
+  if (select.options.length) {
+    let preferred = null;
+    try { preferred = JSON.parse(localStorage.getItem('avt_preferences_v088') || '{}').voice; } catch (_) {}
+    if (preferred && Array.from(select.options).some(opt => opt.value === preferred)) select.value = preferred;
+    selectedVoice = select.value;
+  }
+  if(!select.options.length)selectedVoice='';
+  if($('greetingPlayBtn'))$('greetingPlayBtn').classList.toggle('hidden',!(selectedVoice||welcomeGreeting.audio));
+  updateVoiceTitle();
+  await refreshSessions();
+  if (!(status.llm_configured ?? status.deepseek_configured)) { openSettings(); selectSettingsTab('model'); await loadLLMSettings(); }
+}
+const supportedVoiceProfiles = [];
+function closeRoleMenu() {
+  $('roleMenu').hidden = true;
+  $('roleTrigger').setAttribute('aria-expanded','false');
+}
+function characterPortraitThumb(item){
+  const thumb=document.createElement('span');thumb.className='role-portrait-thumb';
+  if(item?.has_portrait&&item.id!=='default'){
+    const img=document.createElement('img');img.alt='';img.loading='lazy';
+    img.src='/api/characters/'+encodeURIComponent(item.id)+'/portrait';thumb.appendChild(img);
+  }else thumb.textContent=item?.avatar||'日';
+  return thumb;
+}
+function renderRoleMenu(){
+  const menu=$('roleMenu');menu.replaceChildren();
+  for(const item of availableCharacters){
+    const b=document.createElement('button');b.type='button';b.className='role-menu-item';
+    const name=document.createElement('span');name.textContent=item.label;
+    const info=document.createElement('small');info.textContent=item.voice_ready?'含语音模型':'文字模式';
+    const copy=document.createElement('span');copy.className='role-menu-copy';copy.append(name,info);
+    b.append(characterPortraitThumb(item),copy);b.classList.toggle('chosen',item.id===activeCharacter);
+    b.onclick=()=>{closeRoleMenu();selectCharacter(item.id);};menu.appendChild(b);
+  }
+}
+function syncRolePicker(){
+  const item=availableCharacters.find(x=>x.id===activeCharacter);
+  $('rolePickerName').textContent=item?.label||'AnimeVoiceTutor';
+  const emblem=$('roleAvatar');emblem.replaceChildren();
+  const image=characterPortraitThumb(item);
+  if(image.querySelector('img'))emblem.append(image.firstChild);
+  else emblem.textContent=item?.avatar||'日';
+  renderRoleMenu();
+}
+function refreshCharacterControls(){
+  const choice=$('characterSelect');if(choice){choice.replaceChildren();
+    for(const item of availableCharacters){const o=document.createElement('option');o.value=item.id;o.textContent=item.label;choice.appendChild(o);}
+    choice.value=activeCharacter;
+  }
+  syncRolePicker();
+  const item=availableCharacters.find(x=>x.id===activeCharacter);
+  if($('characterStatus'))$('characterStatus').textContent=activeCharacter==='default'
+    ?'基础版：标准日语会话，无角色专属语音和素材。'
+    :item?.voice_ready
+      ?'角色素材和语音权重已安装。预录问候：'+item.recordings_present+'/'+item.recordings_total+'；实时合成需要单独启动 TTS。'
+      :'角色素材已安装，尚未配置 TTS 模型。';
+  if($('characterVoiceStatus'))$('characterVoiceStatus').textContent=appStatus?.tts_detail||'';
+}
+async function syncVoicesForCharacter(){
+  const status=await (await api('/api/status')).json();showStatus(status);
+  supportedVoiceProfiles.splice(0,supportedVoiceProfiles.length,...(status.voices||[]));
+  const voice=$('voice');voice.replaceChildren();
+  for(const item of supportedVoiceProfiles){
+    const opt=document.createElement('option');opt.value=item.id;opt.textContent=item.label;voice.appendChild(opt);
+  }
+  selectedVoice=voice.options.length?voice.value:'';
+  updateVoiceTitle();savePreferences();
+  $('greetingPlayBtn')?.classList.toggle('hidden',!(selectedVoice||welcomeGreeting.audio));
+  return status;
+}
+let characterSplashTimer=null;
+function showCharacterActivation(item,detail){
+  const overlay=$('characterActivation');clearTimeout(characterSplashTimer);
+  $('characterActivationTitle').textContent=item?.label||'角色已切换';
+  $('characterActivationDetail').textContent=detail;
+  $('characterActivationIcon').innerHTML=svg('check',25);
+  overlay.hidden=false;
+  characterSplashTimer=setTimeout(()=>{overlay.hidden=true;},2200);
+}
+function setCharacterInstallFeedback(phase,label,percent,detail){
+  const box=$('characterInstallFeedback');box.hidden=false;box.dataset.phase=phase;
+  $('characterInstallFeedbackTitle').textContent=label;
+  $('characterInstallFeedbackIcon').innerHTML=svg(phase==='success'?'check':'package',18);
+  $('characterInstallFeedbackPercent').textContent=phase==='installing'?'…':String(percent)+'%';
+  $('characterInstallProgressFill').style.width=String(Math.max(0,Math.min(100,percent)))+'%';
+  $('characterInstallProgress').setAttribute('aria-valuenow',String(percent));
+  $('characterInstallFeedbackDetail').textContent=detail;
+}
+function uploadCharacterPack(file,progress){
+  return new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();xhr.open('POST','/api/characters/install');
+    xhr.upload.onprogress=e=>{if(e.lengthComputable)progress(Math.min(100,Math.round(e.loaded/e.total*100)));};
+    xhr.onerror=()=>reject(new Error('上传连接中断'));
+    xhr.onabort=()=>reject(new Error('上传已中止'));
+    xhr.onload=()=>{
+      let data={};try{data=JSON.parse(xhr.responseText||'{}');}catch(_){/* handled below */}
+      if(xhr.status>=200&&xhr.status<300){resolve(data);return;}
+      reject(new Error(typeof data.detail==='string'?data.detail:'HTTP '+xhr.status));
+    };
+    const form=new FormData();form.append('archive',file,file.name);xhr.send(form);
+  });
+}
+async function selectCharacter(id){
+  if(id===activeCharacter)return;
+  try{
+    await api('/api/characters/active',jsonPost({id}));
+    await loadCharacterContent();
+    const status=await syncVoicesForCharacter();
+    closeSettings();await newChat();
+    const item=availableCharacters.find(x=>x.id===id);
+    showCharacterActivation(item,id==='default'?'已切换到标准日语':status.tts_ready?'当前角色语音已就绪':'已切换人物；实时语音需要启动模型');
+  }catch(e){note('角色切换失败：'+e.message,true);}
+}
+async function installCharacterFromSettings(){
+  const file=$('characterZip')?.files?.[0];if(!file)return note('请选择 ZIP 角色包。',true);
+  const button=$('characterInstall');button.disabled=true;
+  setCharacterInstallFeedback('uploading','正在上传角色包',0,'正在传输 '+file.name);
+  try{
+    const result=await uploadCharacterPack(file,percent=>{
+      if(percent>=100)setCharacterInstallFeedback('installing','正在验证并安装',100,'文件已上传；正在校验 ZIP 与复制模型权重');
+      else setCharacterInstallFeedback('uploading','正在上传角色包',percent,'正在传输 '+file.name);
+    });
+    const installed=result.installed;
+    if(!installed?.id)throw new Error('安装接口未返回角色信息');
+    // Compatible with an older server process that only performs installation.
+    if(result.active!==installed.id)await api('/api/characters/active',jsonPost({id:installed.id}));
+    await loadCharacterContent();
+    const status=await syncVoicesForCharacter();
+    setCharacterInstallFeedback('success','安装成功',100,'已自动启用 '+installed.label);
+    $('characterZip').value='';
+    closeSettings();await newChat();
+    showCharacterActivation(availableCharacters.find(x=>x.id===installed.id),
+      status.tts_ready?'安装成功，角色语音已就绪':'安装成功；已启用人物，语音模型需单独启动');
+  }catch(e){
+    setCharacterInstallFeedback('error','安装失败',0,String(e.message||e));
+    note('角色包安装失败：'+e.message,true);
+  }finally{button.disabled=false;}
+}
+function syncComposerAction() {
+  const hasText = Boolean($('text').value.trim());
+  const recording = recorder?.state === 'recording';
+  $('send').classList.toggle('hidden', !hasText || recording);
+  $('record').classList.toggle('hidden', hasText && !recording);
+  $('send').disabled = busy;
+  $('record').disabled = busy;
+}
+function resizeInput() {
+  const el = $('text');
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  syncComposerAction();
+}
+function updateVoiceTitle(){
+  $('voiceTitle').textContent=availableCharacters.find(x=>x.id===activeCharacter)?.label||'AnimeVoiceTutor';
+  syncRolePicker();
+}
+// Provider secrets are held by the local FastAPI server, never localStorage.
+let llmProviderState = {provider:'deepseek', providers:{}};
+function fillProviderForm(){
+  const provider=$('llmProvider').value;
+  const item=llmProviderState.providers?.[provider] || {};
+  $('llmSelectedModel').textContent='自动模型：'+(item.model||'待选择');
+  $('llmKeyInput').value='';
+  $('llmKeyMask').textContent=item.has_api_key?(item.key_hint||'••••••••'):'尚未配置';
+  $('llmKeyStatus').textContent=item.has_api_key?'已配置 · 仅显示末四位':'尚未配置 API Key';
+  $('llmSaveStatus').textContent='';
+}
+async function loadLLMSettings(){
+  try{
+    llmProviderState=await (await api('/api/llm/config')).json();
+    $('llmProvider').value=llmProviderState.provider;
+    fillProviderForm();
+  }catch(e){
+    const text=String(e.message||e);
+    providerFeedback(text.includes('Not Found') || text.includes('404')
+      ? '当前 Web 后端缺少模型配置接口。请彻底退出 AnimeVoiceTutor 后重新启动（只刷新网页无效）。'
+      : '无法读取 API 设置：'+text,true);
+  }
+}
+function providerFeedback(message,error=false){
+  const hint=$('llmSaveStatus');hint.textContent=message;
+  hint.className='provider-hint '+(error?'error':'success');
+}
+async function saveLLMSettings(){
+  const button=$('llmSave');button.disabled=true;
+  providerFeedback('正在保存…');
+  try{
+    const next=await api('/api/llm/config',jsonPost({
+      provider:$('llmProvider').value,
+      api_key:$('llmKeyInput').value,clear_key:false
+    }));
+    llmProviderState=await next.json();
+    fillProviderForm();providerFeedback('已应用，下一轮对话立即生效');
+    await refreshStatus();
+  }catch(e){providerFeedback('保存失败：'+e.message,true);}
+  finally{button.disabled=false;}
+}
+async function testLLMConnection(){
+  const button=$('llmTest');button.disabled=true;providerFeedback('正在测试当前已保存的模型…');
+  try{await api('/api/llm/test',jsonPost({}));providerFeedback('连接正常');await refreshStatus();}
+  catch(e){providerFeedback('连接失败：'+e.message,true);}
+  finally{button.disabled=false;}
+}
+async function clearLLMKey(){
+  if(!(await confirmAction({title:'移除 API Key？',description:'当前服务商的密钥将从本地配置中移除。重新使用该服务需要再次输入密钥。',confirmLabel:'移除 Key'})))return;
+  try{
+    llmProviderState=await (await api('/api/llm/config',jsonPost({
+      provider:$('llmProvider').value,
+      clear_key:true
+    }))).json();
+    fillProviderForm();providerFeedback('API Key 已移除');await refreshStatus();
+  }catch(e){providerFeedback('移除失败：'+e.message,true);}
+}
+// Local-only interface preferences; no speech weights or server credentials are changed.
+const preferenceIds = ['correction','reviewSpeech','autoPlay','autoStop','continuous','enterToSend','playbackSpeed'];
+function savePreferences() {
+  const prefs = {voice: selectedVoice};
+  for (const id of preferenceIds) {
+    const field = $(id);
+    prefs[id] = field.type === 'checkbox' ? field.checked : field.value;
+  }
+  try { localStorage.setItem('avt_preferences_v088', JSON.stringify(prefs)); } catch (_) {}
+}
+function restorePreferences() {
+  let prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem('avt_preferences_v088') || '{}'); } catch (_) {}
+  for (const id of preferenceIds) {
+    if (!(id in prefs)) continue;
+    const field = $(id);
+    if (field.type === 'checkbox') field.checked = Boolean(prefs[id]);
+    else if (Array.from(field.options).some(opt => opt.value === String(prefs[id]))) field.value = String(prefs[id]);
+  }
+  for (const id of preferenceIds) $(id).addEventListener('change', savePreferences);
+  $('correction').addEventListener('change', updateCorrectionVisibility);
+  updateCorrectionVisibility();
+}
+document.querySelectorAll('[data-settings-icon]').forEach(el => { el.innerHTML = svg(el.dataset.settingsIcon, 19); });
+setIcon('openSidebar', 'menu');
+setIcon('closeSidebar', 'menu');
+setIcon('topNewChat', 'compose');
+setIcon('newChatIcon', 'compose');
+setIcon('roleChevron', 'chevron');
+setIcon('settingsBtnIcon', 'settings');
+setIcon('settingsTopIcon', 'activity');
+setIcon('closeStatus', 'close');
+setIcon('closeSettings', 'close');
+setIcon('record', 'voice');
+setIcon('stopAudio', 'stop');
+setIcon('exitAppIcon', 'power');
+setIcon('send', 'send');
+setIcon('micClose', 'close');
+$('openSidebar').onclick = openSidebar;
+$('closeSidebar').onclick = closeSidebar;
+$('sidebarScrim').onclick = closeSidebar;
+$('newChat').onclick = newChat;
+$('roleTrigger').onclick=()=>{const menu=$('roleMenu');const shouldOpen=menu.hidden;closeRoleMenu();if(shouldOpen){menu.hidden=false;$('roleTrigger').setAttribute('aria-expanded','true');}};
+document.addEventListener('pointerdown',ev=>{if(!$('rolePicker').contains(ev.target))closeRoleMenu();});
+$('topNewChat').onclick = newChat;
+window.addEventListener('resize', () => { syncSidebarState(); closeStatusPopover(); });
+async function exitAnimeVoiceTutor(){
+  if(!(await confirmAction({title:'退出 AnimeVoiceTutor？',
+    description:'将关闭当前会话的 Web、ASR 和 TTS 服务并释放其占用的资源。对话与缓存音频不会删除。',
+    confirmLabel:'退出应用',iconName:'power'})))return;
+  const button=$('exitAppBtn');
+  button.disabled=true;
+  try{
+    const info=await (await api('/api/system/exit-token')).json();
+    if(!info.available||!info.token)throw new Error('当前不是受管的一键启动会话，请使用 Stop AnimeVoiceTutor.cmd');
+    const response=await fetch('/api/system/exit',{
+      method:'POST',cache:'no-store',credentials:'same-origin',
+      headers:{'Content-Type':'application/json','X-AVT-Exit-Token':info.token},
+      body:'{}'
+    });
+    if(!response.ok){const body=await response.json().catch(()=>({}));
+      throw new Error(body.detail||`退出请求失败 (${response.status})`);}
+    stopPlayback();stopCharacterPortrait();presenceEnabled=false;
+    document.body.classList.add('app-shutdown');
+    // Browser-owned tabs cannot always be closed by scripts. Try closing the
+    // dedicated app window first; remove the shutdown page if Chrome blocks it.
+    window.close();
+    setTimeout(()=>{
+      if(!document.hidden){
+        // No persistent shutdown screen or stale fetches after backend terminates.
+        window.location.replace('about:blank');
+      }
+    },450);
+  }catch(err){button.disabled=false;note('退出失败：'+err.message,true);}
+}
+$('exitAppBtn').onclick=exitAnimeVoiceTutor;
+$('settingsBtn').onclick = openSettings;
+$('statusBtn').onclick = toggleStatusPopover;
+$('closeStatus').onclick = closeStatusPopover;
+$('refreshStatus').onclick = refreshStatus;
+document.querySelectorAll('.settings-tab').forEach(el => el.onclick = () => {selectSettingsTab(el.dataset.tab);if(el.dataset.tab==='model')loadLLMSettings()});
+$('llmProvider').onchange=fillProviderForm;
+$('llmSave').onclick=saveLLMSettings;
+$('llmTest').onclick=testLLMConnection;
+$('llmClearKey').onclick=clearLLMKey;
+document.addEventListener('pointerdown', event => { if (!$('statusPopover').hidden && !$('statusPopover').contains(event.target) && !$('statusBtn').contains(event.target)) closeStatusPopover(); });
+document.addEventListener('pointerdown', event => {if(currentSessionMenu && !currentSessionMenu.contains(event.target) && !event.target.closest('.session-more'))closeSessionMenu();});
+$('sessions').addEventListener('scroll',closeSessionMenu,{passive:true});
+$('closeSettings').onclick = closeSettings;
+$('settingsScrim').onclick = closeSettings;
+
+$('characterSelect').onchange=e=>selectCharacter(e.target.value);
+$('characterInstall').onclick=installCharacterFromSettings;
+$('voice').onchange = (e) => { selectedVoice = e.target.value; updateVoiceTitle(); savePreferences(); };
+$('continuous').onchange = () => { if ($('continuous').checked) $('autoStop').checked = true; savePreferences(); };
+$('send').onclick = () => sendText($('text').value);
+$('text').oninput = resizeInput;
+$('text').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && $('enterToSend').checked) {
+    e.preventDefault();
+    sendText($('text').value);
+  }
+});
+$('record').onclick = recordToggle;
+$('cancelRevision').onclick = () => {clearRevision(true); $('text').focus({preventScroll:true});};
+$('stopAudio').onclick = stopPlayback;
+$('micClose').onclick = closeMicHelp;
+$('micHelpScrim').onclick = closeMicHelp;
+$('micRetry').onclick = () => { closeMicHelp(); recordToggle(); };
+$('export').onclick = () => {
+  if (sessionId) location.href = '/api/sessions/' + encodeURIComponent(sessionId) + '/export';
+};
+$('clearChat').onclick = async () => {
+  if (!sessionId) return newChat();
+  if (!(await confirmAction({title:'删除当前对话？',description:'此对话及已生成的缓存语音将永久删除，无法撤销。',confirmLabel:'删除对话'}))) return;
+  try {
+    await api('/api/sessions/' + encodeURIComponent(sessionId), {method: 'DELETE'});
+    await newChat();
+    closeSettings();
+  } catch (e) { note('删除失败：' + e.message, true); }
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeRoleMenu(); closeStatusPopover(); closeSettings(); closeSidebar(); closeMicHelp(); }
+});
+// Local desktop lifecycle: a closed last tab releases the managed services.
+// This only supplies presence; the optional one-click watchdog owns shutdown.
+const browserClientId = 'avt_' + (crypto.randomUUID ? crypto.randomUUID().replaceAll('-', '') : String(Date.now()) + '_' + Math.random().toString(36).slice(2));
+let presenceEnabled = true;
+function browserPing() {
+  if (!presenceEnabled) return;
+  fetch('/api/browser/ping', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({client_id: browserClientId}),
+    cache: 'no-store', keepalive: true
+  }).catch(() => {});
+}
+browserPing();
+setInterval(browserPing, 6000);
+window.addEventListener('pageshow', () => { presenceEnabled = true; browserPing(); });
+window.addEventListener('pagehide', () => {
+  presenceEnabled = false;
+  try {
+    navigator.sendBeacon('/api/browser/leave', new Blob(
+      [JSON.stringify({client_id: browserClientId})],
+      {type: 'application/json'}
+    ));
+  } catch (_) {}
+});
+window.addEventListener('beforeunload', () => {
+  for (const url of audioObjects.values()) URL.revokeObjectURL(url);
+});
+restorePreferences();
+selectSettingsTab('conversation');
+closeSettings();
+closeStatusPopover();
+resizeInput();
+syncSidebarState();
+setup().catch(e => note('连接失败：' + e.message, true));
+setInterval(refreshStatus, 12000);
+
+setInterval(()=>{
+  if(!document.hidden && needsTitleRefresh && !currentSessionMenu && !busy)
+    refreshSessions().catch(()=>{});
+},10000);
+const initialGreetingButton=$('greetingPlayBtn');
+if(initialGreetingButton){
+  selectWelcomeGreeting();
+  configureWelcomeBubble($('welcome')?.querySelector('.manga-speech'));
+}
+</script>
+<script>
+/* AnimeVoiceTutor v0.11.0u — UI-only localization. Never translate chat or lesson text. */
+(() => {
+  'use strict';
+  const MARKER = 'AnimeVoiceTutor-i18n-v0.11.0u';
+  const STORAGE_KEY = 'avt.ui.language.v1';
+  const LOCALES = ['zh-CN', 'en', 'ja'];
+  const translations = [
+    // Navigation and state.
+    ['新对话','New chat','新しい会話'],
+    ['最近对话','Recent chats','最近の会話'],
+    ['已置顶','Pinned','ピン留め'],
+    ['设置与偏好','Settings','設定'],
+    ['退出应用','Exit app','アプリを終了'],
+    ['选择角色语音','Choose character voice','キャラクターボイスを選択'],
+    ['收起侧栏','Collapse sidebar','サイドバーを閉じる'],
+    ['展开侧栏','Expand sidebar','サイドバーを開く'],
+    ['会话侧边栏','Chat sidebar','会話サイドバー'],
+    ['历史会话','Chat history','会話履歴'],
+    ['关闭 AnimeVoiceTutor 和本地语音服务','Close AnimeVoiceTutor and local voice services','AnimeVoiceTutor とローカル音声サービスを終了'],
+    ['查看服务状态','View service status','サービス状態を表示'],
+    ['服务状态','Service status','サービス状態'],
+    ['AI 对话','AI chat','AI 会話'],
+    ['语音识别','Speech recognition','音声認識'],
+    ['语音合成','Speech synthesis','音声合成'],
+    ['重新检查','Check again','再確認'],
+    ['检查中','Checking','確認中'],
+    ['已配置','Configured','設定済み'],
+    ['未配置','Not configured','未設定'],
+    ['已就绪','Ready','準備完了'],
+    ['未就绪','Not ready','未準備'],
+    ['ready','Ready','準備完了'],
+    ['服务就绪','Services ready','サービス準備完了'],
+    ['部分服务不可用','Some services unavailable','一部のサービスを利用できません'],
+    ['关闭服务状态','Close service status','サービス状態を閉じる'],
+    ['对话内容','Chat messages','会話メッセージ'],
+    ['设置','Settings','設定'],
+    ['关闭','Close','閉じる'],
+    ['发送','Send','送信'],
+    ['语音输入','Voice input','音声入力'],
+    ['停止录音','Stop recording','録音を停止'],
+    ['播放问候语','Play greeting','挨拶を再生'],
+    ['停止播放','Stop playback','再生を停止'],
+    ['输入消息','Message input','メッセージ入力'],
+    ['用日语开始对话','Start a Japanese conversation','日本語で会話を始める'],
+    ['麦克风音量','Microphone level','マイク音量'],
+    ['角色动态肖像','Animated character portrait','キャラクターのパーティクル肖像'],
+    ['点击角色，外侧会出现波纹和小音符','Tap the character to create ripples and music notes','キャラクターを押すと波紋と音符が現れます'],
+    ['点击切换并播放下一条问候语','Switch to and play the next greeting','次の挨拶に切り替えて再生'],
+    // Settings and localization.
+    ['个性化你的对话体验','Personalize your conversation','会話体験をカスタマイズ'],
+    ['设置类别','Settings categories','設定カテゴリ'],
+    ['对话','Chat','会話'],
+    ['模型','Model','モデル'],
+    ['语音','Voice','音声'],
+    ['数据','Data','データ'],
+    ['关于','About','アプリ情報'],
+    ['关闭设置','Close settings','設定を閉じる'],
+    ['界面语言','Interface language','表示言語'],
+    ['只更改界面文字；不影响日语对话、识别和语音','Changes the interface only; does not affect Japanese chat, ASR or speech','画面表示のみ変更します。日本語の会話・音声認識・合成には影響しません'],
+    ['回复偏好','Reply preferences','返信設定'],
+    ['日语纠错','Japanese corrections','日本語の添削'],
+    ['关闭：不提供纠错；简洁：只改明显错误；详细：解释原因并可提出具体改进','Off: no corrections; concise: fix clear errors; detailed: explain and suggest improvements','オフ：添削なし／簡潔：明らかな誤りのみ／詳しく：理由と改善案を説明'],
+    ['关闭（不纠错）','Off (no corrections)','オフ（添削なし）'],
+    ['简洁纠错','Concise corrections','簡潔な添削'],
+    ['详细纠错与建议','Detailed explanations','詳しい解説と提案'],
+    ['按 Enter 发送','Enter to send','Enter で送信'],
+    ['Shift + Enter 可换行','Shift + Enter for a new line','Shift + Enter で改行'],
+    ['对话模型与 API','Chat model and API','会話モデルと API'],
+    ['API 服务商','API provider','API プロバイダー'],
+    ['模型由服务自动选择','Model selected automatically','モデルは自動選択されます'],
+    ['当前 API Key','Current API key','現在の API キー'],
+    ['尚未设置','Not set','未設定'],
+    ['更换 API Key','Change API key','API キーを変更'],
+    ['输入新 Key；不修改则留空','Enter a new key, or leave blank to keep it','新しいキーを入力（変更しない場合は空欄）'],
+    ['尚未检查连接配置','Connection settings not checked','接続設定は未確認です'],
+    ['保存并应用','Save and apply','保存して適用'],
+    ['测试连接','Test connection','接続テスト'],
+    ['移除 Key','Remove key','キーを削除'],
+    ['保存 API Key 后会自动匹配可用模型。下一条消息立即生效，不必重启应用。','The available model is selected after saving the API key. Changes apply to the next message without restarting.','API キー保存後に利用可能なモデルを自動選択します。次のメッセージから反映され、再起動は不要です。'],
+    ['语音体验','Voice experience','音声設定'],
+    ['自动生成并播放回复','Generate and play replies automatically','返信音声を自動生成・再生'],
+    ['关闭后仍可手动生成语音','You can still generate speech manually when off','オフでも手動で音声を生成できます'],
+    ['语音识别后先确认','Review transcription before sending','音声認識結果を送信前に確認'],
+    ['开启：显示在输入框供修改；关闭：自动发送，可在消息下方更正','On: review and edit before sending; Off: send automatically, with an edit action under your message','オン：編集してから送信／オフ：自動送信（送信後の修正も可能）'],
+    ['停顿后结束录音','Stop recording on pause','無音で録音を停止'],
+    ['检测到停顿后结束录音','Stop after a detected pause','無音を検出したら録音を終了します'],
+    ['连续语音对话','Continuous voice chat','連続音声会話'],
+    ['播放结束后继续录音','Resume recording after playback','再生終了後に録音を再開'],
+    ['播放速度','Playback speed','再生速度'],
+    ['只影响播放，不改变合成权重','Playback only; synthesis weights remain unchanged','再生速度のみ変更し、合成モデルの重みは変えません'],
+    ['角色声音','Character voice','キャラクターボイス'],
+    ['当前音色','Selected voice','使用する声'],
+    ['会话记录','Chat records','会話履歴'],
+    ['可以导出或删除当前聊天记录。删除会话时一并清理保存的语音。','Export or delete the current chat. Deleting a chat also removes its saved audio.','現在の会話をエクスポートまたは削除できます。会話を削除すると保存済み音声も削除されます。'],
+    ['导出当前会话','Export current chat','現在の会話をエクスポート'],
+    ['删除当前会话','Delete current chat','現在の会話を削除'],
+    ['以日语文字和语音自然交流的桌面应用。','A desktop app for natural Japanese text and voice conversation.','日本語のテキストと音声で自然に会話できるデスクトップアプリです。'],
+    ['当前角色','Character','キャラクター'],
+    ['语音方案','Voice preset','音声プリセット'],
+    ['角色独立配置','Local E36 · FP32','ローカル E36 · FP32'],
+    ['界面版本','UI version','UI バージョン'],
+    ['连接情况请查看右上角服务状态按钮。','Check the top-right service status for connectivity.','接続状態は右上のサービス状態から確認できます。'],
+    // Dialogs, revisions and actions.
+    ['正在更正此前发送的发言','Editing an earlier message','以前の発言を修正中'],
+    ['取消更正','Cancel edit','修正をキャンセル'],
+    ['更正此前发言','Correction to an earlier message','以前の発言の修正'],
+    ['修改','Edit','修正'],
+    ['复制','Copy','コピー'],
+    ['已复制','Copied','コピーしました'],
+    ['播放语音','Play speech','音声を再生'],
+    ['重新生成语音','Regenerate speech','音声を再生成'],
+    ['播放已保存语音','Play saved audio','保存済み音声を再生'],
+    ['生成并播放语音','Generate and play audio','音声を生成・再生'],
+    ['表达纠正','Language correction','表現の添削'],
+    ['详细解释','Detailed explanation','詳しい解説'],
+    ['正在识别语音','Recognizing speech','音声を認識中'],
+    ['正在生成回复','Generating a reply','返信を生成中'],
+    ['取消置顶','Unpin','ピン留めを解除'],
+    ['置顶会话','Pin chat','会話をピン留め'],
+    ['删除对话','Delete chat','会話を削除'],
+    ['会话选项','Chat options','会話のオプション'],
+    ['删除对话？','Delete chat?','会話を削除しますか？'],
+    ['删除后将无法恢复。','This cannot be undone.','この操作は取り消せません。'],
+    ['取消','Cancel','キャンセル'],
+    ['删除','Delete','削除'],
+    ['确认操作？','Confirm action?','操作を確認しますか？'],
+    ['此操作无法撤销。','This action cannot be undone.','この操作は取り消せません。'],
+    ['删除这段对话？','Delete this conversation?','この会話を削除しますか？'],
+    ['对应的聊天记录和已生成语音也会一并删除，且无法恢复。','Its messages and generated audio will be permanently deleted.','会話履歴と生成音声も削除され、元に戻せません。'],
+    ['删除当前对话？','Delete the current chat?','現在の会話を削除しますか？'],
+    ['此对话及已生成的缓存语音将永久删除，无法撤销。','This chat and its cached audio will be deleted permanently.','この会話とキャッシュ音声を完全に削除します。'],
+    ['退出 AnimeVoiceTutor？','Exit AnimeVoiceTutor?','AnimeVoiceTutor を終了しますか？'],
+    ['将关闭当前会话的 Web、ASR 和 TTS 服务并释放其占用的资源。对话与缓存音频不会删除。','Web, ASR and TTS services will stop. Chats and cached audio will be preserved.','Web・音声認識・音声合成サービスを終了します。会話とキャッシュ音声は保持されます。'],
+    ['麦克风不可用','Microphone unavailable','マイクを利用できません'],
+    ['未检测到麦克风','Microphone not detected','マイクが見つかりません'],
+    ['请在浏览器设置中允许使用麦克风。','Allow microphone access in your browser settings.','ブラウザーの設定でマイクの使用を許可してください。'],
+    ['请连接麦克风，或检查 Windows 的录音设备设置。','Connect a microphone or check Windows recording device settings.','マイクを接続するか、Windows の録音デバイス設定を確認してください。'],
+    ['请在浏览器地址栏的麦克风权限设置中允许此网站使用麦克风，然后重试。','Allow this site to use the microphone from the browser address bar, then retry.','アドレスバーの権限設定でマイクを許可してから再試行してください。'],
+    ['重试','Retry','再試行'],
+    // Transient feedback / dynamically populated UI.
+    ['语音服务正在准备，正在自动重试…','Voice service is starting; retrying…','音声サービスの起動中です。再試行しています…'],
+    ['隐藏台词朗读内容为空','Hidden greeting speech text is empty','非公開の挨拶音声テキストが空です'],
+    ['正在使用旧版语音接口。完全退出并重启应用后，将启用隐藏台词磁盘缓存。','An older voice endpoint is in use. Restart the app to enable the greeting audio cache.','旧音声 API を使用中です。アプリを再起動すると挨拶音声のキャッシュが有効になります。'],
+    ['生成的语音为空','Generated audio is empty','生成された音声が空です'],
+    ['复制失败，请检查剪贴板权限','Could not copy. Check clipboard permissions','コピーできません。クリップボードの権限を確認してください'],
+    ['正在重新生成语音…','Regenerating speech…','音声を再生成中…'],
+    ['正在生成语音…','Generating speech…','音声を生成中…'],
+    ['浏览器阻止了自动播放，请点击回复下方的播放按钮','Autoplay was blocked. Use the play button below the reply.','自動再生がブロックされました。返信の下の再生ボタンを押してください。'],
+    ['语音播放失败','Audio playback failed','音声の再生に失敗しました'],
+    ['这条回复尚未关联语音','This reply has no associated audio','この返信には音声が紐づいていません'],
+    ['语音尚未生成','Audio has not been generated yet','音声はまだ生成されていません'],
+    ['消息尚未保存','Message has not been saved','メッセージはまだ保存されていません'],
+    ['生成语音为空','Generated speech is empty','生成された音声が空です'],
+    ['没有录制到语音，请重试','No speech was recorded. Please retry.','音声が録音されませんでした。もう一度お試しください'],
+    ['没有识别到语音，请重试','No speech was recognized. Please retry.','音声を認識できませんでした。もう一度お試しください'],
+    ['尚未配置可用的角色语音','No character voices are available','利用可能なキャラクターボイスがありません'],
+    ['尚未配置','Not configured','未設定'],
+    ['已配置 · 仅显示末四位','Configured · showing last 4 characters','設定済み・末尾4文字のみ表示'],
+    ['尚未配置 API Key','API key not configured','API キーが未設定です'],
+    ['正在保存…','Saving…','保存中…'],
+    ['已应用，下一轮对话立即生效','Saved. Changes apply to the next turn.','保存しました。次の会話から反映されます'],
+    ['正在测试当前已保存的模型…','Testing the saved model…','保存済みモデルをテスト中…'],
+    ['连接正常','Connection successful','接続に成功しました'],
+    ['移除 API Key？','Remove API key?','API キーを削除しますか？'],
+    ['当前服务商的密钥将从本地配置中移除。重新使用该服务需要再次输入密钥。','This provider’s local key will be removed. Enter a key again to use the service.','このプロバイダーのローカルキーを削除します。再利用するにはキーを入力してください。'],
+    ['API Key 已移除','API key removed','API キーを削除しました'],
+    ['当前 Web 后端缺少模型配置接口。请彻底退出 AnimeVoiceTutor 后重新启动（只刷新网页无效）。','The backend lacks the model settings endpoint. Fully restart AnimeVoiceTutor; a page refresh is not enough.','バックエンドにモデル設定 API がありません。ページ更新ではなく、アプリを完全に再起動してください。'],
+    ['自动模型：','Automatic model: ','自動モデル：'],
+    ['待选择','Not selected','未選択'],
+    ['打开会话：','Open chat: ','会話を開く：'],
+    ['会话选项：','Chat options: ','会話オプション：'],
+    ['问候语播放失败：','Greeting playback failed: ','挨拶の再生に失敗：'],
+    ['读取历史对话失败：','Could not load chat history: ','会話履歴の読み込みに失敗：'],
+    ['会话列表更新失败：','Could not update chat list: ','会話一覧の更新に失敗：'],
+    ['读取语音失败：','Could not load audio: ','音声の読み込みに失敗：'],
+    ['语音生成失败：','Speech generation failed: ','音声生成に失敗：'],
+    ['语音暂不可用，文字回复已保留：','Speech is unavailable; text reply was saved: ','音声を利用できません。テキスト返信は保存されました：'],
+    ['发送失败：','Send failed: ','送信に失敗：'],
+    ['语音识别失败：','Speech recognition failed: ','音声認識に失敗：'],
+    ['无法使用麦克风：','Cannot use microphone: ','マイクを使用できません：'],
+    ['无法读取 API 设置：','Could not load API settings: ','API 設定の取得に失敗：'],
+    ['保存失败：','Save failed: ','保存に失敗：'],
+    ['连接失败：','Connection failed: ','接続に失敗：'],
+    ['移除失败：','Removal failed: ','削除に失敗：'],
+    ['退出请求失败','Exit request failed','終了リクエストに失敗'],
+    ['退出失败：','Exit failed: ','終了に失敗：'],
+    ['删除失败：','Delete failed: ','削除に失敗：'],
+    ['无法使用麦克风','Cannot use microphone','マイクを使用できません'],
+  ];
+  const exact = new Map();
+  const prefixes = [];
+  for (const [zh, en, ja] of translations) {
+    const value = {en, ja};
+    if (!exact.has(zh)) exact.set(zh, value);
+    if (zh.endsWith('：')) prefixes.push([zh, value]);
+  }
+  prefixes.sort((a,b) => b[0].length - a[0].length);
+  const originals = new WeakMap();
+  const attributeOriginals = new WeakMap();
+  let locale = 'zh-CN';
+  function tr(source) {
+    if (locale === 'zh-CN' || !source) return source;
+    const index = locale === 'en' ? 'en' : 'ja';
+    const match = /^([\s\u00a0]*)([\s\S]*?)([\s\u00a0]*)$/.exec(String(source));
+    if (!match) return source;
+    const body = match[2];
+    let translated = exact.get(body)?.[index];
+    if (!translated) {
+      const prefix = prefixes.find(([key]) => body.startsWith(key));
+      if (prefix) translated = prefix[1][index] + body.slice(prefix[0].length);
+    }
+    return translated ? match[1] + translated + match[3] : source;
+  }
+  function isPrivateContent(element, forAttribute = false) {
+    if (!element || !element.closest) return true;
+    const protectedSelector = 'script, style, pre, code, .session-title, .manga-speech h1, [data-no-ui-translate], .bubble, .correction > div, .role-picker .brandmark';
+    return !!element.closest(forAttribute ? protectedSelector : protectedSelector + ', textarea, #voice, #llmProvider, #uiLocale');
+  }
+  function textNode(node) {
+    const parent = node.parentElement;
+    if (!parent || isPrivateContent(parent)) return;
+    let input = node.nodeValue;
+    const last = originals.get(node);
+    if (last && input === last.output) input = last.source;
+    if (last && input === last.source) input = last.source;
+    const output = tr(input);
+    originals.set(node, {source:input, output});
+    if (node.nodeValue !== output) node.nodeValue = output;
+  }
+  const attributeNames = ['placeholder','title','aria-label'];
+  function attributeNode(el, name) {
+    if (!el || !el.hasAttribute || !el.hasAttribute(name)) return;
+    if (isPrivateContent(el, true)) return;
+    let history = attributeOriginals.get(el);
+    if (!history) { history={}; attributeOriginals.set(el,history); }
+    const value = el.getAttribute(name);
+    const last = history[name];
+    const source = last && value === last.output ? last.source : value;
+    const output = tr(source);
+    history[name] = {source, output};
+    if (value !== output) el.setAttribute(name, output);
+  }
+  function translateSubtree(root) {
+    if (!root) return;
+    if (root.nodeType === Node.TEXT_NODE) {textNode(root); return;}
+    if (root.nodeType !== Node.ELEMENT_NODE) return;
+    const el = root;
+    if (isPrivateContent(el)) return;
+    for (const attr of attributeNames) attributeNode(el, attr);
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === Node.TEXT_NODE) textNode(node);
+      else if (node.nodeType === Node.ELEMENT_NODE) {
+        for (const attr of attributeNames) attributeNode(node, attr);
+      }
+    }
+  }
+  function setLocale(next) {
+    if (!LOCALES.includes(next)) next = 'zh-CN';
+    locale = next;
+    document.documentElement.lang = next;
+    document.documentElement.dataset.uiLanguage = next;
+    const select=document.getElementById('uiLocale');
+    if (select && select.value !== next) select.value=next;
+    try { localStorage.setItem(STORAGE_KEY, next); } catch (_) { /* private browsing */ }
+    translateSubtree(document.body);
+  }
+  const select=document.getElementById('uiLocale');
+  if (!select) return;
+  select.addEventListener('change',() => setLocale(select.value));
+  const observer = new MutationObserver(records => {
+    for (const record of records) {
+      if (record.type === 'characterData') textNode(record.target);
+      else if (record.type === 'attributes') attributeNode(record.target,record.attributeName);
+      else if (record.type === 'childList') for (const child of record.addedNodes) translateSubtree(child);
+    }
+  });
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeNames});
+  let preferred='zh-CN';
+  try { preferred=localStorage.getItem(STORAGE_KEY) || 'zh-CN'; } catch (_) { /* private browsing */ }
+  setLocale(preferred);
+})();
+</script>
+</body>
+</html>
