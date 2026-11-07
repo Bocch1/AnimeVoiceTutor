@@ -1,46 +1,57 @@
 # AnimeVoiceTutor
 
-**自托管日语对话练习工具，支持本地语音识别和独立安装的人物语音包。**
+**让 AI 对话拥有专属动漫角色声音，体验更加自然的人物对话。**
 
 [English](README.md) | 简体中文 | [日本語](README.ja.md)
 
-程序使用 Qwen3-ASR 识别语音、GPT-SoVITS 合成人物语音；AI 对话需在网页设置中填写自己的 OpenAI / DeepSeek 等受支持服务商 API Key。Core ZIP 不包含模型权重、人物素材或 API Key。
+AnimeVoiceTutor 是一款开源、本地部署的 **AI 角色对话程序**。安装人物语音包后，即可通过文字或麦克风与 AI 角色交流，并听到人物专属的合成语音。程序支持自定义 AI 服务，并结合本地 Qwen3-ASR 语音识别与 GPT-SoVITS 语音合成。
 
-## 首次使用（Windows）
+## 主要功能
 
-1. 从项目的 GitHub Releases 下载 **`AnimeVoiceTutor_Core_v0.13.1.zip`**，把整个 ZIP 解压到可写入的目录。不要进入增量补丁 ZIP 的 `payload` 目录运行安装器。
-2. 双击 **`First Run Setup.cmd`**。语言切换入口始终显示为 **Language**（简体中文 / English / 日本語）。第一步只需使用 **安装环境、环境诊断、高级选项**：先点击安装；如果已经装过，可以直接诊断；高级选项可选本机已有 GPT-SoVITS 引擎或 ASR 模型。
-3. 在第二步刷新 GitHub Releases 人物列表，选择角色 ZIP 并点击**下载并安装角色**；也可选择电脑里已有的可信 ZIP。后续还可以从 Web 设置中导入。
-4. 双击 **`Start AnimeVoiceTutor.cmd`** 启动网页应用。在设置中填写自己的 AI API Key，进行日语录音、对话和实时语音播放。结束时点击网页侧边栏的**退出应用**；必要时可双击 `Stop AnimeVoiceTutor.cmd`。
+- **人物语音包：** 下载并安装 AnimeVoiceTutor 专用人物 ZIP，在已安装的角色之间切换。
+- **AI 对话：** 配置受支持的 AI 服务和自己的 API Key，与角色交流。
+- **语音互动：** 麦克风输入、本地语音识别和角色语音回复。
+- **角色界面：** 人物立绘、问候语、聊天记录及多语言操作界面。
+- **本地运行：** 在自己的电脑上运行 Web、ASR 和 TTS 组件。
+- **三语言界面：** 简体中文、英语、日语。
 
-**日常使用不需要控制台命令。** “环境诊断”检查基础环境是否完整，不等同于验证某个人物的权重已经加载。TTS 启动中应等待模型初始化；若一直失败，可在网页的“服务状态”中查看详情。
+## 安装与启动（Windows）
 
-**当前目标平台**为 Windows 10/11 x64、兼容 CUDA 12.8 的 NVIDIA 显卡与驱动。首次下载依赖和模型需要网络，并不能保证所有电脑都可自动完成。尽管已固定 GPT-SoVITS 上游版本，你本机额外修改过的推理文件尚未制成正式兼容包，因此不能承诺所有电脑的音频结果完全相同。
+1. 从 [GitHub Releases](https://github.com/Bocch1/AnimeVoiceTutor/releases) 下载 **`AnimeVoiceTutor_Core_v0.13.1.zip`**，将整个 ZIP 解压到可写入的文件夹。
+2. 双击 **`First Run Setup.cmd`**，**安装语音环境并通过“环境诊断”检查安装结果**。语言入口始终显示 **Language**；需要复用本机已有模型或引擎时可展开**高级选项**。
+3. 从 **Release 附件**下载 **AnimeVoiceTutor 专用人物 ZIP 包**（若该版本已提供），在 **First Run 第二步**下载并安装或选择本地 ZIP 导入；以后也可以从网页界面导入。
+4. 双击 **`Start AnimeVoiceTutor.cmd`** 启动程序，在**设置**中配置自己的 AI 服务，然后开始对话。结束时点击网页中的**退出应用**；必要时使用 `Stop AnimeVoiceTutor.cmd`。
 
-## 本地安装包放在哪里？
+**人物包使用 AnimeVoiceTutor 专用格式。** 单独的 `.pth` 权重不是完整角色包，不能直接导入；完整语音包还需包含角色信息、参考音频、推理配置及匹配的模型文件。Core ZIP 不附带动漫人物语音或第三方人物素材。
 
-首次安装窗口会在项目根目录自动创建：
+程序主要面向 **Windows 10/11 x64 与 NVIDIA GPU 环境**。实际兼容性可能因硬件、驱动与系统配置而有所不同。首次下载安装依赖与模型需要网络。详细要求与故障排查见 [安装说明](docs/INSTALLATION.md)。
 
-```text
-packages/
-  updates/       AnimeVoiceTutor_Core_v0.13.1.zip、AnimeVoiceTutor_Update_v0.13.1.zip
-  characters/    AnimeVoiceTutor_Character_<角色id>_v<版本>.zip
-```
-
-从 First Run 或网页成功导入的人物 ZIP 会自动保存一份到 `packages/characters`，方便备份和转移；实际解压并运行的模型仍在 `data/character_packs`，不会被移动。通过高级构建工具生成的 Core ZIP 默认放入 `packages/updates`。两个归档文件夹都被 Git 忽略，不会进入公开源码 ZIP。见 [本地文件夹与命名说明](docs/LOCAL_PACKAGES.md)。
-
-## 根目录保留三个 CMD
+## 日常使用
 
 | 双击文件 | 用途 |
 | --- | --- |
-| `First Run Setup.cmd` | 安装或诊断语音环境、下载导入人物 |
-| `Start AnimeVoiceTutor.cmd` | 正常启动程序，无需一直打开控制台 |
-| `Stop AnimeVoiceTutor.cmd` | 网页退出失败时停止本程序管理的服务 |
+| `First Run Setup.cmd` | 安装、诊断语音环境；下载或导入人物 ZIP |
+| `Start AnimeVoiceTutor.cmd` | 启动程序，无需保持控制台运行 |
+| `Stop AnimeVoiceTutor.cmd` | 网页退出不可用时，停止本次安装管理的服务 |
 
-**CMD 文件名中有空格完全正常**，不必改名。脚本已经对带空格的调用路径加引号；旧的诊断、测试、手动安装与发布工具统一放在 [`advanced/`](advanced/)。
+日常使用不需要运行 PowerShell 命令。开发、诊断和测试工具放在 [`advanced/`](advanced/)；CMD 文件名中的空格不影响使用。
+
+## 本地安装包归档
+
+```text
+packages/
+  updates/       AnimeVoiceTutor_Core_v0.13.1.zip
+  characters/    AnimeVoiceTutor_Character_<id>_v<version>.zip
+```
+
+成功导入的人物 ZIP 会存入 `packages/characters/`；实际使用的模型仍在 `data/character_packs/`。`packages/` 和本地模型不会进入公开 Core 包。详见 [本地文件夹说明](docs/LOCAL_PACKAGES.md)。
 
 ## 更多说明
 
-[安装与诊断](docs/INSTALLATION.md) · [本地安装包归档](docs/LOCAL_PACKAGES.md) · [人物包格式](docs/CHARACTER_PACKS.md) · [测试说明](docs/TESTING.md) · [发布说明](docs/PUBLISHING.md)
+[安装与故障排查](docs/INSTALLATION.md) · [人物 ZIP 格式](docs/CHARACTER_PACKS.md) · [本地归档](docs/LOCAL_PACKAGES.md) · [测试说明](docs/TESTING.md) · [发布说明](docs/PUBLISHING.md)
 
-**版权与安全：** Core 程序源代码采用 MIT 许可证，但第三方模型、人物立绘、声音权重和录音各有自己的许可。未经适当授权，不应公开发布相关人物包；“侵权联系删除”并不能代替授权。详见 [安全说明](SECURITY.md) 和 [第三方声明](THIRD_PARTY_NOTICES.md)。
+## 非官方同人项目与权利声明
+
+AnimeVoiceTutor 是**独立、非官方、以非商业目的开发的同人项目**，不代表任何动画制作公司、出版社、角色权利人或配音演员，也未获得其官方背书。原始角色、立绘、录音、商标等第三方内容的权利归各自权利人所有。
+
+程序原创**源代码采用 MIT 许可证**，但该许可证不包含第三方角色或音频的分发许可；MIT 代码许可本身也不限制商业再利用。权利人如对项目内容有异议，可通过 [GitHub 仓库](https://github.com/Bocch1/AnimeVoiceTutor/issues) 联系维护者。有效权利请求将得到及时审查，必要时删除相关内容。**“收到投诉后删除”的声明不能代替第三方素材的使用或分发授权。** 详见 [第三方声明](THIRD_PARTY_NOTICES.md) 与 [安全说明](SECURITY.md)。

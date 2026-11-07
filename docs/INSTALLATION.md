@@ -1,17 +1,17 @@
-# Installation and environment checks
+# Install AnimeVoiceTutor — AI character voice chat
 
 For ordinary use, open the project folder in **Windows File Explorer** and double-click the files described here. A terminal is not required.
 
 ## Requirements
 
-The supported accelerated profile is **Windows 10/11 x64** with a compatible NVIDIA GPU and driver supporting CUDA 12.8. Internet access and sufficient disk space are required to download dependencies, Qwen3-ASR, GPT-SoVITS and pretrained resources. FFmpeg/ffprobe are also required. AI chat needs a separately configured OpenAI/DeepSeek API key. Compatibility with all PCs, macOS, Linux or other GPUs is not guaranteed.
+The primary accelerated target is **Windows 10/11 x64** with a compatible NVIDIA GPU and driver supporting CUDA 12.8. Internet access and sufficient disk space are required to download dependencies, Qwen3-ASR, GPT-SoVITS and pretrained resources. FFmpeg/ffprobe are also required. AI chat needs a separately configured OpenAI/DeepSeek API key. Compatibility may vary with hardware, drivers, and system configuration; other operating systems and GPU types have not been established as supported profiles.
 
-## First use: two steps
+## First use: voice environment, then a character pack
 
-1. Download `AnimeVoiceTutor_Core_v0.13.1.zip` from the **official GitHub Releases** page. Extract the **whole** ZIP into a writable local folder, for example `C:\Apps\AnimeVoiceTutor`. Do not launch scripts from a patch ZIP's `payload` directory.
+1. Download `AnimeVoiceTutor_Core_v0.13.1.zip` from the **[official GitHub Releases](https://github.com/Bocch1/AnimeVoiceTutor/releases)** page. Extract the **whole** ZIP into a writable local folder, for example `C:\Apps\AnimeVoiceTutor`. Do not launch scripts from a patch ZIP's `payload` directory.
 2. Double-click `First Run Setup.cmd`. Choose your language from **Language** (this label is always English).
 3. **Step 1 — Voice environment:** click **Install voice base** to install or repair the Web, ASR and TTS runtimes, the Qwen3-ASR 1.7B model and the GPT-SoVITS inference prerequisites. **Diagnostics** checks the installed components; green success means the base checks passed. **Advanced options** permits existing engine and ASR model paths, a smaller ASR model, and a separately reviewed engine overlay. Installation may download multiple gigabytes.
-4. **Step 2 — Character:** use **Refresh releases**, choose a published character, then click **Download and install selected character**. You can instead select a trusted local ZIP. This is a separate action from the base installation. Do not use character packs you are not authorized to possess or distribute.
+4. **Step 2 — Character:** download an **AnimeVoiceTutor_Character_*.zip** file from the same Release Assets when one is published. Use **Refresh releases** and **Download and install selected character**, or choose that previously downloaded ZIP from your computer. These are AnimeVoiceTutor-specific character packages, not arbitrary standalone `.pth` weights. Do not import untrusted or unauthorized packs.
 5. Double-click `Start AnimeVoiceTutor.cmd`. The app opens in a browser-style window without a persistent console. Enter your own AI provider key under Settings. Confirm recording, transcription and newly generated character speech in the Web interface.
 6. Click **Exit application** in the Web sidebar. `Stop AnimeVoiceTutor.cmd` is a fallback if the Web exit is unavailable.
 

@@ -1,44 +1,57 @@
 # AnimeVoiceTutor
 
-**ローカル音声認識と追加キャラクター音声に対応した、日本語会話練習アプリです。**
+**AIとの会話にアニメキャラクターならではの声を。より自然なキャラクターとの対話を楽しもう。**
 
 [English](README.md) | [简体中文](README.zh-CN.md) | 日本語
 
-音声認識には Qwen3-ASR、音声合成には GPT-SoVITS を使用します。AI 会話には、利用者自身が OpenAI / DeepSeek などの API キーを設定してください。Core ZIP に学習済みモデル、キャラクターの素材、API キーは含まれていません。
+AnimeVoiceTutor は、**キャラクターボイスを追加できる、オープンソースのセルフホスト型 AI キャラクター会話アプリ**です。キャラクター専用の音声パックを導入すると、テキストやマイクで AI キャラクターと会話し、そのキャラクターの合成音声で返答を聞くことができます。AI サービスの設定に加え、Qwen3-ASR によるローカル音声認識と GPT-SoVITS による音声合成に対応しています。
 
-## 初回セットアップ（Windows）
+## 主な機能
 
-1. GitHub Releases から **`AnimeVoiceTutor_Core_v0.13.1.zip`** をダウンロードし、ZIP 全体を書き込み可能なフォルダーに展開します。更新パッチの `payload` フォルダーから起動しないでください。
-2. **`First Run Setup.cmd`** をダブルクリックします。言語メニューは常に **Language** と表示されます。ステップ 1 には **環境のインストール・環境診断・詳細設定** の 3 つがあります。既存の GPT-SoVITS / ASR を使う場合は詳細設定で選択できます。
-3. ステップ 2 で GitHub Releases のキャラクター一覧を更新し、対象 ZIP を選択してダウンロード・導入します。信頼できるローカル ZIP の取り込みや、後から Web 画面での取り込みもできます。
-4. **`Start AnimeVoiceTutor.cmd`** をダブルクリックしてアプリを起動します。設定画面で AI API キーを入力し、録音・会話・音声再生を確認してください。終了時はサイドバーの **アプリを終了** を使います。必要な場合だけ `Stop AnimeVoiceTutor.cmd` を使います。
+- **キャラクターボイスパック：** AnimeVoiceTutor 専用 ZIP をダウンロード・導入し、キャラクターを切り替え。
+- **AI 会話：** 対応する AI サービスと自分の API キーを設定して会話。
+- **音声チャット：** マイク入力、ローカル音声認識、キャラクターボイスによる返答。
+- **キャラクター画面：** 立ち絵、挨拶、会話履歴、多言語 UI。
+- **ローカル実行：** Web・ASR・TTS を自分の PC で動作。
+- **3 言語対応：** 日本語、英語、簡体字中国語。
 
-通常の操作にコマンド入力は不要です。環境診断の成功は、キャラクターの TTS モデルが実際に読み込まれたことを意味しません。起動中は読み込みを待ち、失敗した場合はサービス状態を確認してください。
+## インストールと起動（Windows）
 
-**動作対象：** Windows 10/11 x64 と CUDA 12.8 に対応する NVIDIA GPU / ドライバー。すべての PC での自動インストールを保証するものではありません。開発用 GPT-SoVITS には未公開のローカル変更があり、完全な再現性はまだ検証中です。
+1. [GitHub Releases](https://github.com/Bocch1/AnimeVoiceTutor/releases) から **`AnimeVoiceTutor_Core_v0.13.1.zip`** をダウンロードし、書き込み可能なフォルダーにすべて展開します。
+2. **`First Run Setup.cmd`** をダブルクリックし、**音声環境をインストールして「環境診断」で確認します**。言語メニューの表示名は常に **Language** です。既存のモデルやエンジンを使う場合は**詳細設定**を開きます。
+3. **Release の Assets** から **AnimeVoiceTutor 専用キャラクター ZIP**（公開されている場合）をダウンロードし、**First Run のステップ 2** で導入します。ダウンロード済みの ZIP を選択したり、後から Web UI で導入したりすることもできます。
+4. **`Start AnimeVoiceTutor.cmd`** をダブルクリックして起動します。**設定**で自分の AI サービスを登録して会話を始めます。終了時は Web UI の **アプリを終了** を使い、必要な場合だけ `Stop AnimeVoiceTutor.cmd` を使います。
 
-## ローカル ZIP の保存先
+**キャラクターパックは AnimeVoiceTutor 専用形式です。** 単体の `.pth` ファイルは完全なキャラクターパックではないため、そのまま導入できません。音声を利用するにはキャラクター情報・参照音声・推論設定・対応するモデルファイルが必要です。Core ZIP に第三者のキャラクター音声や素材は含まれていません。
 
-セットアップ時に次のフォルダーが自動作成されます。
+主な対象環境は **Windows 10/11 x64 と NVIDIA GPU** です。ハードウェア、ドライバー、システム構成によって互換性が異なる場合があります。初回の依存関係・モデルの取得にはインターネット接続が必要です。詳しくは [インストール](docs/INSTALLATION.md) を参照してください。
+
+## 通常の使い方
+
+| ダブルクリックするファイル | 用途 |
+| --- | --- |
+| `First Run Setup.cmd` | 音声環境のインストール・診断、キャラクター ZIP のダウンロードと導入 |
+| `Start AnimeVoiceTutor.cmd` | コンソールを開いたままにせずアプリを起動 |
+| `Stop AnimeVoiceTutor.cmd` | Web 画面から終了できない場合に管理対象サービスを停止 |
+
+通常の操作に PowerShell コマンドは不要です。開発・診断用ツールは [`advanced/`](advanced/) にあります。CMD ファイル名に空白があっても問題ありません。
+
+## ローカルパッケージの保存先
 
 ```text
 packages/
-  updates/       AnimeVoiceTutor_Core_v0.13.1.zip、AnimeVoiceTutor_Update_v0.13.1.zip
+  updates/       AnimeVoiceTutor_Core_v0.13.1.zip
   characters/    AnimeVoiceTutor_Character_<id>_v<version>.zip
 ```
 
-導入済みキャラクター ZIP は `packages/characters` に保存されます。展開されたモデルは従来どおり `data/character_packs` に残ります。Core のビルド結果は `packages/updates` に保存されます。両フォルダーは Git の対象外で、公開 Core ZIP に含まれません。詳細は [Local packages](docs/LOCAL_PACKAGES.md) を参照してください。
+導入されたキャラクター ZIP は `packages/characters/` に保存され、実際のモデルは `data/character_packs/` に置かれます。これらのローカルファイルは公開 Core ZIP に含まれません。詳しくは [ローカル ZIP](docs/LOCAL_PACKAGES.md) を参照してください。
 
-## 通常使う 3 つの CMD
+## ドキュメント
 
-| ファイル | 操作 |
-| --- | --- |
-| `First Run Setup.cmd` | 環境のインストール・診断・キャラクターの導入 |
-| `Start AnimeVoiceTutor.cmd` | コンソールを常時表示せずアプリを起動 |
-| `Stop AnimeVoiceTutor.cmd` | 画面から終了できない場合の停止操作 |
+[インストール](docs/INSTALLATION.md) · [キャラクターパック形式](docs/CHARACTER_PACKS.md) · [ローカル ZIP](docs/LOCAL_PACKAGES.md) · [テスト](docs/TESTING.md) · [公開](docs/PUBLISHING.md)
 
-**CMD ファイル名に空白があっても問題ありません。** 内部ではパスを引用符で囲んでいます。開発・診断用のツールは [`advanced/`](advanced/) にあります。
+## 非公式ファンプロジェクトと権利について
 
-[インストール](docs/INSTALLATION.md) · [ZIP 保存先](docs/LOCAL_PACKAGES.md) · [キャラクターパック](docs/CHARACTER_PACKS.md) · [テスト](docs/TESTING.md) · [公開](docs/PUBLISHING.md)
+AnimeVoiceTutor は、**非営利目的で開発された独立した非公式ファンプロジェクト**です。アニメ制作会社、出版社、キャラクターの権利者、声優などとは提携・協賛関係がなく、公式の承認も受けていません。原作キャラクター、イラスト、音声収録、商標その他の第三者素材に関する権利は、それぞれの権利者に帰属します。
 
-**ライセンス：** Core ソースは MIT ですが、人物画像・音声・モデルなどの再配布には別の許可が必要です。削除依頼窓口だけでは再配布許可になりません。[Security](SECURITY.md) と [Third-party notices](THIRD_PARTY_NOTICES.md) を確認してください。
+アプリ独自の**ソースコードには MIT ライセンス**が適用されますが、第三者のキャラクターや音声素材の利用・再配布を認めるものではありません。また、MIT ライセンス自体は商用利用を禁止しません。権利に関するご連絡は [GitHub リポジトリ](https://github.com/Bocch1/AnimeVoiceTutor/issues) までお願いします。正当な申し立ては速やかに確認し、必要に応じて該当素材を削除します。**削除要請への対応方針は、第三者素材の配布許可に代わるものではありません。** [第三者コンテンツについて](THIRD_PARTY_NOTICES.md)・[セキュリティ](SECURITY.md) もご覧ください。

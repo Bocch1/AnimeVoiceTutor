@@ -1,50 +1,61 @@
 # AnimeVoiceTutor
 
-**A self-hosted Japanese conversation tutor with optional local character voices.**
+**Give AI conversations distinctive anime character voices for a more natural character chat experience.**
 
 English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-AnimeVoiceTutor provides Japanese conversation, speech recognition (Qwen3-ASR), and character speech synthesis (GPT-SoVITS). Chat with an AI provider requires your own OpenAI/DeepSeek API key. No models, API keys or copyrighted character media are included in the small Core ZIP.
+AnimeVoiceTutor is an open-source, self-hosted **AI character chat application**. Install a character voice pack to chat with an AI character using text or your microphone and hear responses in that character's voice. The application combines configurable AI providers with local Qwen3-ASR speech recognition and GPT-SoVITS voice synthesis.
 
-## Get started (Windows)
+## Features
 
-1. Download **`AnimeVoiceTutor_Core_v0.13.1.zip`** from the project's GitHub Releases page. Extract the **entire** ZIP to a writable folder. Do not run setup from an incremental update ZIP's `payload` directory.
-2. Double-click **`First Run Setup.cmd`**. The language selector is always called **Language** (English / 简体中文 / 日本語). In Step 1, click **Install voice base**. **Diagnostics** checks the installed base and reports what is missing; **Advanced options** lets you use your existing ASR model or GPT-SoVITS engine.
-3. In Step 2, select a **character ZIP** from the project's published GitHub Releases list, then click **Download and install selected character**. Alternatively, choose a trusted character ZIP already on your computer. You can also import a ZIP later in the Web app.
-4. Double-click **`Start AnimeVoiceTutor.cmd`**. Use the app's Settings page to enter your own AI provider credentials. Speak, chat, listen to generated audio, and use **Exit application** in the sidebar when finished. `Stop AnimeVoiceTutor.cmd` is an emergency fallback.
+- **Character voice packs:** download and install AnimeVoiceTutor character ZIPs, then switch between installed characters.
+- **AI conversations:** connect a supported AI provider using your own API credentials.
+- **Voice chat:** speak through the microphone, transcribe speech locally, and listen to generated character responses.
+- **Character interface:** portraits, greetings, conversation history, and multilingual controls.
+- **Local deployment:** run the Web UI, ASR and TTS components on your own computer.
+- **Three interface languages:** English, Simplified Chinese, and Japanese.
 
-You do **not** need to run a terminal for normal use. The setup window distinguishes environment installation/diagnosis from live speech: a successful environment check does not claim that a specific character's TTS weights are loaded. If TTS is initializing, allow it to load; check **Service status** if it fails.
+## Install and start (Windows)
 
-**Platform target:** Windows 10/11 x64 and a compatible NVIDIA GPU/driver for CUDA 12.8. Fully automated installation is not guaranteed on all PCs, and an internet connection is needed for dependency/model downloads. The TTS source reference is pinned, but equivalence with the developer's locally modified GPT-SoVITS inference files has **not** been established. See [Installation](docs/INSTALLATION.md).
+1. From [GitHub Releases](https://github.com/Bocch1/AnimeVoiceTutor/releases), download and extract **`AnimeVoiceTutor_Core_v0.13.1.zip`** to a writable folder.
+2. Double-click **`First Run Setup.cmd`** to **install the voice environment and verify it using Diagnostics**. The language selector always reads **Language**; **Advanced options** allows supported local engine/model paths.
+3. From the **Release Assets**, download an **AnimeVoiceTutor character ZIP** (when one is available). Install it in **First Run → Step 2**, or import that ZIP later in the Web UI.
+4. Double-click **`Start AnimeVoiceTutor.cmd`**, configure your AI provider in **Settings**, and start chatting. Choose **Exit application** in the Web UI when finished; `Stop AnimeVoiceTutor.cmd` is a fallback.
 
-## Where are my downloaded packages?
+**Character packages are specific to AnimeVoiceTutor.** A standalone `.pth` weight file is not a complete character package and cannot be imported directly. Each full voice package needs its metadata, reference audio, voice settings, and matching model files. The Core download does not include character voices or third-party character media.
 
-The first-run wizard creates these local folders beside your Core source:
+The application is designed primarily for **Windows 10/11 x64 with NVIDIA GPU support**. Compatibility may vary depending on hardware, drivers, and system configuration. An internet connection is needed for initial dependency/model downloads. See [Installation](docs/INSTALLATION.md) for requirements and troubleshooting.
 
-```text
-packages/
-  updates/       AnimeVoiceTutor_Core_v0.13.1.zip, AnimeVoiceTutor_Update_v0.13.1.zip
-  characters/    AnimeVoiceTutor_Character_<id>_v<version>.zip
-```
-
-Imported character ZIPs are archived automatically. The installed/extracted character data continues to live in `data/character_packs/` and is not moved. When building a new Core locally, the output goes to `packages/updates/`. These folders are **private and Git-ignored**; neither the original character ZIP nor the installed weights are included in the public Core source package. See [Local package folders](docs/LOCAL_PACKAGES.md).
-
-## Three everyday files
+## Everyday use
 
 | Double-click | Purpose |
 | --- | --- |
-| `First Run Setup.cmd` | Install/check the base and import character ZIPs |
-| `Start AnimeVoiceTutor.cmd` | Open the application without a persistent console |
-| `Stop AnimeVoiceTutor.cmd` | Stop managed services if the in-app Exit control is unavailable |
+| `First Run Setup.cmd` | Install and diagnose the voice environment; download/import a character ZIP |
+| `Start AnimeVoiceTutor.cmd` | Launch the application without keeping a console open |
+| `Stop AnimeVoiceTutor.cmd` | Stop this installation's managed services if the Web exit is unavailable |
 
-Spaces in CMD filenames are supported by Windows. Keep the names unchanged; the provided scripts quote their paths. Diagnostic, test and export commands live in [`advanced/`](advanced/).
+Normal use does not require PowerShell commands. Development and diagnostic tools are in [`advanced/`](advanced/). Spaces in `.cmd` filenames are supported.
+
+## Local package folders
+
+```text
+packages/
+  updates/       AnimeVoiceTutor_Core_v0.13.1.zip
+  characters/    AnimeVoiceTutor_Character_<id>_v<version>.zip
+```
+
+Character ZIP archives are saved in `packages/characters/` after import. Installed model files remain in `data/character_packs/`. The `packages/` directory and local models are excluded from the public Core source. See [Local packages](docs/LOCAL_PACKAGES.md).
 
 ## Documentation
 
-- [Installation and environment checks](docs/INSTALLATION.md)
-- [Local ZIP archive and naming rules](docs/LOCAL_PACKAGES.md)
-- [Character ZIP format](docs/CHARACTER_PACKS.md)
-- [Real-user testing](docs/TESTING.md)
-- [Publishing Core and updates](docs/PUBLISHING.md)
+- [Installation and troubleshooting](docs/INSTALLATION.md)
+- [Character package format](docs/CHARACTER_PACKS.md)
+- [Local package folders](docs/LOCAL_PACKAGES.md)
+- [Testing](docs/TESTING.md)
+- [Publishing](docs/PUBLISHING.md)
 
-**Licenses:** The Core application source is MIT-licensed; GPT-SoVITS, FFmpeg, pretrained models, and character artwork/audio/weights have independent rights. Do not distribute third-party character media without permission. A takedown notice is not permission. See [Security](SECURITY.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).
+## Fan project, licenses and rights
+
+AnimeVoiceTutor is an **independent, unofficial fan-made project developed for non-commercial purposes**. It is not affiliated with or endorsed by anime studios, publishers, character owners, or voice actors. Original characters, artwork, voice recordings, trademarks, and other third-party material remain the property of their respective rights holders.
+
+The application's original **source code is MIT-licensed**; this does not grant rights to third-party characters or audio. The MIT code license has its own terms and is not a non-commercial-only license. Rights-holder concerns can be raised through the [repository](https://github.com/Bocch1/AnimeVoiceTutor/issues); substantiated requests will be reviewed promptly and affected material removed when appropriate. **A takedown notice does not replace permission to distribute third-party material.** See [Third-party notices](THIRD_PARTY_NOTICES.md) and [Security](SECURITY.md).

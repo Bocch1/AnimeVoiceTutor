@@ -4,7 +4,9 @@ AnimeVoiceTutor Core is character-neutral: it includes no fictional-character po
 
 ## Install or switch a character
 
-1. Obtain a character ZIP from a source authorized to distribute all its contents.
+Character voices are distributed as **AnimeVoiceTutor-specific ZIP packages**, not as arbitrary single `.pth` model files. A full voice pack includes `character.json`, compatible GPT/SoVITS weights, reference audio, and the inference preset. Core does not include these third-party character files.
+
+1. Download an `AnimeVoiceTutor_Character_*.zip` package from the project's GitHub Release Assets (when available), or obtain a trusted, authorized AnimeVoiceTutor package locally.
 2. Open **Settings → Character → Install ZIP** and select the file.
 3. After successful installation the app activates the character and updates its welcome screen, portrait, and greetings. Switch between installed characters and **Standard Japanese** in the same settings section.
 4. For a pack with live voice weights, ensure a compatible GPT-SoVITS-v5 engine is configured and restart the managed TTS service when changing voice models.
