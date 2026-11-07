@@ -23,3 +23,16 @@ def test_public_text_contains_no_known_machine_paths_or_keys():
 def test_private_patterns_reject_realistic_credentials_and_home_paths():
     probes = ['DEEPSEEK_API_KEY=sk-' + 'a'*30, 'C:' + chr(92) + 'Users' + chr(92) + 'SomeUser' + chr(92) + 'Desktop']
     assert all(any(regex.search(candidate) for regex in SECRET_PATTERNS) for candidate in probes)
+
+
+def test_single_public_readme_screenshot_is_included_but_other_images_remain_private():
+    from scripts.verify_public_source import is_private_path, PUBLIC_README_SCREENSHOT
+    paths = public_paths(ROOT)
+    assert PUBLIC_README_SCREENSHOT in paths
+    assert (ROOT / PUBLIC_README_SCREENSHOT).is_file()
+    assert not is_private_path(PUBLIC_README_SCREENSHOT)
+    assert is_private_path('docs/images/unknown_character.png')
+    assert is_private_path('web/assets/azusa_subject.png')
+    for readme in ('README.md', 'README.zh-CN.md', 'README.ja.md'):
+        content = (ROOT / readme).read_text(encoding='utf-8')
+        assert f']({PUBLIC_README_SCREENSHOT})' in content

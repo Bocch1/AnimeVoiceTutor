@@ -6,6 +6,16 @@
 
 AnimeVoiceTutor は、**キャラクターボイスを追加できる、オープンソースのセルフホスト型 AI キャラクター会話アプリ**です。キャラクター専用の音声パックを導入すると、テキストやマイクで AI キャラクターと会話し、そのキャラクターの合成音声で返答を聞くことができます。AI サービスの設定に加え、Qwen3-ASR によるローカル音声認識と GPT-SoVITS による音声合成に対応しています。
 
+## 注目のキャラクター — 中野 梓（Azusa Nakano）
+
+**けいおん！ / K-ON!** · Azusa キャラクターボイスパック v1 · 日本語音声
+
+梓をテーマにした専用ボイスパックで、キャラクターの挨拶や AI とのリアルタイム音声会話を楽しめます。[ボイスパックを Releases から入手](https://github.com/Bocch1/AnimeVoiceTutor/releases)。
+
+![AnimeVoiceTutor の梓のウェルカム画面。日本語の挨拶とキャラクターチャット画面](docs/images/animevoicetutor_azusa_preview.png)
+
+*Azusa ボイスパックを使った実際のウェルカム画面です。非公式のファンメイド作品です。*
+
 ## 主な機能
 
 - **キャラクターボイスパック：** AnimeVoiceTutor 専用 ZIP をダウンロード・導入し、キャラクターを切り替え。

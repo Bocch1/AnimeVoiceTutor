@@ -103,3 +103,6 @@ web/assets/*
 data/character_packs/
 data/app/selected_character.json
 data/app/tts_model_binding.json
+
+# Public README screenshot reviewed for this release (all other PNG files remain ignored).
+!docs/images/animevoicetutor_azusa_preview.png

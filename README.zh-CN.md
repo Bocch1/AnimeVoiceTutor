@@ -6,6 +6,16 @@
 
 AnimeVoiceTutor 是一款开源、本地部署的 **AI 角色对话程序**。安装人物语音包后，即可通过文字或麦克风与 AI 角色交流，并听到人物专属的合成语音。程序支持自定义 AI 服务，并结合本地 Qwen3-ASR 语音识别与 GPT-SoVITS 语音合成。
 
+## 当前主打角色 — 中野梓（Azusa Nakano）
+
+**《轻音少女》/ K-ON! / けいおん！** · Azusa 人物语音包 v1 · 日语语音
+
+通过 Azusa 主题人物语音包，体验专属问候语、人物声音与实时 AI 语音对话。[从 GitHub Releases 获取人物包](https://github.com/Bocch1/AnimeVoiceTutor/releases)。
+
+![AnimeVoiceTutor 的 Azusa 人物欢迎页面，包含日语问候语和角色对话界面](docs/images/animevoicetutor_azusa_preview.png)
+
+*实际运行中的 Azusa 人物欢迎页面。此为独立非官方同人项目展示。*
+
 ## 主要功能
 
 - **人物语音包：** 下载并安装 AnimeVoiceTutor 专用人物 ZIP，在已安装的角色之间切换。

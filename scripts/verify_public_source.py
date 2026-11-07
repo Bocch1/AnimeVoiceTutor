@@ -19,6 +19,8 @@ PRIVATE_ROOT_NAMES = {
     'local', 'private', 'weights', 'checkpoints', 'outputs', 'reports',
     'logs', 'build', 'dist', '.venv_old_backup', 'packages',
 }
+PUBLIC_README_SCREENSHOT = 'docs/images/animevoicetutor_azusa_preview.png'
+
 PRIVATE_SUFFIXES = {
     '.wav', '.mp3', '.flac', '.ogg', '.mkv', '.mp4', '.pth', '.pt',
     '.ckpt', '.safetensors', '.onnx', '.png', '.jpg', '.jpeg', '.webp',
@@ -37,7 +39,7 @@ def is_private_path(relative: str) -> bool:
     path = PurePosixPath(relative)
     if path.is_absolute() or not path.parts or '..' in path.parts or '\\' in relative:
         return True
-    if relative == '.env.example':
+    if relative in {'.env.example', PUBLIC_README_SCREENSHOT}:
         return False
     if path.parts[0] in PRIVATE_ROOT_NAMES or path.parts[0].startswith('.env.'):
         return True
