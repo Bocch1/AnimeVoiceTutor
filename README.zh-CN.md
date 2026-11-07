@@ -14,6 +14,8 @@ AnimeVoiceTutor 是一款开源、本地部署的 **AI 角色对话程序**。�
 
 ![AnimeVoiceTutor 的 Azusa 人物欢迎页面，包含日语问候语和角色对话界面](docs/images/animevoicetutor_azusa_preview.png)
 
+> **独立模型权重：** 如果只需要 GPT-SoVITS 模型权重，可以前往 [Hugging Face](https://huggingface.co/oumaerin/AnimeVoiceTutor-Azusa-v5turbo) 下载。独立权重适用于兼容的 GPT-SoVITS 环境，并非完整的 AnimeVoiceTutor 人物包。
+
 *实际运行中的 Azusa 人物欢迎页面。此为独立非官方同人项目展示。*
 
 ## 主要功能

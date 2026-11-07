@@ -14,6 +14,8 @@ AnimeVoiceTutor は、**キャラクターボイスを追加できる、オー�
 
 ![AnimeVoiceTutor の梓のウェルカム画面。日本語の挨拶とキャラクターチャット画面](docs/images/animevoicetutor_azusa_preview.png)
 
+> **モデルの重みのみ必要な場合：** GPT-SoVITS のモデルウェイトは [Hugging Face](https://huggingface.co/oumaerin/AnimeVoiceTutor-Azusa-v5turbo) からダウンロードできます。単体のモデルウェイトは対応する GPT-SoVITS 環境向けであり、AnimeVoiceTutor の完全なキャラクターパックではありません。
+
 *Azusa ボイスパックを使った実際のウェルカム画面です。非公式のファンメイド作品です。*
 
 ## 主な機能

@@ -6,13 +6,15 @@ English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 AnimeVoiceTutor is an open-source, self-hosted **AI character chat application**. Install a character voice pack to chat with an AI character using text or your microphone and hear responses in that character's voice. The application combines configurable AI providers with local Qwen3-ASR speech recognition and GPT-SoVITS voice synthesis.
 
-## Character — Azusa Nakano (中野 梓)
+## Available Characters — Azusa Nakano (中野 梓)
 
 **K-ON! / けいおん！** · Azusa character voice pack v1 · Japanese voice
 
 Experience an Azusa-themed AI conversation with a character greeting, a dedicated voice, and real-time speech synthesis. [Find the character pack in Releases](https://github.com/Bocch1/AnimeVoiceTutor/releases).
 
 ![AnimeVoiceTutor welcome screen with Azusa, a Japanese greeting, and the character chat interface](docs/images/animevoicetutor_azusa_preview.png)
+
+> **Standalone Model Weights:** If you only need the GPT-SoVITS model weights, visit [Hugging Face](https://huggingface.co/oumaerin/AnimeVoiceTutor-Azusa-v5turbo). These weights are intended for compatible GPT-SoVITS environments and are not complete AnimeVoiceTutor character packs.
 
 *Actual application welcome screen featuring the Azusa character pack. Unofficial fan-made character experience.*
 
